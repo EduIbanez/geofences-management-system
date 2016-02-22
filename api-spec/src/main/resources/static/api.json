@@ -15,7 +15,7 @@
     ],
     "paths": {
         "/users": {
-            "put": {
+            "post": {
                 "summary": "Create user",
                 "description": "This method creates a new user.\n",
                 "parameters": [
@@ -89,7 +89,7 @@
             }
         },
         "/users/{public_identifier}": {
-            "post": {
+            "put": {
                 "summary": "Modify user",
                 "description": "This method modifies the data of a previously created user.\n",
                 "parameters": [
@@ -276,8 +276,8 @@
                             "$ref": "#/definitions/User"
                         }
                     },
-                    "404": {
-                        "description": "User not found",
+                    "400": {
+                        "description": "Invalid user/password",
                         "schema": {
                             "$ref": "#/definitions/Error"
                         }
@@ -299,23 +299,14 @@
                     "Users"
                 ],
                 "responses": {
-                    "200": {
-                        "description": "User logged out",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    },
                     "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
+                        "description": "User logged out"
                     }
                 }
             }
         },
         "/geofences": {
-            "put": {
+            "post": {
                 "summary": "Create geofence",
                 "description": "This method creates a new geofence.\n",
                 "parameters": [
@@ -375,7 +366,7 @@
             }
         },
         "/geofences/{geofence_id}": {
-            "post": {
+            "put": {
                 "summary": "Modify geofence",
                 "description": "This method modifies the data of a previously created geofence.\n",
                 "parameters": [
@@ -581,7 +572,7 @@
             }
         },
         "/notifications": {
-            "put": {
+            "post": {
                 "summary": "Create notification",
                 "description": "This method creates a new notification.\n",
                 "parameters": [
@@ -634,7 +625,7 @@
             }
         },
         "/notifications/{notification_id}": {
-            "post": {
+            "put": {
                 "summary": "Modify notification",
                 "description": "This method modifies the data of a previously created notification.\n",
                 "parameters": [
@@ -783,7 +774,7 @@
             }
         },
         "/positions/{user}": {
-            "post": {
+            "put": {
                 "summary": "Update position of a user",
                 "description": "This method updates the position of a certain user based on his GPS location.\n",
                 "parameters": [
