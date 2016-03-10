@@ -35,7 +35,7 @@ public class SwaggerConfig {
     }
 
     private Predicate<String> apiPaths() {
-        return regex("/todo.*");
+        return regex("/api.*");
     }
 
     @Bean

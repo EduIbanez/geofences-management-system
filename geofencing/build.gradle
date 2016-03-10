@@ -8,12 +8,10 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'tarea-rest-service'
+    baseName = 'geofencing'
     version =  '0.1.0'
 }
 
