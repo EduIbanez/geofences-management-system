@@ -19,16 +19,10 @@ public class GeofenceController {
      */
     @RequestMapping(path="/api/geofences", method=RequestMethod.POST)
     public Geofence createGeofence(@RequestBody Geofence geofence) {
-        Integer id = geofence.getId();
         String type = geofence.getType();
         Properties properties = geofence.getProperties();
         Geometry geometry = geofence.getGeometry();
-        ArrayList<Double[]> array = new ArrayList<Double[]>();
-        array.add(new Double[]{2.0, 0.0});
-        array.add(new Double[]{2.0, 2.0});
-        array.add(new Double[]{0.0, 2.0});
-        array.add(new Double[]{0.0, 0.0});
-        return new Geofence(id, type, properties, geometry);
+        return new Geofence(5, type, properties, geometry);
     }
 
     /**
@@ -45,14 +39,7 @@ public class GeofenceController {
                                        @RequestParam(value = "latitude", required = false) String latitude,
                                        @RequestParam(value = "longitude", required = false) String longitude,
                                        @RequestParam(value = "radius", required = false) Integer radius) {
-        ArrayList<Double[]> array = new ArrayList<Double[]>();
-        array.add(new Double[]{2.0, 0.0});
-        array.add(new Double[]{2.0, 2.0});
-        array.add(new Double[]{0.0, 2.0});
-        array.add(new Double[]{0.0, 0.0});
-        return Lists.newArrayList(new Geofence(1, "Feature", new Properties("Cuadrado"), new Geometry("Polygon", array)),
-                new Geofence(2, "Feature", new Properties("Cuadrado"), new Geometry("Polygon", array)),
-                new Geofence(3, "Feature", new Properties("Cuadrado"), new Geometry("Polygon", array)));
+        return Lists.newArrayList(createPolygonFixture(1), createPolygonFixture(2), createPolygonFixture(3));
     }
 
     /**
@@ -66,11 +53,6 @@ public class GeofenceController {
         String type = geofence.getType();
         Properties properties = geofence.getProperties();
         Geometry geometry = geofence.getGeometry();
-        ArrayList<Double[]> array = new ArrayList<Double[]>();
-        array.add(new Double[]{2.0, 0.0});
-        array.add(new Double[]{2.0, 2.0});
-        array.add(new Double[]{0.0, 2.0});
-        array.add(new Double[]{0.0, 0.0});
         return new Geofence(id, type, properties, geometry);
     }
 
@@ -79,14 +61,10 @@ public class GeofenceController {
      * @param id        unique identifier representing a specific geofence
      * @return          the geofence deleted
      */
+    // TODO Este es un método DELETE, revisar semántica
     @RequestMapping(path="/api/geofences/{id}", method=RequestMethod.DELETE)
     public Geofence deleteGeofence(@PathVariable("id") int id) {
-        ArrayList<Double[]> array = new ArrayList<Double[]>();
-        array.add(new Double[]{2.0, 0.0});
-        array.add(new Double[]{2.0, 2.0});
-        array.add(new Double[]{0.0, 2.0});
-        array.add(new Double[]{0.0, 0.0});
-        return new Geofence(id, "Feature", new Properties("Cuadrado"), new Geometry("Polygon", array));
+        return createPolygonFixture(id);
     }
 
     /**
@@ -96,7 +74,11 @@ public class GeofenceController {
      */
     @RequestMapping(path="/api/geofences/{id}", method=RequestMethod.GET)
     public Geofence getGeofence(@PathVariable("id") int id) {
-        ArrayList<Double[]> array = new ArrayList<Double[]>();
+        return createPolygonFixture(id);
+    }
+
+    private Geofence createPolygonFixture(@PathVariable("id") int id) {
+        ArrayList<Double[]> array = new ArrayList<>();
         array.add(new Double[]{2.0, 0.0});
         array.add(new Double[]{2.0, 2.0});
         array.add(new Double[]{0.0, 2.0});
