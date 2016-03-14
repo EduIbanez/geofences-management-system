@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import es.unizar.iaaa.geofencing.model.Geofence;
 import es.unizar.iaaa.geofencing.model.Geometry;
 import es.unizar.iaaa.geofencing.model.Properties;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,11 +20,17 @@ public class GeofenceController {
      * @return          the geofence created
      */
     @RequestMapping(path="/api/geofences", method=RequestMethod.POST)
-    public Geofence createGeofence(@RequestBody Geofence geofence) {
+    public ResponseEntity<Geofence> createGeofence(@RequestBody Geofence geofence) {
         String type = geofence.getType();
         Properties properties = geofence.getProperties();
         Geometry geometry = geofence.getGeometry();
-        return new Geofence(5, type, properties, geometry);
+        boolean created = true;
+        if (created) {
+            return new ResponseEntity<Geofence>(new Geofence(5, type, properties, geometry), HttpStatus.CREATED);
+        }
+        else {
+            return new ResponseEntity<Geofence>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -35,11 +43,18 @@ public class GeofenceController {
      * @return          an array of geofences
      */
     @RequestMapping(path="/api/geofences", method=RequestMethod.GET)
-    public List<Geofence> getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
+    public ResponseEntity<List<Geofence>> getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
                                        @RequestParam(value = "latitude", required = false) String latitude,
                                        @RequestParam(value = "longitude", required = false) String longitude,
                                        @RequestParam(value = "radius", required = false) Integer radius) {
-        return Lists.newArrayList(createPolygonFixture(1), createPolygonFixture(2), createPolygonFixture(3));
+        boolean found = true;
+        if (found) {
+            return new ResponseEntity<List<Geofence>>(Lists.newArrayList(createPolygonFixture(1), createPolygonFixture(2), createPolygonFixture(3)),
+                    HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<List<Geofence>>(HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
@@ -49,11 +64,23 @@ public class GeofenceController {
      * @return          the geofence modified
      */
     @RequestMapping(path="/api/geofences/{id}", method=RequestMethod.PUT)
-    public Geofence modifyGeofence(@PathVariable("id") int id, @RequestBody Geofence geofence) {
+    public ResponseEntity<Geofence> modifyGeofence(@PathVariable("id") int id, @RequestBody Geofence geofence) {
         String type = geofence.getType();
         Properties properties = geofence.getProperties();
         Geometry geometry = geofence.getGeometry();
-        return new Geofence(id, type, properties, geometry);
+        boolean found = true;
+        boolean modified = true;
+        if (found) {
+            if (modified) {
+                return new ResponseEntity<Geofence>(new Geofence(id, type, properties, geometry), HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<Geofence>(HttpStatus.NOT_MODIFIED);
+            }
+        }
+        else {
+            return new ResponseEntity<Geofence>(HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
@@ -61,10 +88,21 @@ public class GeofenceController {
      * @param id        unique identifier representing a specific geofence
      * @return          the geofence deleted
      */
-    // TODO Este es un método DELETE, revisar semántica
     @RequestMapping(path="/api/geofences/{id}", method=RequestMethod.DELETE)
-    public Geofence deleteGeofence(@PathVariable("id") int id) {
-        return createPolygonFixture(id);
+    public ResponseEntity<Geofence> deleteGeofence(@PathVariable("id") int id) {
+        boolean found = true;
+        boolean deleted = true;
+        if (found) {
+            if (deleted) {
+                return new ResponseEntity<Geofence>(createPolygonFixture(id), HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<Geofence>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        else {
+            return new ResponseEntity<Geofence>(HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
@@ -73,12 +111,18 @@ public class GeofenceController {
      * @return          the geofence requested
      */
     @RequestMapping(path="/api/geofences/{id}", method=RequestMethod.GET)
-    public Geofence getGeofence(@PathVariable("id") int id) {
-        return createPolygonFixture(id);
+    public ResponseEntity<Geofence> getGeofence(@PathVariable("id") int id) {
+        boolean found = true;
+        if (found) {
+            return new ResponseEntity<Geofence>(createPolygonFixture(id), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<Geofence>(HttpStatus.NOT_FOUND);
+        }
     }
 
     private Geofence createPolygonFixture(@PathVariable("id") int id) {
-        ArrayList<Double[]> array = new ArrayList<>();
+        ArrayList<Double[]> array = new ArrayList<Double[]>();
         array.add(new Double[]{2.0, 0.0});
         array.add(new Double[]{2.0, 2.0});
         array.add(new Double[]{0.0, 2.0});
