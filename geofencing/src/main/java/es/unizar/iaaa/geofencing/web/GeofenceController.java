@@ -53,6 +53,8 @@ public class GeofenceController {
      * @return an array of geofences
      */
     @RequestMapping(path = "/api/geofences", method = RequestMethod.GET)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Array of geofences", response = List.class)})
     public List<Geofence> getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
                                        @RequestParam(value = "latitude", required = false) String latitude,
                                        @RequestParam(value = "longitude", required = false) String longitude,
@@ -68,6 +70,10 @@ public class GeofenceController {
      * @return the geofence modified
      */
     @RequestMapping(path = "/api/geofences/{id}", method = RequestMethod.PUT)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Geofence modified", response = Geofence.class),
+            @ApiResponse(code = 304, message = "Geofence not modified", response = GeofenceNotModifiedException.class),
+            @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
     public Geofence modifyGeofence(@PathVariable("id") int id, @RequestBody Geofence geofence) {
         String type = geofence.getType();
         Properties properties = geofence.getProperties();
@@ -88,17 +94,14 @@ public class GeofenceController {
      * @return the geofence deleted
      */
     @RequestMapping(path = "/api/geofences/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Geofence> deleteGeofence(@PathVariable("id") int id) {
-        boolean found = true;
-        boolean deleted = true;
-        if (found) {
-            if (deleted) {
-                return new ResponseEntity<>(createPolygonFixture(id), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Geofence deleted", response = Geofence.class),
+            @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
+    public Geofence deleteGeofence(@PathVariable("id") int id) {
+        if (id == 3) {
+            return createPolygonFixture(id);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new GeofenceNotFoundException();
         }
     }
 
@@ -109,12 +112,14 @@ public class GeofenceController {
      * @return the geofence requested
      */
     @RequestMapping(path = "/api/geofences/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Geofence> getGeofence(@PathVariable("id") int id) {
-        boolean found = true;
-        if (found) {
-            return new ResponseEntity<>(createPolygonFixture(id), HttpStatus.OK);
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Geofence requested", response = Geofence.class),
+            @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
+    public Geofence getGeofence(@PathVariable("id") int id) {
+        if (id == 3) {
+            return createPolygonFixture(id);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new GeofenceNotFoundException();
         }
     }
 
@@ -128,13 +133,9 @@ public class GeofenceController {
     }
 
     @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "Not modified")
-    public class GeofenceNotModifiedException extends RuntimeException {
-
-    }
+    public class GeofenceNotModifiedException extends RuntimeException { }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Geofence")
-    public class GeofenceNotFoundException extends RuntimeException {
-
-    }
+    public class GeofenceNotFoundException extends RuntimeException { }
 
 }

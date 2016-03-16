@@ -1,9 +1,16 @@
 package es.unizar.iaaa.geofencing.web;
 
 import es.unizar.iaaa.geofencing.model.User;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ResponseHeader;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 public class UserController {
@@ -15,14 +22,17 @@ public class UserController {
      * @return the user created
      */
     @RequestMapping(path = "/api/users", method = RequestMethod.POST)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "User created",
+                    responseHeaders = @ResponseHeader(name = "Location", description = "Location",
+                            response = URI.class), response = User.class)})
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        boolean created = true;
-        if (created) {
-            return new ResponseEntity<>(new User(user.getId(), user.getEmail(), user.getPass(), user.getFirst_name(),
-                    user.getLast_name(), user.getBirthday(), user.getImei()), HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(5).toUri());
+        return new ResponseEntity<>(new User(user.getId(), user.getEmail(), user.getPass(), user.getFirst_name(),
+                user.getLast_name(), user.getBirthday(), user.getImei()), httpHeaders, HttpStatus.CREATED);
     }
 
     /**
@@ -33,18 +43,18 @@ public class UserController {
      * @return the user modified
      */
     @RequestMapping(path = "/api/users/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<User> modifyUser(@PathVariable("id") int id, @RequestBody User user) {
-        boolean found = true;
-        boolean modified = true;
-        if (found) {
-            if (modified) {
-                return new ResponseEntity<>(new User(user.getId(), user.getEmail(), user.getPass(), user.getFirst_name(),
-                        user.getLast_name(), user.getBirthday(), user.getImei()), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-            }
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User modified", response = User.class),
+            @ApiResponse(code = 304, message = "User not modified", response = UserNotModifiedException.class),
+            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
+    public User modifyUser(@PathVariable("id") int id, @RequestBody User user) {
+        if (id > 4) {
+            return new User(id, user.getEmail(), user.getPass(), user.getFirst_name(), user.getLast_name(),
+                    user.getBirthday(), user.getImei());
+        } else if (id == 4) {
+            throw new UserNotModifiedException();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new UserNotFoundException();
         }
     }
 
@@ -55,17 +65,14 @@ public class UserController {
      * @return the user deleted
      */
     @RequestMapping(path = "/api/users/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<User> deleteUser(@PathVariable("id") int id) {
-        boolean found = true;
-        boolean deleted = true;
-        if (found) {
-            if (deleted) {
-                return new ResponseEntity<>(new User(id, "", "", "", "", "", ""), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User deleted", response = User.class),
+            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
+    public User deleteUser(@PathVariable("id") int id) {
+        if (id == 4) {
+            return new User(id, "", "", "", "", "", "");
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new UserNotFoundException();
         }
     }
 
@@ -76,12 +83,14 @@ public class UserController {
      * @return the user requested
      */
     @RequestMapping(path = "/api/users/{id}", method = RequestMethod.GET)
-    public ResponseEntity<User> getUser(@PathVariable("id") int id) {
-        boolean found = true;
-        if (found) {
-            return new ResponseEntity<>(new User(id, "", "", "", "", "", ""), HttpStatus.OK);
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User requested", response = User.class),
+            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
+    public User getUser(@PathVariable("id") int id) {
+        if (id == 4) {
+            return new User(id, "", "", "", "", "", "");
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new UserNotFoundException();
         }
     }
 
@@ -93,12 +102,14 @@ public class UserController {
      * @return the user logged in
      */
     @RequestMapping(path = "/api/users/login", method = RequestMethod.GET)
-    public ResponseEntity<User> loginUser(@RequestParam("email") String email, @RequestParam("pass") String pass) {
-        boolean checked = true;
-        if (checked) {
-            return new ResponseEntity<>(new User(1, email, pass, "", "", "", ""), HttpStatus.OK);
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User logged in", response = User.class),
+            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
+    public User loginUser(@RequestParam("email") String email, @RequestParam("pass") String pass) {
+        if (email.equals("email") && pass.equals("pass")) {
+            return new User(1, email, pass, "", "", "", "");
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new UserNotFoundException();
         }
     }
 
@@ -110,13 +121,21 @@ public class UserController {
      * @return the user logged out
      */
     @RequestMapping(path = "/api/users/logout", method = RequestMethod.GET)
-    public ResponseEntity<User> logoutUser(@RequestParam("email") String email, @RequestParam("pass") String pass) {
-        boolean checked = true;
-        if (checked) {
-            return new ResponseEntity<>(new User(1, email, pass, "", "", "", ""), HttpStatus.OK);
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User logged out", response = User.class),
+            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
+    public User logoutUser(@RequestParam("email") String email, @RequestParam("pass") String pass) {
+        if (email.equals("email") && pass.equals("pass")) {
+            return new User(1, email, pass, "", "", "", "");
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new UserNotFoundException();
         }
     }
+
+    @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "Not modified")
+    public class UserNotModifiedException extends RuntimeException { }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such User")
+    public class UserNotFoundException extends RuntimeException { }
 
 }
