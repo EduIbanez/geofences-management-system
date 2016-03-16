@@ -9,7 +9,7 @@ public class Geofence {
     private Properties properties;
     private Geometry geometry;
 
-    public Geofence(@JsonProperty("id")int id, @JsonProperty("type") String type,
+    public Geofence(@JsonProperty("id") int id, @JsonProperty("type") String type,
                     @JsonProperty("properties") Properties properties, @JsonProperty("geometry") Geometry geometry) {
         this.id = id;
         this.type = type;

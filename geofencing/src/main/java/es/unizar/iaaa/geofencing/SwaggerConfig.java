@@ -28,9 +28,15 @@ public class SwaggerConfig {
 
     @Bean
     public Docket geofencingApi() {
-        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any()).paths(apiPaths()).build().pathMapping("/")
-                .directModelSubstitute(LocalDate.class, String.class).genericModelSubstitutes(ResponseEntity.class)
-                .alternateTypeRules(newRule(typeResolver.resolve(DeferredResult.class, typeResolver.resolve(ResponseEntity.class, WildcardType.class)), typeResolver.resolve(WildcardType.class)))
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select().apis(RequestHandlerSelectors.any()).paths(apiPaths()).build()
+                .pathMapping("/")
+                .directModelSubstitute(LocalDate.class, String.class)
+                .genericModelSubstitutes(ResponseEntity.class)
+                .alternateTypeRules(
+                        newRule(typeResolver.resolve(DeferredResult.class,
+                                typeResolver.resolve(ResponseEntity.class, WildcardType.class)),
+                                typeResolver.resolve(WildcardType.class)))
                 .useDefaultResponseMessages(false);
     }
 

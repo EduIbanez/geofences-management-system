@@ -12,7 +12,7 @@ public class User {
     private String birthday;
     private String imei;
 
-    public User(@JsonProperty("id")int id, @JsonProperty("email") String email,
+    public User(@JsonProperty("id") int id, @JsonProperty("email") String email,
                 @JsonProperty("pass") String pass, @JsonProperty("first_name") String first_name,
                 @JsonProperty("last_name") String last_name, @JsonProperty("birthday") String birthday,
                 @JsonProperty("imei") String imei) {
