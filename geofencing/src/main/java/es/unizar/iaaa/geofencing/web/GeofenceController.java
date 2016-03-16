@@ -97,6 +97,7 @@ public class GeofenceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Geofence deleted", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
+    // TODO Repasar reglas de HTTP
     public Geofence deleteGeofence(@PathVariable("id") int id) {
         if (id == 3) {
             return createPolygonFixture(id);
