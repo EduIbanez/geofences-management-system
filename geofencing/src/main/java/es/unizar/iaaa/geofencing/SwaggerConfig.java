@@ -48,4 +48,5 @@ public class SwaggerConfig {
     UiConfiguration uiConfig() {
         return new UiConfiguration("validatorUrl");
     }
+
 }
