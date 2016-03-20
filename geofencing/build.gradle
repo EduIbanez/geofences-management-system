@@ -33,6 +33,8 @@ dependencies {
     compile("io.springfox:springfox-swagger2:2.4.0")
     compile("io.springfox:springfox-swagger-ui:2.4.0")
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("com.jayway.jsonpath:json-path:2.0.0")
+    compile("com.google.code.gson:gson:2.6.2")
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 

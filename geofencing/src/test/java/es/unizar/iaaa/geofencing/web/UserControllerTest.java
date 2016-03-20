@@ -1,6 +1,8 @@
 package es.unizar.iaaa.geofencing.web;
 
+import com.google.gson.Gson;
 import es.unizar.iaaa.geofencing.Application;
+import es.unizar.iaaa.geofencing.model.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,9 +35,13 @@ public class UserControllerTest {
 
     @Test
     public void createUser() throws Exception {
-        this.mockMvc.perform(get("/users/1").accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
+        User usuario = new User(1, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809");
+        Gson gson = new Gson();
+        String json = gson.toJson(usuario);
+        this.mockMvc.perform(post("/api/users").contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
+                .content(json))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.email").value("example.gmail.com"))
                 .andExpect(jsonPath("$.pass").value("password"))
