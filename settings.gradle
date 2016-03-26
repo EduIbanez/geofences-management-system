@@ -1,2 +1,3 @@
 include 'api-spec'
 include 'geofencing'
+include 'spring-boot-spatial'

@@ -1,0 +1,1 @@
+Ejemplo utilizando Spring Boot con Hibernate Spatial.
