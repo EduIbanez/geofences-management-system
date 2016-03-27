@@ -54,12 +54,14 @@ public class Application implements CommandLineRunner {
         for(Customer c: repository.findByLastName("Bauer")) {
             System.out.println(c);
         }
+        System.out.println();
 
         System.out.println("Customers found within POLYGON((-107 39, -102 39, -102 41, -107 41, -107 39)):");
         System.out.println("--------------------------------");
         for(Customer c: repository.findWithin(wktToGeometry("POLYGON((-107 39, -102 39, -102 41, -107 41, -107 39))"))) {
             System.out.println(c);
         }
+        System.out.println();
     }
 
     //utility method to create a Geometry from a WKT string

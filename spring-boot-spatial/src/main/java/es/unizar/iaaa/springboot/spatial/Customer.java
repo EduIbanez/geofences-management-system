@@ -29,4 +29,8 @@ public class Customer {
         this.lastName = lastName;
         this.geom = geom;
     }
+
+    public String toString() {
+        return "Customer(id: "+id+" firsrtName: "+firstName+" lastName: "+lastName+" geom: "+geom+")";
+    }
 }
