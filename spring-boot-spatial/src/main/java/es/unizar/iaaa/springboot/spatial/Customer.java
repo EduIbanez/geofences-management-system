@@ -1,12 +1,12 @@
 package es.unizar.iaaa.springboot.spatial;
 
+import com.vividsolutions.jts.geom.Geometry;
+import groovy.transform.ToString;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import com.vividsolutions.jts.geom.Geometry;
-import org.hibernate.annotations.Type;
-
-import groovy.transform.ToString;
 
 @Entity
 @ToString(includeNames=true, includeFields = true)
@@ -20,6 +20,9 @@ public class Customer {
 
     @Type(type="org.hibernate.spatial.GeometryType")
     private Geometry geom;
+
+    public Customer() {
+    }
 
     public Customer(String firstName, String lastName, Geometry geom) {
         this.firstName = firstName;
