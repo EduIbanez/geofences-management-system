@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
+@Entity
 public class Geofence {
 
     private long id;
@@ -46,7 +47,6 @@ public class Geofence {
         this.type = type;
     }
 
-    @Column(name = "PROPERTIES", unique = false, nullable = false, length = 30)
     public Properties getProperties() {
         return properties;
     }

@@ -2,9 +2,18 @@ package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="user_")
 public class User {
 
     private long id;
@@ -15,6 +24,8 @@ public class User {
     private String birthday;
     private String imei;
     private Set<Geofence> geofences;
+
+    public User(){};
 
     public User(@JsonProperty("id") long id, @JsonProperty("email") String email,
                 @JsonProperty("pass") String pass, @JsonProperty("first_name") String first_name,

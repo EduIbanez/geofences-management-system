@@ -2,6 +2,9 @@ package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Properties {
 
     private String name;
