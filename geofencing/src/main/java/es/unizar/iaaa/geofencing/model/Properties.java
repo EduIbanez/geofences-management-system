@@ -17,4 +17,8 @@ public class Properties {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String toString() {
+        return "Properties(name: "+name+")";
+    }
 }

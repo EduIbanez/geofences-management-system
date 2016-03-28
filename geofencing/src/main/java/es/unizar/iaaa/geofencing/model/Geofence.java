@@ -1,30 +1,43 @@
 package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vividsolutions.jts.geom.Geometry;
+import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
 
 public class Geofence {
 
-    private int id;
+    private long id;
     private String type;
     private Properties properties;
-    private Geometry geometry;
 
-    public Geofence(@JsonProperty("id") int id, @JsonProperty("type") String type,
-                    @JsonProperty("properties") Properties properties, @JsonProperty("geometry") Geometry geometry) {
+    @Type(type="org.hibernate.spatial.GeometryType")
+    private Geometry geometry;
+    private User user;
+
+    public Geofence(@JsonProperty("id") long id, @JsonProperty("type") String type,
+                    @JsonProperty("properties") Properties properties, @JsonProperty("geometry") Geometry geometry,
+                    @JsonProperty("user") User user) {
         this.id = id;
         this.type = type;
         this.properties = properties;
         this.geometry = geometry;
+        this.user = user;
     }
 
-    public int getId() {
+    @Id
+    @GeneratedValue
+    @Column(name = "ID", unique = true, nullable = false)
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
+    @Column(name = "TYPE", unique = false, nullable = false, length = 20)
     public String getType() {
         return type;
     }
@@ -33,6 +46,7 @@ public class Geofence {
         this.type = type;
     }
 
+    @Column(name = "PROPERTIES", unique = false, nullable = false, length = 30)
     public Properties getProperties() {
         return properties;
     }
@@ -41,11 +55,25 @@ public class Geofence {
         this.properties = properties;
     }
 
+    @Column(name = "GEOMETRY", unique = false, nullable = false, length = 100)
     public Geometry getGeometry() {
         return geometry;
     }
 
     public void setGeometry(Geometry geometry) {
         this.geometry = geometry;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String toString() {
+        return "Geofence(id: "+id+" type: "+type+" properties: "+properties+" geom: "+geometry+" user: "+user+")";
     }
 }

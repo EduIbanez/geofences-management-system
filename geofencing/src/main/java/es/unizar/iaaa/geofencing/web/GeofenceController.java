@@ -1,12 +1,17 @@
 package es.unizar.iaaa.geofencing.web;
 
 import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Geometry;
 import es.unizar.iaaa.geofencing.model.Geofence;
-import es.unizar.iaaa.geofencing.model.Geometry;
 import es.unizar.iaaa.geofencing.model.Properties;
+import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +19,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class GeofenceController {
+
+    @Autowired
+    private GeofenceRepository geofenceRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(GeofenceController.class);
 
     /**
      * This method creates a new geofence.
@@ -33,13 +42,14 @@ public class GeofenceController {
                             response = URI.class), response = Geofence.class)})
     public ResponseEntity<Geofence> createGeofence(@RequestBody Geofence geofence) {
         String type = geofence.getType();
-        Properties properties = geofence.getProperties();
         Geometry geometry = geofence.getGeometry();
+        Properties properties = geofence.getProperties();
+        User user = geofence.getUser();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(5).toUri());
-        return new ResponseEntity<>(new Geofence(5, type, properties, geometry), httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(new Geofence(5, type, properties, geometry, user), httpHeaders, HttpStatus.CREATED);
     }
 
     /**
@@ -78,8 +88,9 @@ public class GeofenceController {
         String type = geofence.getType();
         Properties properties = geofence.getProperties();
         Geometry geometry = geofence.getGeometry();
+        User user = geofence.getUser();
         if (id < 3) {
-            return new Geofence(id, type, properties, geometry);
+            return new Geofence(id, type, properties, geometry, user);
         } else if (id == 3) {
             throw new GeofenceNotModifiedException();
         } else {
@@ -125,12 +136,8 @@ public class GeofenceController {
     }
 
     private Geofence createPolygonFixture(@PathVariable("id") int id) {
-        ArrayList<Double[]> array = new ArrayList<>();
-        array.add(new Double[]{2.0, 0.0});
-        array.add(new Double[]{2.0, 2.0});
-        array.add(new Double[]{0.0, 2.0});
-        array.add(new Double[]{0.0, 0.0});
-        return new Geofence(id, "Feature", new Properties("Cuadrado"), new Geometry("Polygon", array));
+        User user = new User(1, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809", null);
+        return new Geofence(id, "Feature", new Properties("Cuadrado"), null, user);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "Not modified")

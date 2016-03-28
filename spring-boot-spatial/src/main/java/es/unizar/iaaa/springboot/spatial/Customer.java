@@ -1,7 +1,6 @@
 package es.unizar.iaaa.springboot.spatial;
 
 import com.vividsolutions.jts.geom.Geometry;
-import groovy.transform.ToString;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
@@ -9,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-@ToString(includeNames=true, includeFields = true)
 public class Customer {
 
     @Id
@@ -31,6 +29,6 @@ public class Customer {
     }
 
     public String toString() {
-        return "Customer(id: "+id+" firsrtName: "+firstName+" lastName: "+lastName+" geom: "+geom+")";
+        return "Customer(id: "+id+" firstName: "+firstName+" lastName: "+lastName+" geom: "+geom+")";
     }
 }

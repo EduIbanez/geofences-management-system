@@ -35,7 +35,7 @@ public class UserControllerTest {
 
     @Test
     public void createUser() throws Exception {
-        User usuario = new User(1, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809");
+        User usuario = new User(1, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809", null);
         Gson gson = new Gson();
         String json = gson.toJson(usuario);
         this.mockMvc.perform(post("/api/users").contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
@@ -48,7 +48,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.first_name").value("First"))
                 .andExpect(jsonPath("$.last_name").value("Last"))
                 .andExpect(jsonPath("$.birthday").value("07/08/1992"))
-                .andExpect(jsonPath("$.imei").value("356938035643809"));
+                .andExpect(jsonPath("$.imei").value("356938035643809"))
+                .andExpect(jsonPath("$.geofences").value(null));
     }
 
 }
