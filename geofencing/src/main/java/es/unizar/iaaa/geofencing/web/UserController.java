@@ -57,18 +57,11 @@ public class UserController {
             @ApiResponse(code = 200, message = "User modified", response = User.class),
             @ApiResponse(code = 304, message = "User not modified", response = UserNotModifiedException.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User modifyUser(@PathVariable("id") int id, @RequestBody User user) {
-        logger.info("Requested /api/users PUT method");
-        User userFound = userRepository.findOneByEmail(user.getId(), user.getEmail());
-        if (userFound != null) {
-            userFound.setPass(user.getPass());
-            userFound.setFirst_name(user.getFirst_name());
-            userFound.setLast_name(user.getLast_name());
-            userFound.setBirthday(user.getBirthday());
-            userFound.setImei(user.getImei());
-            userFound.setGeofences(user.getGeofences());
-            User userModified = userRepository.save(userFound);
-            if (userFound.equals(userModified)) {
+    public User modifyUser(@PathVariable("id") long id, @RequestBody User user) {
+        logger.info("Requested /api/users/{id} PUT method");
+        if (userRepository.exists(id)) {
+            User userModified = userRepository.save(user);
+            if (user.equals(userModified)) {
                 return userModified;
             } else {
                 throw new UserNotModifiedException();
@@ -88,9 +81,11 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User deleted", response = User.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User deleteUser(@PathVariable("id") int id) {
-        if (id == 4) {
-            return new User(id, "", "", "", "", "", "", null);
+    public User deleteUser(@PathVariable("id") long id) {
+        logger.info("Requested /api/users/{id} DELETE method");
+        if (userRepository.exists(id)) {
+            userRepository.delete(id);
+            return null;
         } else {
             throw new UserNotFoundException();
         }
@@ -106,9 +101,11 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User requested", response = User.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User getUser(@PathVariable("id") int id) {
-        if (id == 4) {
-            return new User(id, "", "", "", "", "", "", null);
+    public User getUser(@PathVariable("id") long id) {
+        logger.info("Requested /api/users/{id} GET method");
+        if (userRepository.exists(id)) {
+            User userRequested = userRepository.findOne(id);
+            return userRequested;
         } else {
             throw new UserNotFoundException();
         }

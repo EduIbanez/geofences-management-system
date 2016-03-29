@@ -84,7 +84,7 @@ public class GeofenceController {
             @ApiResponse(code = 200, message = "Geofence modified", response = Geofence.class),
             @ApiResponse(code = 304, message = "Geofence not modified", response = GeofenceNotModifiedException.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
-    public Geofence modifyGeofence(@PathVariable("id") int id, @RequestBody Geofence geofence) {
+    public Geofence modifyGeofence(@PathVariable("id") long id, @RequestBody Geofence geofence) {
         String type = geofence.getType();
         Properties properties = geofence.getProperties();
         Geometry geometry = geofence.getGeometry();
@@ -109,7 +109,7 @@ public class GeofenceController {
             @ApiResponse(code = 200, message = "Geofence deleted", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
     // TODO Repasar reglas de HTTP
-    public Geofence deleteGeofence(@PathVariable("id") int id) {
+    public Geofence deleteGeofence(@PathVariable("id") long id) {
         if (id == 3) {
             return createPolygonFixture(id);
         } else {
@@ -127,7 +127,7 @@ public class GeofenceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Geofence requested", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
-    public Geofence getGeofence(@PathVariable("id") int id) {
+    public Geofence getGeofence(@PathVariable("id") long id) {
         if (id == 3) {
             return createPolygonFixture(id);
         } else {
@@ -135,7 +135,7 @@ public class GeofenceController {
         }
     }
 
-    private Geofence createPolygonFixture(@PathVariable("id") int id) {
+    private Geofence createPolygonFixture(@PathVariable("id") long id) {
         User user = new User(1, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809", null);
         return new Geofence(id, "Feature", new Properties("Cuadrado"), null, user);
     }

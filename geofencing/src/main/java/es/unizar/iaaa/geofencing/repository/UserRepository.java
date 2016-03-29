@@ -6,6 +6,4 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends CrudRepository<User, Long> {
 
-    @Query("SELECT u FROM User u WHERE u.id = ?1 AND u.email = ?2")
-    User findOneByEmail(Long id, String email);
 }
