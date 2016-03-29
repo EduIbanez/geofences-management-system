@@ -1,20 +1,27 @@
 package es.unizar.iaaa.geofencing.web;
 
-import es.unizar.iaaa.geofencing.model.User;
-import es.unizar.iaaa.geofencing.repository.UserRepository;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.ResponseHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+
+import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.repository.UserRepository;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ResponseHeader;
 
 @RestController
 public class UserController {
@@ -35,13 +42,14 @@ public class UserController {
             @ApiResponse(code = 201, message = "User created",
                     responseHeaders = @ResponseHeader(name = "Location", description = "Location",
                             response = URI.class), response = User.class)})
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody final User user) {
         logger.info("Requested /api/users POST method");
+        user.setId(null);
+        User userCreated = userRepository.save(user);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(5).toUri());
-        User userCreated = userRepository.save(user);
+                .buildAndExpand(user.getId()).toUri());
         return new ResponseEntity<>(userCreated, httpHeaders, HttpStatus.CREATED);
     }
 
@@ -124,7 +132,7 @@ public class UserController {
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
     public User loginUser(@RequestParam("email") String email, @RequestParam("pass") String pass) {
         if (email.equals("email") && pass.equals("pass")) {
-            return new User(1, email, pass, "", "", "", "", null);
+            return new User(1L, email, pass, "", "", "", "", null);
         } else {
             throw new UserNotFoundException();
         }
@@ -143,7 +151,7 @@ public class UserController {
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
     public User logoutUser(@RequestParam("email") String email, @RequestParam("pass") String pass) {
         if (email.equals("email") && pass.equals("pass")) {
-            return new User(1, email, pass, "", "", "", "", null);
+            return new User(1L, email, pass, "", "", "", "", null);
         } else {
             throw new UserNotFoundException();
         }

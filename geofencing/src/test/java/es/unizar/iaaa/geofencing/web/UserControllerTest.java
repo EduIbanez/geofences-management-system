@@ -3,10 +3,8 @@ package es.unizar.iaaa.geofencing.web;
 import com.google.gson.Gson;
 
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
@@ -19,10 +17,15 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.HashSet;
 
 import es.unizar.iaaa.geofencing.Application;
-import es.unizar.iaaa.geofencing.model.Geofence;
 import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.repository.UserRepository;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,75 +33,89 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @SpringApplicationConfiguration(classes = Application.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserControllerTest {
 
     @Autowired
     private WebApplicationContext wac;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private MockMvc mockMvc;
+
+    private Gson gson;
+
+    private static final User USER1 = new User(null, "example.gmail.com", "password", "First",
+            "Last", "07/08/1992", "356938035643809", new HashSet<>());
+
 
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        userRepository.deleteAll();
+        gson = new Gson();
     }
 
     @Test
-    public void test1CreateUser() throws Exception {
-        User usuario = new User(1, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809", new HashSet<Geofence>());
-        Gson gson = new Gson();
-        String json = gson.toJson(usuario);
-        this.mockMvc.perform(post("/api/users").contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
-                .content(json))
+    public void createUser() throws Exception {
+        mockMvc.perform(post("/api/users")
+                .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
+                .content(gson.toJson(USER1)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.email").value("example.gmail.com"))
-                .andExpect(jsonPath("$.pass").value("password"))
-                .andExpect(jsonPath("$.first_name").value("First"))
-                .andExpect(jsonPath("$.last_name").value("Last"))
-                .andExpect(jsonPath("$.birthday").value("07/08/1992"))
-                .andExpect(jsonPath("$.imei").value("356938035643809"))
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.email").value(USER1.getEmail()))
+                .andExpect(jsonPath("$.pass").value(USER1.getPass()))
+                .andExpect(jsonPath("$.first_name").value(USER1.getFirst_name()))
+                .andExpect(jsonPath("$.last_name").value(USER1.getLast_name()))
+                .andExpect(jsonPath("$.birthday").value(USER1.getBirthday()))
+                .andExpect(jsonPath("$.imei").value(USER1.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty());
+        assertEquals(1, userRepository.count());
     }
 
     @Test
-    public void test2ModifyUser() throws Exception {
-        User usuario = new User(1, "example.gmail.com", "pass", "Second", "Last", "07/08/1994", "356938035643809", new HashSet<Geofence>());
-        Gson gson = new Gson();
-        String json = gson.toJson(usuario);
-        this.mockMvc.perform(put("/api/users/1").contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
-                .content(json))
+    public void modifyUser() throws Exception {
+        User usuario = userRepository.save(USER1);
+        usuario.setBirthday("07/08/1994");
+        this.mockMvc.perform(put("/api/users/"+usuario.getId())
+                .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
+                .content(gson.toJson(usuario)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.email").value("example.gmail.com"))
-                .andExpect(jsonPath("$.pass").value("pass"))
-                .andExpect(jsonPath("$.first_name").value("Second"))
-                .andExpect(jsonPath("$.last_name").value("Last"))
-                .andExpect(jsonPath("$.birthday").value("07/08/1994"))
-                .andExpect(jsonPath("$.imei").value("356938035643809"))
+                .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
+                .andExpect(jsonPath("$.email").value(usuario.getEmail()))
+                .andExpect(jsonPath("$.pass").value(usuario.getPass()))
+                .andExpect(jsonPath("$.first_name").value(usuario.getFirst_name()))
+                .andExpect(jsonPath("$.last_name").value(usuario.getLast_name()))
+                .andExpect(jsonPath("$.birthday").value(usuario.getBirthday()))
+                .andExpect(jsonPath("$.imei").value(usuario.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty());
+        User usuarioNew = userRepository.findOne(usuario.getId());
+        assertEquals(usuario.getBirthday(), usuarioNew.getBirthday());
     }
 
     @Test
-    public void test3DeleteUser() throws Exception {
-        this.mockMvc.perform(delete("/api/users/1"))
+    public void deleteUser() throws Exception {
+        User usuario = userRepository.save(USER1);
+        mockMvc.perform(delete("/api/users/"+usuario.getId()))
                 .andExpect(status().isOk());
+        assertNull(userRepository.findOne(usuario.getId()));
     }
 
     @Test
-    public void test4GetUser() throws Exception {
-        this.mockMvc.perform(get("/api/users/1"))
+    public void getUser() throws Exception {
+        User usuario = userRepository.save(USER1);
+        mockMvc.perform(get("/api/users/"+usuario.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.email").value("example.gmail.com"))
-                .andExpect(jsonPath("$.pass").value("password"))
-                .andExpect(jsonPath("$.first_name").value("First"))
-                .andExpect(jsonPath("$.last_name").value("Last"))
-                .andExpect(jsonPath("$.birthday").value("07/08/1992"))
-                .andExpect(jsonPath("$.imei").value("356938035643809"))
+                .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
+                .andExpect(jsonPath("$.email").value(usuario.getEmail()))
+                .andExpect(jsonPath("$.pass").value(usuario.getPass()))
+                .andExpect(jsonPath("$.first_name").value(usuario.getFirst_name()))
+                .andExpect(jsonPath("$.last_name").value(usuario.getLast_name()))
+                .andExpect(jsonPath("$.birthday").value(usuario.getBirthday()))
+                .andExpect(jsonPath("$.imei").value(usuario.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty());
     }
 }

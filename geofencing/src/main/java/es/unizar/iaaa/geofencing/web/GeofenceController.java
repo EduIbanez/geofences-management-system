@@ -1,7 +1,27 @@
 package es.unizar.iaaa.geofencing.web;
 
 import com.google.common.collect.Lists;
+
 import com.vividsolutions.jts.geom.Geometry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
 import es.unizar.iaaa.geofencing.model.Geofence;
 import es.unizar.iaaa.geofencing.model.Properties;
 import es.unizar.iaaa.geofencing.model.User;
@@ -9,17 +29,6 @@ import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 public class GeofenceController {
@@ -27,7 +36,7 @@ public class GeofenceController {
     @Autowired
     private GeofenceRepository geofenceRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(GeofenceController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeofenceController.class);
 
     /**
      * This method creates a new geofence.
@@ -136,7 +145,7 @@ public class GeofenceController {
     }
 
     private Geofence createPolygonFixture(@PathVariable("id") long id) {
-        User user = new User(1, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809", null);
+        User user = new User(1L, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809", null);
         return new Geofence(id, "Feature", new Properties("Cuadrado"), null, user);
     }
 

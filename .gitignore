@@ -1,3 +1,4 @@
+/geofencing/src/test/resources/application.properties
 ### Gradle template
 .gradle
 build/
