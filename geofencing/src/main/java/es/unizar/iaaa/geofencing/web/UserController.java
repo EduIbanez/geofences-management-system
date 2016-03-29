@@ -41,8 +41,8 @@ public class UserController {
         httpHeaders.setLocation(ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(5).toUri());
-        userRepository.save(user);
-        return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
+        User userCreated = userRepository.save(user);
+        return new ResponseEntity<>(userCreated, httpHeaders, HttpStatus.CREATED);
     }
 
     /**
@@ -58,11 +58,21 @@ public class UserController {
             @ApiResponse(code = 304, message = "User not modified", response = UserNotModifiedException.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
     public User modifyUser(@PathVariable("id") int id, @RequestBody User user) {
-        if (id > 4) {
-            return new User(id, user.getEmail(), user.getPass(), user.getFirst_name(), user.getLast_name(),
-                    user.getBirthday(), user.getImei(), user.getGeofences());
-        } else if (id == 4) {
-            throw new UserNotModifiedException();
+        logger.info("Requested /api/users PUT method");
+        User userFound = userRepository.findOneByEmail(user.getId(), user.getEmail());
+        if (userFound != null) {
+            userFound.setPass(user.getPass());
+            userFound.setFirst_name(user.getFirst_name());
+            userFound.setLast_name(user.getLast_name());
+            userFound.setBirthday(user.getBirthday());
+            userFound.setImei(user.getImei());
+            userFound.setGeofences(user.getGeofences());
+            User userModified = userRepository.save(userFound);
+            if (userFound.equals(userModified)) {
+                return userModified;
+            } else {
+                throw new UserNotModifiedException();
+            }
         } else {
             throw new UserNotFoundException();
         }

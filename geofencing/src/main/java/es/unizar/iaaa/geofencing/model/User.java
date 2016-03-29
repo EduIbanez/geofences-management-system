@@ -13,7 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="user_")
+@Table(name="USER_")
 public class User {
 
     private long id;
@@ -25,7 +25,7 @@ public class User {
     private String imei;
     private Set<Geofence> geofences;
 
-    public User(){};
+    public User(){}
 
     public User(@JsonProperty("id") long id, @JsonProperty("email") String email,
                 @JsonProperty("pass") String pass, @JsonProperty("first_name") String first_name,
@@ -118,5 +118,20 @@ public class User {
     public String toString() {
         return "User(id: "+id+" email: "+email+" pass: "+pass+" first_name: "+first_name+
                 "last_name: "+last_name+" birthday: "+birthday+" imei: "+imei+" geofence: "+geofences+")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        User user = (User) obj;
+        return this.id == user.getId() && this.email.equals(user.getEmail()) && this.pass.equals(user.getPass()) &&
+                this.first_name.equals(user.getFirst_name()) && this.last_name.equals(user.getLast_name()) &&
+                this.birthday.equals(user.getBirthday()) && this.imei.equals(user.getImei()) &&
+                this.getGeofences().equals(user.getGeofences());
     }
 }

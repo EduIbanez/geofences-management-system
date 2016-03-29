@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 @Entity
+@Table(name="GEOFENCE")
 public class Geofence {
 
     private long id;
@@ -16,6 +17,8 @@ public class Geofence {
     @Type(type="org.hibernate.spatial.GeometryType")
     private Geometry geometry;
     private User user;
+
+    public Geofence() {}
 
     public Geofence(@JsonProperty("id") long id, @JsonProperty("type") String type,
                     @JsonProperty("properties") Properties properties, @JsonProperty("geometry") Geometry geometry,

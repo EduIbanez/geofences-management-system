@@ -2,6 +2,7 @@ package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
@@ -13,6 +14,7 @@ public class Properties {
         this.name = name;
     }
 
+    @Column(name = "NAME", unique = false, nullable = false, length = 30)
     public String getName() {
         return name;
     }
