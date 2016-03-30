@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Table(name="GEOFENCE")
 public class Geofence {
 
-    private long id;
+    private Long id;
     private String type;
     private Properties properties;
 
@@ -20,7 +20,7 @@ public class Geofence {
 
     public Geofence() {}
 
-    public Geofence(@JsonProperty("id") long id, @JsonProperty("type") String type,
+    public Geofence(@JsonProperty("id") Long id, @JsonProperty("type") String type,
                     @JsonProperty("properties") Properties properties, @JsonProperty("geometry") Geometry geometry,
                     @JsonProperty("user") User user) {
         this.id = id;
@@ -33,11 +33,11 @@ public class Geofence {
     @Id
     @GeneratedValue
     @Column(name = "ID", unique = true, nullable = false)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

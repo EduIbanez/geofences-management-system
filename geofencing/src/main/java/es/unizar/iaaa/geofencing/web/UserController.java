@@ -29,7 +29,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     /**
      * This method creates a new user.
@@ -43,7 +43,7 @@ public class UserController {
                     responseHeaders = @ResponseHeader(name = "Location", description = "Location",
                             response = URI.class), response = User.class)})
     public ResponseEntity<User> createUser(@RequestBody final User user) {
-        logger.info("Requested /api/users POST method");
+        LOGGER.info("Requested /api/users POST method");
         user.setId(null);
         User userCreated = userRepository.save(user);
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -65,8 +65,8 @@ public class UserController {
             @ApiResponse(code = 200, message = "User modified", response = User.class),
             @ApiResponse(code = 304, message = "User not modified", response = UserNotModifiedException.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User modifyUser(@PathVariable("id") long id, @RequestBody User user) {
-        logger.info("Requested /api/users/{id} PUT method");
+    public User modifyUser(@PathVariable("id") Long id, @RequestBody User user) {
+        LOGGER.info("Requested /api/users/{id} PUT method");
         if (userRepository.exists(id)) {
             User userModified = userRepository.save(user);
             if (user.equals(userModified)) {
@@ -89,8 +89,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User deleted", response = User.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User deleteUser(@PathVariable("id") long id) {
-        logger.info("Requested /api/users/{id} DELETE method");
+    public User deleteUser(@PathVariable("id") Long id) {
+        LOGGER.info("Requested /api/users/{id} DELETE method");
         if (userRepository.exists(id)) {
             userRepository.delete(id);
             return null;
@@ -109,8 +109,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User requested", response = User.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User getUser(@PathVariable("id") long id) {
-        logger.info("Requested /api/users/{id} GET method");
+    public User getUser(@PathVariable("id") Long id) {
+        LOGGER.info("Requested /api/users/{id} GET method");
         if (userRepository.exists(id)) {
             User userRequested = userRepository.findOne(id);
             return userRequested;

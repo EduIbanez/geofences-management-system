@@ -2,11 +2,14 @@ package es.unizar.iaaa.geofencing.web;
 
 import com.google.common.collect.Lists;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
+import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,16 +52,15 @@ public class GeofenceController {
             @ApiResponse(code = 201, message = "Geofence created",
                     responseHeaders = @ResponseHeader(name = "Location", description = "Location",
                             response = URI.class), response = Geofence.class)})
-    public ResponseEntity<Geofence> createGeofence(@RequestBody Geofence geofence) {
-        String type = geofence.getType();
-        Geometry geometry = geofence.getGeometry();
-        Properties properties = geofence.getProperties();
-        User user = geofence.getUser();
+    public ResponseEntity<Geofence> createGeofence(@RequestBody final Geofence geofence) {
+        LOGGER.info("Requested /api/geofences POST method");
+        geofence.setId(null);
+        Geofence geofenceCreated = geofenceRepository.save(geofence);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(5).toUri());
-        return new ResponseEntity<>(new Geofence(5, type, properties, geometry, user), httpHeaders, HttpStatus.CREATED);
+                .buildAndExpand(geofence.getId()).toUri());
+        return new ResponseEntity<>(geofenceCreated, httpHeaders, HttpStatus.CREATED);
     }
 
     /**
@@ -75,10 +77,22 @@ public class GeofenceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of geofences", response = List.class)})
     public List<Geofence> getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
-                                       @RequestParam(value = "latitude", required = false) String latitude,
-                                       @RequestParam(value = "longitude", required = false) String longitude,
-                                       @RequestParam(value = "radius", required = false) Integer radius) {
-        return Lists.newArrayList(createPolygonFixture(1), createPolygonFixture(2), createPolygonFixture(3));
+                                       @RequestParam(value = "latitude", required = true) Double latitude,
+                                       @RequestParam(value = "longitude", required = true) Double longitude,
+                                       @RequestParam(value = "radius", required = true) Integer radius) {
+        LOGGER.info("Requested /api/geofences GET method");
+        GeometricShapeFactory shapeFactory = new GeometricShapeFactory();
+        shapeFactory.setNumPoints(32);
+        shapeFactory.setCentre(new Coordinate(latitude, longitude));
+        shapeFactory.setSize(radius * 2);
+        List<Geofence> geofences = null;
+        if (limit != null) {
+            geofences = geofenceRepository.findWithin(shapeFactory.createCircle(), new PageRequest(0, limit));
+        }
+        else {
+            geofences = geofenceRepository.findWithin(shapeFactory.createCircle());
+        }
+        return geofences;
     }
 
     /**
