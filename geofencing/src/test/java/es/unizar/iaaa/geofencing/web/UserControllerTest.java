@@ -1,6 +1,6 @@
 package es.unizar.iaaa.geofencing.web;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,9 +42,10 @@ public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    private Gson gson;
+    private MockMvc mockMvc;
 
     private static final User USER1 = new User(null, "example.gmail.com", "password", "First",
             "Last", "07/08/1992", "356938035643809", new HashSet<>());
@@ -53,14 +55,14 @@ public class UserControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         userRepository.deleteAll();
-        gson = new Gson();
     }
 
     @Test
     public void createUser() throws Exception {
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
-                .content(gson.toJson(USER1)))
+                .content(objectMapper.writeValueAsString(USER1)))
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").isNumber())
@@ -80,7 +82,8 @@ public class UserControllerTest {
         usuario.setBirthday("07/08/1994");
         this.mockMvc.perform(put("/api/users/"+usuario.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
-                .content(gson.toJson(usuario)))
+                .content(objectMapper.writeValueAsString(usuario)))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
@@ -107,6 +110,7 @@ public class UserControllerTest {
     public void getUser() throws Exception {
         User usuario = userRepository.save(USER1);
         mockMvc.perform(get("/api/users/"+usuario.getId()))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))

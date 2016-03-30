@@ -10,6 +10,10 @@ public class Properties {
 
     private String name;
 
+    public Properties(){
+
+    }
+
     public Properties(@JsonProperty("name") String name) {
         this.name = name;
     }
