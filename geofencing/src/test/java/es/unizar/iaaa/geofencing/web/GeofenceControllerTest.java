@@ -8,8 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
@@ -28,7 +26,9 @@ import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -60,9 +60,11 @@ public class GeofenceControllerTest {
     private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", new Properties("Prueba"),
             new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GeofenceControllerTest.class);
-
     private User currentUser;
+    private final int[] COORDINATES = {1, 2};
+    private final int COUNT = 10;
+    private final int RADIUS = 3;
+    private final int LIMIT = 2;
 
     @Before
     public void setup() {
@@ -91,6 +93,41 @@ public class GeofenceControllerTest {
                 .andExpect(jsonPath("$.geometry.type").value(GEOFENCE1.getGeometry().getGeometryType()))
                 .andExpect(jsonPath("$.user.id").value(GEOFENCE1.getUser().getId().intValue()));
         assertEquals(1, geofenceRepository.count());
+    }
+
+    @Test
+    public void getGeofencesWithLimit() throws Exception {
+        Geofence auxGeofence = GEOFENCE1;
+        for (int i = 0; i < COUNT; i++) {
+            auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
+            auxGeofence = geofenceRepository.save(auxGeofence);
+        }
+        mockMvc.perform(get("/api/geofences")
+                .param("limit", String.valueOf(LIMIT))
+                .param("latitude", String.valueOf(COORDINATES[0]))
+                .param("longitude", String.valueOf(COORDINATES[1]))
+                .param("radius", String.valueOf(RADIUS)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(LIMIT)));
+        assertEquals(COUNT, geofenceRepository.count());
+    }
+
+    @Test
+    public void getGeofencesWithoutLimit() throws Exception {
+        Geofence auxGeofence = GEOFENCE1;
+        for (int i = 0; i < COUNT; i++) {
+            auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
+            auxGeofence = geofenceRepository.save(auxGeofence);
+        }
+        mockMvc.perform(get("/api/geofences")
+                .param("latitude", String.valueOf(COORDINATES[0]))
+                .param("longitude", String.valueOf(COORDINATES[1]))
+                .param("radius", String.valueOf(RADIUS)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.*", hasSize(RADIUS+1)));
+        assertEquals(COUNT, geofenceRepository.count());
     }
 
 
