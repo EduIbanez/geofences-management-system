@@ -1,6 +1,7 @@
 package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.Objects;
 import java.util.Set;
@@ -12,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import es.unizar.iaaa.geofencing.view.View;
 
 @Entity
 @Table(name="USER_")
@@ -45,6 +48,7 @@ public class User {
     @Id
     @GeneratedValue
     @Column(name = "ID", unique = true, nullable = false)
+    @JsonView(View.Geofence.class)
     public Long getId() {
         return id;
     }
@@ -72,6 +76,7 @@ public class User {
     }
 
     @Column(name = "FIRST_NAME", nullable = false, length = 30)
+    @JsonView(View.Geofence.class)
     public String getFirst_name() {
         return first_name;
     }
@@ -81,6 +86,7 @@ public class User {
     }
 
     @Column(name = "LAST_NAME", nullable = false, length = 30)
+    @JsonView(View.Geofence.class)
     public String getLast_name() {
         return last_name;
     }

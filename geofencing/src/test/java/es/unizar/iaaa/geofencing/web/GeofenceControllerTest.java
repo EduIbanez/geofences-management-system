@@ -99,6 +99,7 @@ public class GeofenceControllerTest {
     public void getGeofencesWithLimit() throws Exception {
         Geofence auxGeofence = GEOFENCE1;
         for (int i = 0; i < COUNT; i++) {
+            auxGeofence.setId(null);
             auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
@@ -117,6 +118,7 @@ public class GeofenceControllerTest {
     public void getGeofencesWithoutLimit() throws Exception {
         Geofence auxGeofence = GEOFENCE1;
         for (int i = 0; i < COUNT; i++) {
+            auxGeofence.setId(null);
             auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
@@ -126,7 +128,7 @@ public class GeofenceControllerTest {
                 .param("radius", String.valueOf(RADIUS)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.*", hasSize(RADIUS+1)));
+                .andExpect(jsonPath("$.*", hasSize(RADIUS)));
         assertEquals(COUNT, geofenceRepository.count());
     }
 

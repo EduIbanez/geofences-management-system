@@ -1,11 +1,10 @@
 package es.unizar.iaaa.geofencing.web;
 
-import com.google.common.collect.Lists;
-
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-
 import com.vividsolutions.jts.util.GeometricShapeFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,7 @@ import es.unizar.iaaa.geofencing.model.Geofence;
 import es.unizar.iaaa.geofencing.model.Properties;
 import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
+import es.unizar.iaaa.geofencing.view.View;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
@@ -76,16 +76,17 @@ public class GeofenceController {
     @RequestMapping(path = "/api/geofences", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of geofences", response = List.class)})
+    @JsonView(View.Geofence.class)
     public List<Geofence> getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
-                                       @RequestParam(value = "latitude", required = true) Double latitude,
-                                       @RequestParam(value = "longitude", required = true) Double longitude,
-                                       @RequestParam(value = "radius", required = true) Integer radius) {
+                                       @RequestParam(value = "latitude") Double latitude,
+                                       @RequestParam(value = "longitude") Double longitude,
+                                       @RequestParam(value = "radius") Integer radius) {
         LOGGER.info("Requested /api/geofences GET method");
         GeometricShapeFactory shapeFactory = new GeometricShapeFactory();
         shapeFactory.setNumPoints(32);
         shapeFactory.setCentre(new Coordinate(latitude, longitude));
         shapeFactory.setSize(radius * 2);
-        List<Geofence> geofences = null;
+        List<Geofence> geofences;
         if (limit != null) {
             geofences = geofenceRepository.findWithin(shapeFactory.createCircle(), new PageRequest(0, limit));
         }
@@ -107,7 +108,7 @@ public class GeofenceController {
             @ApiResponse(code = 200, message = "Geofence modified", response = Geofence.class),
             @ApiResponse(code = 304, message = "Geofence not modified", response = GeofenceNotModifiedException.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
-    public Geofence modifyGeofence(@PathVariable("id") long id, @RequestBody Geofence geofence) {
+    public Geofence modifyGeofence(@PathVariable("id") Long id, @RequestBody Geofence geofence) {
         String type = geofence.getType();
         Properties properties = geofence.getProperties();
         Geometry geometry = geofence.getGeometry();
@@ -132,14 +133,13 @@ public class GeofenceController {
             @ApiResponse(code = 200, message = "Geofence deleted", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
     // TODO Repasar reglas de HTTP
-    public Geofence deleteGeofence(@PathVariable("id") long id) {
+    public Geofence deleteGeofence(@PathVariable("id") Long id) {
         if (id == 3) {
             return createPolygonFixture(id);
         } else {
             throw new GeofenceNotFoundException();
         }
     }
-
     /**
      * This method returns a geofence by id.
      *
@@ -150,7 +150,7 @@ public class GeofenceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Geofence requested", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
-    public Geofence getGeofence(@PathVariable("id") long id) {
+    public Geofence getGeofence(@PathVariable("id") Long id) {
         if (id == 3) {
             return createPolygonFixture(id);
         } else {
@@ -158,7 +158,7 @@ public class GeofenceController {
         }
     }
 
-    private Geofence createPolygonFixture(@PathVariable("id") long id) {
+    private Geofence createPolygonFixture(Long id) {
         User user = new User(1L, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809", null);
         return new Geofence(id, "Feature", new Properties("Cuadrado"), null, user);
     }

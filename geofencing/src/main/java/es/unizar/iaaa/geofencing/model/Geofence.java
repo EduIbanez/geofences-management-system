@@ -1,10 +1,13 @@
 package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.vividsolutions.jts.geom.Geometry;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+
+import es.unizar.iaaa.geofencing.view.View;
 
 @Entity
 @Table(name="GEOFENCE")
@@ -33,6 +36,7 @@ public class Geofence {
     @Id
     @GeneratedValue
     @Column(name = "ID", unique = true, nullable = false)
+    @JsonView(View.Geofence.class)
     public Long getId() {
         return id;
     }
@@ -41,7 +45,8 @@ public class Geofence {
         this.id = id;
     }
 
-    @Column(name = "TYPE", unique = false, nullable = false, length = 20)
+    @Column(name = "TYPE", nullable = false, length = 20)
+    @JsonView(View.Geofence.class)
     public String getType() {
         return type;
     }
@@ -50,6 +55,7 @@ public class Geofence {
         this.type = type;
     }
 
+    @JsonView(View.Geofence.class)
     public Properties getProperties() {
         return properties;
     }
@@ -58,7 +64,9 @@ public class Geofence {
         this.properties = properties;
     }
 
-    @Column(name = "GEOMETRY", unique = false, nullable = false, length = 100)
+    @Column(name = "GEOMETRY", nullable = false, length = 100)
+    @Type(type = "org.hibernate.spatial.GeometryType")
+    @JsonView(View.Geofence.class)
     public Geometry getGeometry() {
         return geometry;
     }
@@ -68,6 +76,7 @@ public class Geofence {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonView(View.Geofence.class)
     public User getUser() {
         return user;
     }
@@ -77,6 +86,6 @@ public class Geofence {
     }
 
     public String toString() {
-        return "Geofence(id: "+id+" type: "+type+" properties: "+properties+" geom: "+geometry+" user: "+user+")";
+        return "Geofence(id: "+id+" type: "+type+" properties: "+properties+" geom: "+geometry+" user id: "+user.getId()+")";
     }
 }
