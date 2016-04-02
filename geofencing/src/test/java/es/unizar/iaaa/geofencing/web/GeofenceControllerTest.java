@@ -28,8 +28,8 @@ import es.unizar.iaaa.geofencing.repository.UserRepository;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.Assert.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -81,7 +81,7 @@ public class GeofenceControllerTest {
 
     @Test
     public void createGeofence() throws Exception {
-        mockMvc.perform(post("/api/geofences")
+        this.mockMvc.perform(post("/api/geofences")
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(GEOFENCE1)))
                 .andDo(print())
@@ -103,7 +103,7 @@ public class GeofenceControllerTest {
             auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
-        mockMvc.perform(get("/api/geofences")
+        this.mockMvc.perform(get("/api/geofences")
                 .param("limit", String.valueOf(LIMIT))
                 .param("latitude", String.valueOf(COORDINATES[0]))
                 .param("longitude", String.valueOf(COORDINATES[1]))
@@ -122,7 +122,7 @@ public class GeofenceControllerTest {
             auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
-        mockMvc.perform(get("/api/geofences")
+        this.mockMvc.perform(get("/api/geofences")
                 .param("latitude", String.valueOf(COORDINATES[0]))
                 .param("longitude", String.valueOf(COORDINATES[1]))
                 .param("radius", String.valueOf(RADIUS)))
@@ -132,5 +132,44 @@ public class GeofenceControllerTest {
         assertEquals(COUNT, geofenceRepository.count());
     }
 
+    @Test
+    public void modifyGeofence() throws Exception {
+        Geofence geofence = geofenceRepository.save(GEOFENCE1);
+        geofence.setProperties(new Properties("Proof"));
+        this.mockMvc.perform(put("/api/geofences/"+geofence.getId())
+                .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
+                .content(objectMapper.writeValueAsString(geofence)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json; charset=UTF-8"))
+                .andExpect(jsonPath("$.id").value(geofence.getId().intValue()))
+                .andExpect(jsonPath("$.type").value(geofence.getType()))
+                .andExpect(jsonPath("$.properties.name").value(geofence.getProperties().getName()))
+                .andExpect(jsonPath("$.geometry.type").value(geofence.getGeometry().getGeometryType()))
+                .andExpect(jsonPath("$.user.id").value(geofence.getUser().getId().intValue()));
+        Geofence geofenceNew = geofenceRepository.findOne(geofence.getId());
+        assertEquals(geofence.getProperties().getName(), geofenceNew.getProperties().getName());
+    }
 
+    @Test
+    public void deleteGeofence() throws Exception {
+        Geofence geofence = geofenceRepository.save(GEOFENCE1);
+        this.mockMvc.perform(delete("/api/geofences/"+geofence.getId()))
+                .andExpect(status().isOk());
+        assertNull(userRepository.findOne(geofence.getId()));
+    }
+
+    @Test
+    public void getGeofence() throws Exception {
+        Geofence geofence = geofenceRepository.save(GEOFENCE1);
+        this.mockMvc.perform(get("/api/geofences/"+geofence.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json; charset=UTF-8"))
+                .andExpect(jsonPath("$.id").value(geofence.getId().intValue()))
+                .andExpect(jsonPath("$.type").value(geofence.getType()))
+                .andExpect(jsonPath("$.properties.name").value(geofence.getProperties().getName()))
+                .andExpect(jsonPath("$.geometry.type").value(geofence.getGeometry().getGeometryType()))
+                .andExpect(jsonPath("$.user.id").value(geofence.getUser().getId().intValue()));
+    }
 }

@@ -59,7 +59,7 @@ public class UserControllerTest {
 
     @Test
     public void createUser() throws Exception {
-        mockMvc.perform(post("/api/users")
+        this.mockMvc.perform(post("/api/users")
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(USER1)))
                 .andDo(print())
@@ -101,7 +101,7 @@ public class UserControllerTest {
     @Test
     public void deleteUser() throws Exception {
         User usuario = userRepository.save(USER1);
-        mockMvc.perform(delete("/api/users/"+usuario.getId()))
+        this.mockMvc.perform(delete("/api/users/"+usuario.getId()))
                 .andExpect(status().isOk());
         assertNull(userRepository.findOne(usuario.getId()));
     }
@@ -109,7 +109,7 @@ public class UserControllerTest {
     @Test
     public void getUser() throws Exception {
         User usuario = userRepository.save(USER1);
-        mockMvc.perform(get("/api/users/"+usuario.getId()))
+        this.mockMvc.perform(get("/api/users/"+usuario.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))

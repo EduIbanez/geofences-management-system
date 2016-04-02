@@ -2,7 +2,6 @@ package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 import org.slf4j.Logger;
@@ -109,14 +108,14 @@ public class GeofenceController {
             @ApiResponse(code = 304, message = "Geofence not modified", response = GeofenceNotModifiedException.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
     public Geofence modifyGeofence(@PathVariable("id") Long id, @RequestBody Geofence geofence) {
-        String type = geofence.getType();
-        Properties properties = geofence.getProperties();
-        Geometry geometry = geofence.getGeometry();
-        User user = geofence.getUser();
-        if (id < 3) {
-            return new Geofence(id, type, properties, geometry, user);
-        } else if (id == 3) {
-            throw new GeofenceNotModifiedException();
+        LOGGER.info("Requested /api/geofences/{id} PUT method");
+        if (geofenceRepository.exists(id)) {
+            Geofence geofenceModified = geofenceRepository.save(geofence);
+            if (geofence.equals(geofenceModified)) {
+                return geofenceModified;
+            } else {
+                throw new GeofenceNotModifiedException();
+            }
         } else {
             throw new GeofenceNotFoundException();
         }
@@ -132,10 +131,11 @@ public class GeofenceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Geofence deleted", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
-    // TODO Repasar reglas de HTTP
     public Geofence deleteGeofence(@PathVariable("id") Long id) {
-        if (id == 3) {
-            return createPolygonFixture(id);
+        LOGGER.info("Requested /api/geofences/{id} DELETE method");
+        if (geofenceRepository.exists(id)) {
+            geofenceRepository.delete(id);
+            return null;
         } else {
             throw new GeofenceNotFoundException();
         }
@@ -151,16 +151,13 @@ public class GeofenceController {
             @ApiResponse(code = 200, message = "Geofence requested", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
     public Geofence getGeofence(@PathVariable("id") Long id) {
-        if (id == 3) {
-            return createPolygonFixture(id);
+        LOGGER.info("Requested /api/geofences/{id} GET method");
+        if (geofenceRepository.exists(id)) {
+            Geofence geofenceRequested = geofenceRepository.findOne(id);
+            return geofenceRequested;
         } else {
             throw new GeofenceNotFoundException();
         }
-    }
-
-    private Geofence createPolygonFixture(Long id) {
-        User user = new User(1L, "example.gmail.com", "password", "First", "Last", "07/08/1992", "356938035643809", null);
-        return new Geofence(id, "Feature", new Properties("Cuadrado"), null, user);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "Not modified")
