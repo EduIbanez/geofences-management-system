@@ -24,8 +24,6 @@ import java.net.URI;
 import java.util.List;
 
 import es.unizar.iaaa.geofencing.model.Geofence;
-import es.unizar.iaaa.geofencing.model.Properties;
-import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
 import es.unizar.iaaa.geofencing.view.View;
 import io.swagger.annotations.ApiResponse;
@@ -105,19 +103,19 @@ public class GeofenceController {
     @RequestMapping(path = "/api/geofences/{id}", method = RequestMethod.PUT)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Geofence modified", response = Geofence.class),
-            @ApiResponse(code = 304, message = "Geofence not modified", response = GeofenceNotModifiedException.class),
+            @ApiResponse(code = 409, message = "Geofence state doesn't permit request", response = GeofenceResourceConflictException.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
+    @JsonView(View.Geofence.class)
     public Geofence modifyGeofence(@PathVariable("id") Long id, @RequestBody Geofence geofence) {
         LOGGER.info("Requested /api/geofences/{id} PUT method");
-        if (geofenceRepository.exists(id)) {
-            Geofence geofenceModified = geofenceRepository.save(geofence);
-            if (geofence.equals(geofenceModified)) {
-                return geofenceModified;
-            } else {
-                throw new GeofenceNotModifiedException();
-            }
-        } else {
+        if (!geofenceRepository.exists(id)) {
             throw new GeofenceNotFoundException();
+        }
+        geofence.setId(id);
+        try {
+            return geofenceRepository.save(geofence);
+        } catch (Exception e) {
+            throw new GeofenceResourceConflictException(id, e);
         }
     }
 
@@ -150,6 +148,7 @@ public class GeofenceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Geofence requested", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
+    @JsonView(View.Geofence.class)
     public Geofence getGeofence(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/geofences/{id} GET method");
         if (geofenceRepository.exists(id)) {
@@ -160,8 +159,12 @@ public class GeofenceController {
         }
     }
 
-    @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "Not modified")
-    public class GeofenceNotModifiedException extends RuntimeException { }
+    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Geofence status forbids request")
+    public class GeofenceResourceConflictException extends RuntimeException {
+        public GeofenceResourceConflictException(Long id, Exception e) {
+            super("Failed update of Geofence "+id, e);
+        }
+    }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Geofence")
     public class GeofenceNotFoundException extends RuntimeException { }
