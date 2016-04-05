@@ -55,6 +55,7 @@ public class Geofence {
         this.type = type;
     }
 
+    // TODO Debe ser un Map<String,Object>
     @JsonView(View.Geofence.class)
     public Properties getProperties() {
         return properties;

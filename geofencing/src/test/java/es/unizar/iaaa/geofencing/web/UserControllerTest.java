@@ -76,6 +76,7 @@ public class UserControllerTest {
         assertEquals(1, userRepository.count());
     }
 
+    // TODO Autenticación
     @Test
     public void modifyUser() throws Exception {
         User usuario = userRepository.save(USER1);
@@ -98,6 +99,7 @@ public class UserControllerTest {
         assertEquals(usuario.getBirthday(), usuarioNew.getBirthday());
     }
 
+    // TODO Autenticación
     @Test
     public void deleteUser() throws Exception {
         User usuario = userRepository.save(USER1);
@@ -106,6 +108,7 @@ public class UserControllerTest {
         assertNull(userRepository.findOne(usuario.getId()));
     }
 
+    // TODO Dos vistas: con y sin Autenticación
     @Test
     public void getUser() throws Exception {
         User usuario = userRepository.save(USER1);
