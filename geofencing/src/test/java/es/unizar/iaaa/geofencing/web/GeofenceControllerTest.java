@@ -17,11 +17,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import es.unizar.iaaa.geofencing.Application;
 import es.unizar.iaaa.geofencing.model.Geofence;
-import es.unizar.iaaa.geofencing.model.Properties;
 import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
@@ -57,7 +58,7 @@ public class GeofenceControllerTest {
     private static final User USER1 = new User(null, "example.gmail.com", "password", "First",
             "Last", "07/08/1992", "356938035643809", new HashSet<>());
 
-    private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", new Properties("Prueba"),
+    private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
             new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1);
 
     private User currentUser;
@@ -70,6 +71,9 @@ public class GeofenceControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         currentUser = userRepository.save(USER1);
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("name", "Prueba");
+        GEOFENCE1.setProperties(properties);
         GEOFENCE1.setUser(currentUser);
     }
 
@@ -90,7 +94,7 @@ public class GeofenceControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.type").value(GEOFENCE1.getType()))
-                .andExpect(jsonPath("$.properties.name").value(GEOFENCE1.getProperties().getName()))
+                .andExpect(jsonPath("$.properties.name").value(GEOFENCE1.getProperties().get("name")))
                 .andExpect(jsonPath("$.geometry.type").value(GEOFENCE1.getGeometry().getGeometryType()))
                 .andExpect(jsonPath("$.user.id").value(GEOFENCE1.getUser().getId().intValue()));
         assertEquals(1, geofenceRepository.count());
@@ -139,7 +143,9 @@ public class GeofenceControllerTest {
     @Test
     public void modifyGeofence() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
-        geofence.setProperties(new Properties("Proof"));
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("name", "Proof");
+        geofence.setProperties(properties);
         this.mockMvc.perform(put("/api/geofences/"+geofence.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(geofence)))
@@ -148,11 +154,11 @@ public class GeofenceControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(geofence.getId().intValue()))
                 .andExpect(jsonPath("$.type").value(geofence.getType()))
-                .andExpect(jsonPath("$.properties.name").value(geofence.getProperties().getName()))
+                .andExpect(jsonPath("$.properties.name").value(geofence.getProperties().get("name")))
                 .andExpect(jsonPath("$.geometry.type").value(geofence.getGeometry().getGeometryType()))
                 .andExpect(jsonPath("$.user.id").value(geofence.getUser().getId().intValue()));
         Geofence geofenceNew = geofenceRepository.findOne(geofence.getId());
-        assertEquals(geofence.getProperties().getName(), geofenceNew.getProperties().getName());
+        assertEquals(geofence.getProperties().get("name"), geofenceNew.getProperties().get("name"));
     }
 
     // TODO Con autenticación
@@ -174,7 +180,7 @@ public class GeofenceControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(geofence.getId().intValue()))
                 .andExpect(jsonPath("$.type").value(geofence.getType()))
-                .andExpect(jsonPath("$.properties.name").value(geofence.getProperties().getName()))
+                .andExpect(jsonPath("$.properties.name").value(geofence.getProperties().get("name")))
                 .andExpect(jsonPath("$.geometry.type").value(geofence.getGeometry().getGeometryType()))
                 .andExpect(jsonPath("$.user.id").value(geofence.getUser().getId().intValue()));
     }

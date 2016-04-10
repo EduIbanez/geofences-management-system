@@ -9,13 +9,15 @@ import javax.persistence.*;
 
 import es.unizar.iaaa.geofencing.view.View;
 
+import java.util.Map;
+
 @Entity
 @Table(name="GEOFENCE")
 public class Geofence {
 
     private Long id;
     private String type;
-    private Properties properties;
+    private Map<String, Object> properties;
 
     @Type(type="org.hibernate.spatial.GeometryType")
     private Geometry geometry;
@@ -24,7 +26,7 @@ public class Geofence {
     public Geofence() {}
 
     public Geofence(@JsonProperty("id") Long id, @JsonProperty("type") String type,
-                    @JsonProperty("properties") Properties properties, @JsonProperty("geometry") Geometry geometry,
+                    @JsonProperty("properties") Map<String, Object> properties, @JsonProperty("geometry") Geometry geometry,
                     @JsonProperty("user") User user) {
         this.id = id;
         this.type = type;
@@ -55,13 +57,12 @@ public class Geofence {
         this.type = type;
     }
 
-    // TODO Debe ser un Map<String,Object>
     @JsonView(View.Geofence.class)
-    public Properties getProperties() {
+    public Map<String, Object> getProperties() {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 
@@ -87,6 +88,6 @@ public class Geofence {
     }
 
     public String toString() {
-        return "Geofence(id: "+id+" type: "+type+" properties: "+properties+" geom: "+geometry+" user id: "+user.getId()+")";
+        return "Geofence(id: "+id+" type: "+type+" properties: "+properties.toString()+" geom: "+geometry+" user id: "+user.getId()+")";
     }
 }
