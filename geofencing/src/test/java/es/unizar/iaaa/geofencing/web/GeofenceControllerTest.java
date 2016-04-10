@@ -79,6 +79,7 @@ public class GeofenceControllerTest {
         userRepository.deleteAll();
     }
 
+    // TODO Autenticación
     @Test
     public void createGeofence() throws Exception {
         this.mockMvc.perform(post("/api/geofences")
@@ -95,6 +96,7 @@ public class GeofenceControllerTest {
         assertEquals(1, geofenceRepository.count());
     }
 
+    // TODO Dos vistas: con autenticación y sin autenticación
     @Test
     public void getGeofencesWithLimit() throws Exception {
         Geofence auxGeofence = GEOFENCE1;
@@ -114,6 +116,7 @@ public class GeofenceControllerTest {
         assertEquals(COUNT, geofenceRepository.count());
     }
 
+    // TODO Dos vistas: con autenticación y sin autenticación
     @Test
     public void getGeofencesWithoutLimit() throws Exception {
         Geofence auxGeofence = GEOFENCE1;
@@ -132,6 +135,7 @@ public class GeofenceControllerTest {
         assertEquals(COUNT, geofenceRepository.count());
     }
 
+    // TODO Con autenticación
     @Test
     public void modifyGeofence() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
@@ -151,6 +155,7 @@ public class GeofenceControllerTest {
         assertEquals(geofence.getProperties().getName(), geofenceNew.getProperties().getName());
     }
 
+    // TODO Con autenticación
     @Test
     public void deleteGeofence() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
@@ -159,6 +164,7 @@ public class GeofenceControllerTest {
         assertNull(userRepository.findOne(geofence.getId()));
     }
 
+    // TODO Dos vistas: con autenticación y sin autenticación
     @Test
     public void getGeofence() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
