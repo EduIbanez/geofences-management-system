@@ -1,37 +1,36 @@
 package es.unizar.iaaa.geofencing.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import es.unizar.iaaa.geofencing.view.View;
 
+import java.util.Map;
+
 @Embeddable
 public class Properties {
 
-    private String name;
+    private Map<String, Object> properties;
 
     public Properties(){
 
     }
 
-    public Properties(@JsonProperty("name") String name) {
-        this.name = name;
+    public Properties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
-    @Column(name = "NAME", unique = false, nullable = false, length = 30)
     @JsonView(View.Geofence.class)
-    public String getName() {
-        return name;
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
     public String toString() {
-        return "Properties(name: "+name+")";
+        return "Properties(properties: "+properties.toString()+")";
     }
 }
