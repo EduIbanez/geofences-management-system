@@ -71,7 +71,7 @@ public class GeofenceControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         currentUser = userRepository.save(USER1);
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, String> properties = new HashMap<String, String>();
         properties.put("name", "Prueba");
         GEOFENCE1.setProperties(properties);
         GEOFENCE1.setUser(currentUser);
@@ -143,7 +143,7 @@ public class GeofenceControllerTest {
     @Test
     public void modifyGeofence() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, String> properties = new HashMap<String, String>();
         properties.put("name", "Proof");
         geofence.setProperties(properties);
         this.mockMvc.perform(put("/api/geofences/"+geofence.getId())

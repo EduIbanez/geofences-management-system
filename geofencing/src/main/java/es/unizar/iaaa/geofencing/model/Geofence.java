@@ -17,7 +17,7 @@ public class Geofence {
 
     private Long id;
     private String type;
-    private Map<String, Object> properties;
+    private Map<String, String> properties;
 
     @Type(type="org.hibernate.spatial.GeometryType")
     private Geometry geometry;
@@ -26,7 +26,7 @@ public class Geofence {
     public Geofence() {}
 
     public Geofence(@JsonProperty("id") Long id, @JsonProperty("type") String type,
-                    @JsonProperty("properties") Map<String, Object> properties, @JsonProperty("geometry") Geometry geometry,
+                    @JsonProperty("properties") Map<String, String> properties, @JsonProperty("geometry") Geometry geometry,
                     @JsonProperty("user") User user) {
         this.id = id;
         this.type = type;
@@ -57,12 +57,16 @@ public class Geofence {
         this.type = type;
     }
 
+    @ElementCollection
+    @MapKeyColumn(name="PROPERTIES_KEY")
+    @Column(name="PROPERTIES_VALUE")
+    @CollectionTable(name="PROPERTIES_MAPPING", joinColumns=@JoinColumn(name="GEOFENCE_ID"))
     @JsonView(View.Geofence.class)
-    public Map<String, Object> getProperties() {
+    public Map<String, String> getProperties() {
         return properties;
     }
 
-    public void setProperties(Map<String, Object> properties) {
+    public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 
