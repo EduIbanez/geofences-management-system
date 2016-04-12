@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashMap;
@@ -30,7 +31,10 @@ import es.unizar.iaaa.geofencing.repository.UserRepository;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -141,11 +145,10 @@ public class GeofenceControllerTest {
 
     // TODO Con autenticación
     @Test
+    @Transactional
     public void modifyGeofence() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.put("name", "Proof");
-        geofence.setProperties(properties);
+        geofence.getProperties().put("name", "Proof");
         this.mockMvc.perform(put("/api/geofences/"+geofence.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(geofence)))

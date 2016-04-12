@@ -3,13 +3,25 @@ package es.unizar.iaaa.geofencing.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vividsolutions.jts.geom.Geometry;
+
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
 
 import es.unizar.iaaa.geofencing.view.View;
-
-import java.util.Map;
 
 @Entity
 @Table(name="GEOFENCE")
@@ -17,7 +29,8 @@ public class Geofence {
 
     private Long id;
     private String type;
-    private Map<String, String> properties;
+
+    private Map<String, String> properties = new HashMap<>();
 
     @Type(type="org.hibernate.spatial.GeometryType")
     private Geometry geometry;
