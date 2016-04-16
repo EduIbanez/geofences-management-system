@@ -2,6 +2,7 @@ package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import es.unizar.iaaa.geofencing.domain.security.LoginUser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.HashSet;
 
 import es.unizar.iaaa.geofencing.Application;
-import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.domain.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 
 import static org.junit.Assert.assertEquals;
@@ -124,5 +125,17 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.birthday").value(usuario.getBirthday()))
                 .andExpect(jsonPath("$.imei").value(usuario.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty());
+    }
+
+    @Test
+    public void authenticateUser() throws Exception {
+        LoginUser usuario = new LoginUser("user@gmail.com", "password");
+        this.mockMvc.perform(post("/api/users/authenticate")
+                .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
+                .content(objectMapper.writeValueAsString(usuario)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json; charset=UTF-8"))
+                .andExpect(jsonPath("$.username").value(usuario.getEmail()));
     }
 }

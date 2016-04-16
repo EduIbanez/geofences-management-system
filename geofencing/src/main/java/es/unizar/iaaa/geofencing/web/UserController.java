@@ -1,5 +1,8 @@
 package es.unizar.iaaa.geofencing.web;
 
+import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
+import es.unizar.iaaa.geofencing.domain.security.LoginUser;
+import es.unizar.iaaa.geofencing.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,24 +13,28 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.domain.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -120,41 +127,26 @@ public class UserController {
     }
 
     /**
-     * This method logs user into the system.
+     * This method authenticate user into the system.
      *
-     * @param email email of the user
-     * @param pass  password of the user
+     * @param user email and password of the user
      * @return the user logged in
      */
-    @RequestMapping(path = "/api/users/login", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/users/authenticate", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "User logged in", response = User.class),
-            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User loginUser(@RequestParam("email") String email, @RequestParam("pass") String pass) {
-        if (email.equals("email") && pass.equals("pass")) {
-            return new User(1L, email, pass, "", "", "", "", null);
-        } else {
-            throw new UserNotFoundException();
-        }
+            @ApiResponse(code = 200, message = "User authenticated", response = User.class)})
+    public AuthenticatedUser authenticateUser(@RequestBody final LoginUser user, HttpServletResponse response) throws Exception {
+        return authenticationService.authenticate(user, response);
     }
 
     /**
      * This method logs user out of the system.
-     *
-     * @param email email of the user
-     * @param pass  password of the user
-     * @return the user logged out
      */
     @RequestMapping(path = "/api/users/logout", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "User logged out", response = User.class),
-            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User logoutUser(@RequestParam("email") String email, @RequestParam("pass") String pass) {
-        if (email.equals("email") && pass.equals("pass")) {
-            return new User(1L, email, pass, "", "", "", "", null);
-        } else {
-            throw new UserNotFoundException();
-        }
+            @ApiResponse(code = 200, message = "User logged out", response = User.class)})
+    public void logoutUser() {
+        authenticationService.logout();
     }
 
     @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "Not modified")

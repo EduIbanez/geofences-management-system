@@ -23,8 +23,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import es.unizar.iaaa.geofencing.Application;
-import es.unizar.iaaa.geofencing.model.Geofence;
-import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.domain.Geofence;
+import es.unizar.iaaa.geofencing.domain.User;
 import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 
