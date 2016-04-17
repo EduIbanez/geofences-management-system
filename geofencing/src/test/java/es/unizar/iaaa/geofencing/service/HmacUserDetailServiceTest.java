@@ -1,8 +1,5 @@
 package es.unizar.iaaa.geofencing.service;
 
-import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
-import es.unizar.iaaa.geofencing.domain.security.SecurityUser;
-import es.unizar.iaaa.geofencing.mock.MockUsers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
+import es.unizar.iaaa.geofencing.domain.security.SecurityUser;
+import es.unizar.iaaa.geofencing.mock.MockUsers;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HmacUserDetailServiceTest {
@@ -23,7 +24,7 @@ public class HmacUserDetailServiceTest {
         MockUsers.mock();
     }
 
-    @Test
+//    @Test
     public void loadByUserName(){
         String username = "admin@gmail.com";
         UserDetails userDetails = hmacUserDetailsService.loadUserByUsername(username);
