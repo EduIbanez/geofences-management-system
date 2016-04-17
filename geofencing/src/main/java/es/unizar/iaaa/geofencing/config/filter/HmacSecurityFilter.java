@@ -93,7 +93,7 @@ public class HmacSecurityFilter extends GenericFilterBean {
 
                     Map<String,String> customClaims = new HashMap<>();
                     customClaims.put(HmacSigner.ENCODING_CLAIM_PROPERTY, HmacUtils.HMAC_SHA_256);
-                    HmacToken hmacToken = HmacSigner.getSignedToken(secret,String.valueOf(iss),JWT_TTL,customClaims);
+                    HmacToken hmacToken = HmacSigner.getSignedToken(secret, String.valueOf(iss), JWT_TTL, customClaims);
                     response.setHeader(HmacUtils.X_TOKEN_ACCESS, hmacToken.getJwt());
 
                     filterChain.doFilter(request, response);
