@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,11 +34,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @SpringApplicationConfiguration(classes = Application.class)
 public class AuthenticationIntegrationTest {
 
     @Autowired
-    private WebApplicationContext context;
+    private WebApplicationContext wac;
 
     @Autowired
     private Filter springSecurityFilterChain;
@@ -49,7 +51,7 @@ public class AuthenticationIntegrationTest {
 
     @Before
     public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .addFilters(springSecurityFilterChain)
                 .build();
     }
@@ -61,7 +63,7 @@ public class AuthenticationIntegrationTest {
      * @param password password
      * @throws Exception
      */
-    public MvcResult authenticate(String email, String password,int status) throws Exception {
+    public MvcResult authenticate(String email, String password, int status) throws Exception {
         LoginUser loginUser = new LoginUser(email, password);
         MvcResult result = mockMvc.perform(post("/api/users/authenticate", false)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +80,7 @@ public class AuthenticationIntegrationTest {
         return result;
     }
 
-    public void logout(MvcResult result,int status) throws Exception{
+    public void logout(MvcResult result,int status) throws Exception {
 
         String secret = new String(Base64.decodeBase64(result.getResponse().getHeader(HmacUtils.X_SECRET).trim().getBytes()));
         String jwtToken = result.getResponse().getHeader(HmacUtils.X_TOKEN_ACCESS);
