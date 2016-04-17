@@ -51,6 +51,7 @@ dependencies {
     compile('org.powermock:powermock-api-mockito:1.6.4')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.springframework.security:spring-security-test')
     
 }
 
