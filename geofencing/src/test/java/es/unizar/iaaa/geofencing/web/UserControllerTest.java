@@ -126,16 +126,4 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.imei").value(usuario.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty());
     }
-
-    @Test
-    public void authenticateUser() throws Exception {
-        LoginUser usuario = new LoginUser("user@gmail.com", "password");
-        this.mockMvc.perform(post("/api/users/authenticate")
-                .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
-                .content(objectMapper.writeValueAsString(usuario)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json; charset=UTF-8"))
-                .andExpect(jsonPath("$.username").value(usuario.getEmail()));
-    }
 }
