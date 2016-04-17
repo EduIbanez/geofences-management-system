@@ -1,9 +1,5 @@
-package es.unizar.iaaa.geofencing.domain;
+package es.unizar.iaaa.geofencing.hmac;
 
-import es.unizar.iaaa.geofencing.domain.hmac.HmacException;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacSigner;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacToken;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

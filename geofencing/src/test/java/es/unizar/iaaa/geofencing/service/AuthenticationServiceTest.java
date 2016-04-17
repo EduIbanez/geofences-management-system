@@ -1,11 +1,5 @@
 package es.unizar.iaaa.geofencing.service;
 
-import es.unizar.iaaa.geofencing.domain.hmac.HmacException;
-import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
-import es.unizar.iaaa.geofencing.domain.security.LoginUser;
-import es.unizar.iaaa.geofencing.domain.security.Profile;
-import es.unizar.iaaa.geofencing.domain.security.SecurityUser;
-import es.unizar.iaaa.geofencing.mock.MockUsers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,10 +19,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
+import es.unizar.iaaa.geofencing.domain.security.LoginUser;
+import es.unizar.iaaa.geofencing.domain.security.Profile;
+import es.unizar.iaaa.geofencing.domain.security.SecurityUser;
+import es.unizar.iaaa.geofencing.hmac.HmacException;
+import es.unizar.iaaa.geofencing.mock.MockUsers;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.crypto.*")

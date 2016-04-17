@@ -1,8 +1,5 @@
 package es.unizar.iaaa.geofencing.web;
 
-import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
-import es.unizar.iaaa.geofencing.domain.security.LoginUser;
-import es.unizar.iaaa.geofencing.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +16,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+import javax.servlet.http.HttpServletResponse;
+
 import es.unizar.iaaa.geofencing.domain.User;
+import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
+import es.unizar.iaaa.geofencing.domain.security.LoginUser;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
+import es.unizar.iaaa.geofencing.service.AuthenticationService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class UserController {
@@ -119,8 +119,7 @@ public class UserController {
     public User getUser(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/users/{id} GET method");
         if (userRepository.exists(id)) {
-            User userRequested = userRepository.findOne(id);
-            return userRequested;
+            return userRepository.findOne(id);
         } else {
             throw new UserNotFoundException();
         }

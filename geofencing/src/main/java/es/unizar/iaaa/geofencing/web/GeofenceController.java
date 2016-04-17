@@ -152,8 +152,7 @@ public class GeofenceController {
     public Geofence getGeofence(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/geofences/{id} GET method");
         if (geofenceRepository.exists(id)) {
-            Geofence geofenceRequested = geofenceRepository.findOne(id);
-            return geofenceRequested;
+            return geofenceRepository.findOne(id);
         } else {
             throw new GeofenceNotFoundException();
         }

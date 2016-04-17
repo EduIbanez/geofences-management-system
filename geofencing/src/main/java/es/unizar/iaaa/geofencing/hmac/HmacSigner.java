@@ -1,4 +1,4 @@
-package es.unizar.iaaa.geofencing.domain.hmac;
+package es.unizar.iaaa.geofencing.hmac;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;

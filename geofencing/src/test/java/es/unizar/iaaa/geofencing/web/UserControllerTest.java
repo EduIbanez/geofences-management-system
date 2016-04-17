@@ -2,7 +2,6 @@ package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import es.unizar.iaaa.geofencing.domain.security.LoginUser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

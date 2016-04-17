@@ -1,9 +1,5 @@
 package es.unizar.iaaa.geofencing.config;
 
-import es.unizar.iaaa.geofencing.domain.hmac.HmacRequester;
-import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
-import es.unizar.iaaa.geofencing.mock.MockUsers;
-import es.unizar.iaaa.geofencing.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +12,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
+import es.unizar.iaaa.geofencing.hmac.HmacRequester;
+import es.unizar.iaaa.geofencing.mock.MockUsers;
+import es.unizar.iaaa.geofencing.service.AuthenticationService;
 
 @Configuration
 @EnableWebSecurity

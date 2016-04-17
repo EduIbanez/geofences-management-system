@@ -2,7 +2,7 @@ package es.unizar.iaaa.geofencing.config;
 
 import es.unizar.iaaa.geofencing.config.filter.HmacSecurityFilter;
 import es.unizar.iaaa.geofencing.config.filter.XAuthTokenFilter;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacRequester;
+import es.unizar.iaaa.geofencing.hmac.HmacRequester;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;

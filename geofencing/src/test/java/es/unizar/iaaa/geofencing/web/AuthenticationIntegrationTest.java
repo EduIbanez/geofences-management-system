@@ -1,12 +1,7 @@
 package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.unizar.iaaa.geofencing.Application;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacSigner;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacUtils;
-import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
-import es.unizar.iaaa.geofencing.domain.security.LoginUser;
-import es.unizar.iaaa.geofencing.domain.security.Profile;
+
 import org.apache.commons.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.junit.Assert;
@@ -24,6 +19,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.Filter;
+
+import es.unizar.iaaa.geofencing.Application;
+import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
+import es.unizar.iaaa.geofencing.domain.security.LoginUser;
+import es.unizar.iaaa.geofencing.domain.security.Profile;
+import es.unizar.iaaa.geofencing.hmac.HmacSigner;
+import es.unizar.iaaa.geofencing.hmac.HmacUtils;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

@@ -1,4 +1,4 @@
-package es.unizar.iaaa.geofencing.domain.hmac;
+package es.unizar.iaaa.geofencing.hmac;
 
 public class HmacUtils {
 

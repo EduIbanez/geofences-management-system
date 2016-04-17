@@ -1,7 +1,5 @@
 package es.unizar.iaaa.geofencing.config;
 
-import es.unizar.iaaa.geofencing.config.filter.HmacSecurityFilter;
-import es.unizar.iaaa.geofencing.domain.hmac.*;
 import org.apache.commons.codec.binary.Base64;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -12,13 +10,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
+
+import es.unizar.iaaa.geofencing.config.filter.HmacSecurityFilter;
+import es.unizar.iaaa.geofencing.hmac.HmacException;
+import es.unizar.iaaa.geofencing.hmac.HmacRequester;
+import es.unizar.iaaa.geofencing.hmac.HmacSigner;
+import es.unizar.iaaa.geofencing.hmac.HmacToken;
+import es.unizar.iaaa.geofencing.hmac.HmacUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HmacSecurityFilterTest {

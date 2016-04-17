@@ -1,14 +1,5 @@
 package es.unizar.iaaa.geofencing.service;
 
-import es.unizar.iaaa.geofencing.config.filter.HmacSecurityFilter;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacException;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacSigner;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacToken;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacUtils;
-import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
-import es.unizar.iaaa.geofencing.domain.security.LoginUser;
-import es.unizar.iaaa.geofencing.domain.security.SecurityUser;
-import es.unizar.iaaa.geofencing.mock.MockUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,11 +11,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
+import es.unizar.iaaa.geofencing.config.filter.HmacSecurityFilter;
+import es.unizar.iaaa.geofencing.hmac.HmacException;
+import es.unizar.iaaa.geofencing.hmac.HmacSigner;
+import es.unizar.iaaa.geofencing.hmac.HmacToken;
+import es.unizar.iaaa.geofencing.hmac.HmacUtils;
+import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
+import es.unizar.iaaa.geofencing.domain.security.LoginUser;
+import es.unizar.iaaa.geofencing.domain.security.SecurityUser;
+import es.unizar.iaaa.geofencing.mock.MockUsers;
 
 @Service
 public class AuthenticationService {
@@ -82,9 +84,8 @@ public class AuthenticationService {
         response.setHeader(HmacUtils.X_SECRET, hmacToken.getSecret());
         response.setHeader(HttpHeaders.WWW_AUTHENTICATE, HmacUtils.HMAC_SHA_256);
 
-        AuthenticatedUser authenticatedUser = new AuthenticatedUser(securityUser.getId(), securityUser.getUsername(),
+        return new AuthenticatedUser(securityUser.getId(), securityUser.getUsername(),
                 authorities, securityUser.getProfile());
-        return authenticatedUser;
     }
 
     /**

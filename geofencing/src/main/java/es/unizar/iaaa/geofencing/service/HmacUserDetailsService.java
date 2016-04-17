@@ -1,8 +1,5 @@
 package es.unizar.iaaa.geofencing.service;
 
-import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
-import es.unizar.iaaa.geofencing.domain.security.SecurityUser;
-import es.unizar.iaaa.geofencing.mock.MockUsers;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +9,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
+import es.unizar.iaaa.geofencing.domain.security.SecurityUser;
+import es.unizar.iaaa.geofencing.mock.MockUsers;
 
 @Component
 public class HmacUserDetailsService implements UserDetailsService {
@@ -26,9 +28,7 @@ public class HmacUserDetailsService implements UserDetailsService {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         if(!authenticatedUser.getAuthorities().isEmpty()){
-            for(String authority : authenticatedUser.getAuthorities()){
-                authorities.add(new SimpleGrantedAuthority(authority));
-            }
+            authorities.addAll(authenticatedUser.getAuthorities().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         }
 
         return new SecurityUser(authenticatedUser.getId(), authenticatedUser.getEmail(),

@@ -1,8 +1,8 @@
 package es.unizar.iaaa.geofencing.config.filter;
 
-import es.unizar.iaaa.geofencing.domain.hmac.HmacException;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacSigner;
-import es.unizar.iaaa.geofencing.domain.hmac.HmacUtils;
+import es.unizar.iaaa.geofencing.hmac.HmacException;
+import es.unizar.iaaa.geofencing.hmac.HmacSigner;
+import es.unizar.iaaa.geofencing.hmac.HmacUtils;
 import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
 import es.unizar.iaaa.geofencing.mock.MockUsers;
 import es.unizar.iaaa.geofencing.service.AuthenticationService;

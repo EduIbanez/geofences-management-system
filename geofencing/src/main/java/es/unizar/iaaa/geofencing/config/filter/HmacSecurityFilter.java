@@ -1,6 +1,6 @@
 package es.unizar.iaaa.geofencing.config.filter;
 
-import es.unizar.iaaa.geofencing.domain.hmac.*;
+import es.unizar.iaaa.geofencing.hmac.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.Charsets;
 import org.springframework.util.Assert;

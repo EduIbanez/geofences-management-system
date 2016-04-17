@@ -65,17 +65,15 @@ public class GeofenceControllerTest {
     private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
             new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1);
 
-    private User currentUser;
     private final int[] COORDINATES = {1, 2};
     private final int COUNT = 10;
     private final int RADIUS = 3;
-    private final int LIMIT = 2;
 
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        currentUser = userRepository.save(USER1);
-        Map<String, String> properties = new HashMap<String, String>();
+        User currentUser = userRepository.save(USER1);
+        Map<String, String> properties = new HashMap<>();
         properties.put("name", "Prueba");
         GEOFENCE1.setProperties(properties);
         GEOFENCE1.setUser(currentUser);
@@ -113,6 +111,7 @@ public class GeofenceControllerTest {
             auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
+        int LIMIT = 2;
         this.mockMvc.perform(get("/api/geofences")
                 .param("limit", String.valueOf(LIMIT))
                 .param("latitude", String.valueOf(COORDINATES[0]))

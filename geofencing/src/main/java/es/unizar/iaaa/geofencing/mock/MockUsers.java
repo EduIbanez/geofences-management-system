@@ -1,10 +1,15 @@
 package es.unizar.iaaa.geofencing.mock;
 
-import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
-import es.unizar.iaaa.geofencing.domain.security.Profile;
 import org.springframework.beans.BeanUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
+import es.unizar.iaaa.geofencing.domain.security.Profile;
 
 @SuppressWarnings("unchecked")
 public class MockUsers {
@@ -17,11 +22,11 @@ public class MockUsers {
     }};
 
     public static void mock(){
-        AuthenticatedUser admin = new AuthenticatedUser(Long.valueOf(1), "admin@gmail.com", "password", null, Profile.ADMIN);
+        AuthenticatedUser admin = new AuthenticatedUser(1L, "admin@gmail.com", "password", null, Profile.ADMIN);
         admin.setAuthorities(authorities.get(admin.getProfile()));
         users.add(admin);
 
-        AuthenticatedUser user = new AuthenticatedUser(Long.valueOf(2), "user@gmail.com", "password", null, Profile.USER);
+        AuthenticatedUser user = new AuthenticatedUser(2L, "user@gmail.com", "password", null, Profile.USER);
         users.add(user);
     }
 

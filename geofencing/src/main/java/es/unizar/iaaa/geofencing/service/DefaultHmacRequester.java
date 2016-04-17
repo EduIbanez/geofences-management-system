@@ -1,6 +1,6 @@
 package es.unizar.iaaa.geofencing.service;
 
-import es.unizar.iaaa.geofencing.domain.hmac.HmacRequester;
+import es.unizar.iaaa.geofencing.hmac.HmacRequester;
 import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
 import es.unizar.iaaa.geofencing.mock.MockUsers;
 import org.springframework.stereotype.Service;
