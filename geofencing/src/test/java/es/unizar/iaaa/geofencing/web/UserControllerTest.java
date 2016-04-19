@@ -48,7 +48,7 @@ public class UserControllerTest {
     private MockMvc mockMvc;
 
     private static final User USER1 = new User(null, "example.gmail.com", "password", "First",
-            "Last", "07/08/1992", "356938035643809", new HashSet<>());
+            "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user");
 
 
     @Before
@@ -67,12 +67,14 @@ public class UserControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.email").value(USER1.getEmail()))
-                .andExpect(jsonPath("$.pass").value(USER1.getPass()))
+                .andExpect(jsonPath("$.pass").value(USER1.getPassword()))
                 .andExpect(jsonPath("$.first_name").value(USER1.getFirst_name()))
                 .andExpect(jsonPath("$.last_name").value(USER1.getLast_name()))
                 .andExpect(jsonPath("$.birthday").value(USER1.getBirthday()))
                 .andExpect(jsonPath("$.imei").value(USER1.getImei()))
-                .andExpect(jsonPath("$.geofences").isEmpty());
+                .andExpect(jsonPath("$.geofences").isEmpty())
+                .andExpect(jsonPath("$.enabled").value(USER1.getEnabled()))
+                .andExpect(jsonPath("$.role").value(USER1.getRole()));
         assertEquals(1, userRepository.count());
     }
 
@@ -89,12 +91,14 @@ public class UserControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
                 .andExpect(jsonPath("$.email").value(usuario.getEmail()))
-                .andExpect(jsonPath("$.pass").value(usuario.getPass()))
+                .andExpect(jsonPath("$.pass").value(usuario.getPassword()))
                 .andExpect(jsonPath("$.first_name").value(usuario.getFirst_name()))
                 .andExpect(jsonPath("$.last_name").value(usuario.getLast_name()))
                 .andExpect(jsonPath("$.birthday").value(usuario.getBirthday()))
                 .andExpect(jsonPath("$.imei").value(usuario.getImei()))
-                .andExpect(jsonPath("$.geofences").isEmpty());
+                .andExpect(jsonPath("$.geofences").isEmpty())
+                .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
+                .andExpect(jsonPath("$.role").value(usuario.getRole()));
         User usuarioNew = userRepository.findOne(usuario.getId());
         assertEquals(usuario.getBirthday(), usuarioNew.getBirthday());
     }
@@ -118,11 +122,13 @@ public class UserControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
                 .andExpect(jsonPath("$.email").value(usuario.getEmail()))
-                .andExpect(jsonPath("$.pass").value(usuario.getPass()))
+                .andExpect(jsonPath("$.pass").value(usuario.getPassword()))
                 .andExpect(jsonPath("$.first_name").value(usuario.getFirst_name()))
                 .andExpect(jsonPath("$.last_name").value(usuario.getLast_name()))
                 .andExpect(jsonPath("$.birthday").value(usuario.getBirthday()))
                 .andExpect(jsonPath("$.imei").value(usuario.getImei()))
-                .andExpect(jsonPath("$.geofences").isEmpty());
+                .andExpect(jsonPath("$.geofences").isEmpty())
+                .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
+                .andExpect(jsonPath("$.role").value(usuario.getRole()));
     }
 }

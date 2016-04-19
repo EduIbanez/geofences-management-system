@@ -1,0 +1,1 @@
+INSERT INTO users(id, email, password, first_name, last_name, birthday, imei, enabled, role) VALUES (1, 'example.gmail.com', 'password', 'First', 'Last', '07/08/1992', '356938035643809', true, 'user');

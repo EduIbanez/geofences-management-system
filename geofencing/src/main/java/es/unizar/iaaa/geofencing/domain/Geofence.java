@@ -24,7 +24,7 @@ import javax.persistence.Table;
 import es.unizar.iaaa.geofencing.view.View;
 
 @Entity
-@Table(name="GEOFENCE")
+@Table(name="GEOFENCES")
 public class Geofence {
 
     private Long id;

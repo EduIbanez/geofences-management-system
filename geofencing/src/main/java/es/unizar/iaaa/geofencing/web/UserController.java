@@ -16,13 +16,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-import javax.servlet.http.HttpServletResponse;
-
 import es.unizar.iaaa.geofencing.domain.User;
-import es.unizar.iaaa.geofencing.domain.security.AuthenticatedUser;
-import es.unizar.iaaa.geofencing.domain.security.LoginUser;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
-import es.unizar.iaaa.geofencing.service.AuthenticationService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
@@ -32,9 +27,6 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private AuthenticationService authenticationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -131,22 +123,22 @@ public class UserController {
      * @param user email and password of the user
      * @return the user logged in
      */
-    @RequestMapping(path = "/api/users/authenticate", method = RequestMethod.POST)
+    /*@RequestMapping(path = "/api/users/authenticate", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User authenticated", response = User.class)})
     public AuthenticatedUser authenticateUser(@RequestBody final LoginUser user, HttpServletResponse response) throws Exception {
         return authenticationService.authenticate(user, response);
-    }
+    }*/
 
     /**
      * This method logs user out of the system.
      */
-    @RequestMapping(path = "/api/users/logout", method = RequestMethod.GET)
+    /*@RequestMapping(path = "/api/users/logout", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User logged out", response = User.class)})
     public void logoutUser() {
         authenticationService.logout();
-    }
+    }*/
 
     @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "Not modified")
     public class UserNotModifiedException extends RuntimeException { }

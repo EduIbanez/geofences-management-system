@@ -17,32 +17,37 @@ import javax.persistence.Table;
 import es.unizar.iaaa.geofencing.view.View;
 
 @Entity
-@Table(name="USER_")
+@Table(name="USERS")
 public class User {
 
     private Long id;
     private String email;
-    private String pass;
+    private String password;
     private String first_name;
     private String last_name;
     private String birthday;
     private String imei;
     private Set<Geofence> geofences;
+    private Boolean enabled;
+    private String role;
 
     public User(){}
 
     public User(@JsonProperty("id") Long id, @JsonProperty("email") String email,
-                @JsonProperty("pass") String pass, @JsonProperty("first_name") String first_name,
+                @JsonProperty("password") String password, @JsonProperty("first_name") String first_name,
                 @JsonProperty("last_name") String last_name, @JsonProperty("birthday") String birthday,
-                @JsonProperty("imei") String imei, @JsonProperty("geofence") Set<Geofence> geofences) {
+                @JsonProperty("imei") String imei, @JsonProperty("geofence") Set<Geofence> geofences,
+                @JsonProperty("enabled") Boolean enabled, @JsonProperty("role") String role) {
         this.id = id;
         this.email = email;
-        this.pass = pass;
+        this.password = password;
         this.first_name = first_name;
         this.last_name = last_name;
         this.birthday = birthday;
         this.imei = imei;
         this.geofences = geofences;
+        this.enabled = enabled;
+        this.role = role;
     }
 
     @Id
@@ -66,13 +71,13 @@ public class User {
         this.email = email;
     }
 
-    @Column(name = "PASS", nullable = false, length = 30)
-    public String getPass() {
-        return pass;
+    @Column(name = "PASSWORD", nullable = false, length = 30)
+    public String getPassword() {
+        return password;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+    public void setPassword(String pass) {
+        this.password = password;
     }
 
     @Column(name = "FIRST_NAME", nullable = false, length = 30)
@@ -122,9 +127,28 @@ public class User {
         this.geofences = geofences;
     }
 
+    @Column(name = "ENABLED", nullable = false)
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Column(name = "ROLE", nullable = false, length = 15)
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public String toString() {
-        return "User(id: "+id+" email: "+email+" pass: "+pass+" first_name: "+first_name+
-                "last_name: "+last_name+" birthday: "+birthday+" imei: "+imei+" geofence: "+geofences+")";
+        return "User(id: "+id+" email: "+email+" password: "+password+" first_name: "+first_name+
+                " last_name: "+last_name+" birthday: "+birthday+" imei: "+imei+" geofence: "+geofences+
+                " enabled: "+enabled+" role: "+role+")";
     }
 
     @Override
@@ -134,11 +158,13 @@ public class User {
         User user = (User) o;
         return id == user.id &&
                 Objects.equals(email, user.email) &&
-                Objects.equals(pass, user.pass) &&
+                Objects.equals(password, user.password) &&
                 Objects.equals(first_name, user.first_name) &&
                 Objects.equals(last_name, user.last_name) &&
                 Objects.equals(birthday, user.birthday) &&
                 Objects.equals(imei, user.imei) &&
-                Objects.equals(geofences, user.geofences);
+                Objects.equals(geofences, user.geofences) &&
+                Objects.equals(enabled, user.enabled) &&
+                Objects.equals(role, user.role);
     }
 }

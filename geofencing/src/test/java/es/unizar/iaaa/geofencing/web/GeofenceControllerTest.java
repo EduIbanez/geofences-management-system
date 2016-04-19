@@ -60,7 +60,7 @@ public class GeofenceControllerTest {
     private MockMvc mockMvc;
 
     private static final User USER1 = new User(null, "example.gmail.com", "password", "First",
-            "Last", "07/08/1992", "356938035643809", new HashSet<>());
+            "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user");
 
     private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
             new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1);
