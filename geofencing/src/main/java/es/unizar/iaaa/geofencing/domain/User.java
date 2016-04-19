@@ -53,7 +53,7 @@ public class User {
     @Id
     @GeneratedValue
     @Column(name = "ID", unique = true, nullable = false)
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceCompleteView.class)
     public Long getId() {
         return id;
     }
@@ -81,7 +81,7 @@ public class User {
     }
 
     @Column(name = "FIRST_NAME", nullable = false, length = 30)
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceCompleteView.class)
     public String getFirst_name() {
         return first_name;
     }
@@ -91,7 +91,7 @@ public class User {
     }
 
     @Column(name = "LAST_NAME", nullable = false, length = 30)
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceCompleteView.class)
     public String getLast_name() {
         return last_name;
     }

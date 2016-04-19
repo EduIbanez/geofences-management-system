@@ -51,7 +51,7 @@ public class Geofence {
     @Id
     @GeneratedValue
     @Column(name = "ID", unique = true, nullable = false)
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceBaseView.class)
     public Long getId() {
         return id;
     }
@@ -61,7 +61,7 @@ public class Geofence {
     }
 
     @Column(name = "TYPE", nullable = false, length = 20)
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceBaseView.class)
     public String getType() {
         return type;
     }
@@ -74,7 +74,7 @@ public class Geofence {
     @MapKeyColumn(name="PROPERTIES_KEY")
     @Column(name="PROPERTIES_VALUE")
     @CollectionTable(name="PROPERTIES_MAPPING", joinColumns=@JoinColumn(name="GEOFENCE_ID"))
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceBaseView.class)
     public Map<String, String> getProperties() {
         return properties;
     }
@@ -85,7 +85,7 @@ public class Geofence {
 
     @Column(name = "GEOMETRY", nullable = false, length = 100)
     @Type(type = "org.hibernate.spatial.GeometryType")
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceBaseView.class)
     public Geometry getGeometry() {
         return geometry;
     }
@@ -95,7 +95,7 @@ public class Geofence {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceCompleteView.class)
     public User getUser() {
         return user;
     }

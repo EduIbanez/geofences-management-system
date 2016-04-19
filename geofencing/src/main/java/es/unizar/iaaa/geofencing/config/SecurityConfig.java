@@ -2,6 +2,7 @@ package es.unizar.iaaa.geofencing.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +22,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .anyRequest().fullyAuthenticated()
+                .antMatchers(HttpMethod.POST, "/api/users").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/users/*").fullyAuthenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/users/*").fullyAuthenticated()
+                .antMatchers(HttpMethod.GET, "/api/users/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/geofences").fullyAuthenticated()
+                .antMatchers(HttpMethod.GET, "/api/geofences").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/geofences/*").fullyAuthenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/geofences/*").fullyAuthenticated()
+                .antMatchers(HttpMethod.GET, "/api/geofences/*").permitAll()
+                .anyRequest().denyAll()
                 .and()
                 .httpBasic()
                 .and()
@@ -32,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
-                .usersByUsernameQuery("select email, password, enabled from users where email = ?")
-                .authoritiesByUsernameQuery("select email, role from users where email = ?");
+                .usersByUsernameQuery("SELECT email, password, enabled FROM users WHERE email = ?")
+                .authoritiesByUsernameQuery("SELECT email, role FROM users WHERE email = ?");
     }
 }

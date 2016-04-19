@@ -73,7 +73,6 @@ public class GeofenceController {
     @RequestMapping(path = "/api/geofences", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of geofences", response = List.class)})
-    @JsonView(View.Geofence.class)
     public List<Geofence> getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
                                        @RequestParam(value = "latitude") Double latitude,
                                        @RequestParam(value = "longitude") Double longitude,
@@ -105,7 +104,7 @@ public class GeofenceController {
             @ApiResponse(code = 200, message = "Geofence modified", response = Geofence.class),
             @ApiResponse(code = 409, message = "Geofence state doesn't permit request", response = GeofenceResourceConflictException.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceCompleteView.class)
     public Geofence modifyGeofence(@PathVariable("id") Long id, @RequestBody Geofence geofence) {
         LOGGER.info("Requested /api/geofences/{id} PUT method");
         if (!geofenceRepository.exists(id)) {
@@ -148,7 +147,7 @@ public class GeofenceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Geofence requested", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
-    @JsonView(View.Geofence.class)
+    @JsonView(View.GeofenceCompleteView.class)
     public Geofence getGeofence(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/geofences/{id} GET method");
         if (geofenceRepository.exists(id)) {
