@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,10 +74,10 @@ public class GeofenceController {
     @RequestMapping(path = "/api/geofences", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of geofences", response = List.class)})
-    public List<Geofence> getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
-                                       @RequestParam(value = "latitude") Double latitude,
-                                       @RequestParam(value = "longitude") Double longitude,
-                                       @RequestParam(value = "radius") Integer radius) {
+    public MappingJacksonValue getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
+                                            @RequestParam(value = "latitude") Double latitude,
+                                            @RequestParam(value = "longitude") Double longitude,
+                                            @RequestParam(value = "radius") Integer radius) {
         LOGGER.info("Requested /api/geofences GET method");
         GeometricShapeFactory shapeFactory = new GeometricShapeFactory();
         shapeFactory.setNumPoints(32);
@@ -89,7 +90,9 @@ public class GeofenceController {
         else {
             geofences = geofenceRepository.findWithin(shapeFactory.createCircle());
         }
-        return geofences;
+        final MappingJacksonValue result = new MappingJacksonValue(geofences);
+        result.setSerializationView(View.GeofenceCompleteView.class);
+        return result;
     }
 
     /**

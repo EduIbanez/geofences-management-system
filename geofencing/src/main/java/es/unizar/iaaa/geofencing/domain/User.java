@@ -53,7 +53,7 @@ public class User {
     @Id
     @GeneratedValue
     @Column(name = "ID", unique = true, nullable = false)
-    @JsonView(View.GeofenceCompleteView.class)
+    @JsonView({View.GeofenceCompleteView.class, View.UserCompleteView.class})
     public Long getId() {
         return id;
     }
@@ -63,6 +63,7 @@ public class User {
     }
 
     @Column(name = "EMAIL", unique = true, nullable = false, length = 30)
+    @JsonView(View.UserCompleteView.class)
     public String getEmail() {
         return email;
     }
@@ -72,6 +73,7 @@ public class User {
     }
 
     @Column(name = "PASSWORD", nullable = false, length = 30)
+    @JsonView(View.UserCompleteView.class)
     public String getPassword() {
         return password;
     }
@@ -81,26 +83,27 @@ public class User {
     }
 
     @Column(name = "FIRST_NAME", nullable = false, length = 30)
-    @JsonView(View.GeofenceCompleteView.class)
-    public String getFirst_name() {
+    @JsonView({View.GeofenceCompleteView.class, View.UserCompleteView.class})
+    public String getFirstName() {
         return first_name;
     }
 
-    public void setFirst_name(String first_name) {
+    public void setFirstName(String first_name) {
         this.first_name = first_name;
     }
 
     @Column(name = "LAST_NAME", nullable = false, length = 30)
-    @JsonView(View.GeofenceCompleteView.class)
-    public String getLast_name() {
+    @JsonView({View.GeofenceCompleteView.class, View.UserCompleteView.class})
+    public String getLastName() {
         return last_name;
     }
 
-    public void setLast_name(String last_name) {
+    public void setLastName(String last_name) {
         this.last_name = last_name;
     }
 
     @Column(name = "BIRTHDAY", nullable = false, length = 10)
+    @JsonView(View.UserCompleteView.class)
     public String getBirthday() {
         return birthday;
     }
@@ -110,6 +113,7 @@ public class User {
     }
 
     @Column(name = "IMEI", unique = true, nullable = false, length = 15)
+    @JsonView(View.UserCompleteView.class)
     public String getImei() {
         return imei;
     }
@@ -119,6 +123,7 @@ public class User {
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonView(View.UserCompleteView.class)
     public Set<Geofence> getGeofences() {
         return geofences;
     }
@@ -128,6 +133,7 @@ public class User {
     }
 
     @Column(name = "ENABLED", nullable = false)
+    @JsonView(View.UserCompleteView.class)
     public Boolean getEnabled() {
         return enabled;
     }
@@ -137,6 +143,7 @@ public class User {
     }
 
     @Column(name = "ROLE", nullable = false, length = 15)
+    @JsonView(View.UserCompleteView.class)
     public String getRole() {
         return role;
     }

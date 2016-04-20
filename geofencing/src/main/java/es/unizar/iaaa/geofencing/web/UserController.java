@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import java.net.URI;
 
 import es.unizar.iaaa.geofencing.domain.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
+import es.unizar.iaaa.geofencing.view.View;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
@@ -108,10 +110,12 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User requested", response = User.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User getUser(@PathVariable("id") Long id) {
+    public MappingJacksonValue getUser(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/users/{id} GET method");
         if (userRepository.exists(id)) {
-            return userRepository.findOne(id);
+            final MappingJacksonValue result = new MappingJacksonValue(userRepository.findOne(id));
+            result.setSerializationView(View.UserCompleteView.class);
+            return result;
         } else {
             throw new UserNotFoundException();
         }
