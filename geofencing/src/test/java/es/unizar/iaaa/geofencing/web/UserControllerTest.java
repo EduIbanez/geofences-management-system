@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @SpringApplicationConfiguration(classes = Application.class)
@@ -53,7 +56,8 @@ public class UserControllerTest {
 
     @Before
     public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
+                .apply(SecurityMockMvcConfigurers.springSecurity()).build();
         userRepository.deleteAll();
     }
 
@@ -78,14 +82,14 @@ public class UserControllerTest {
         assertEquals(1, userRepository.count());
     }
 
-    // TODO Autenticación
     @Test
     public void modifyUser() throws Exception {
         User usuario = userRepository.save(USER1);
         usuario.setBirthday("07/08/1994");
         this.mockMvc.perform(put("/api/users/"+usuario.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
-                .content(objectMapper.writeValueAsString(usuario)))
+                .content(objectMapper.writeValueAsString(usuario))
+                .with(httpBasic(usuario.getEmail(), usuario.getPassword())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -103,20 +107,20 @@ public class UserControllerTest {
         assertEquals(usuario.getBirthday(), usuarioNew.getBirthday());
     }
 
-    // TODO Autenticación
     @Test
     public void deleteUser() throws Exception {
         User usuario = userRepository.save(USER1);
-        this.mockMvc.perform(delete("/api/users/"+usuario.getId()))
+        this.mockMvc.perform(delete("/api/users/"+usuario.getId())
+                .with(httpBasic(usuario.getEmail(), usuario.getPassword())))
                 .andExpect(status().isOk());
         assertNull(userRepository.findOne(usuario.getId()));
     }
 
-    // TODO Dos vistas: con y sin Autenticación
     @Test
-    public void getUser() throws Exception {
+    public void getUserAuthenticated() throws Exception {
         User usuario = userRepository.save(USER1);
-        this.mockMvc.perform(get("/api/users/"+usuario.getId()))
+        this.mockMvc.perform(get("/api/users/"+usuario.getId())
+                .with(httpBasic(usuario.getEmail(), usuario.getPassword())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -128,6 +132,19 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.birthday").value(usuario.getBirthday()))
                 .andExpect(jsonPath("$.imei").value(usuario.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty())
+                .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
+                .andExpect(jsonPath("$.role").value(usuario.getRole()));
+    }
+
+    @Test
+    public void getUserNotAuthenticated() throws Exception {
+        User usuario = userRepository.save(USER1);
+        this.mockMvc.perform(get("/api/users/"+usuario.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json; charset=UTF-8"))
+                .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
+                .andExpect(jsonPath("$.email").value(usuario.getEmail()))
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()));
     }

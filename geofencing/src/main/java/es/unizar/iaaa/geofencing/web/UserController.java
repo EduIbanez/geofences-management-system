@@ -7,6 +7,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -114,7 +117,12 @@ public class UserController {
         LOGGER.info("Requested /api/users/{id} GET method");
         if (userRepository.exists(id)) {
             final MappingJacksonValue result = new MappingJacksonValue(userRepository.findOne(id));
-            result.setSerializationView(View.UserCompleteView.class);
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if ((auth instanceof AnonymousAuthenticationToken)) {
+                result.setSerializationView(View.UserBaseView.class);
+            } else {
+                result.setSerializationView(View.UserCompleteView.class);
+            }
             return result;
         } else {
             throw new UserNotFoundException();

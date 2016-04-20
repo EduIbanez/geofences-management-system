@@ -12,6 +12,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,7 +94,12 @@ public class GeofenceController {
             geofences = geofenceRepository.findWithin(shapeFactory.createCircle());
         }
         final MappingJacksonValue result = new MappingJacksonValue(geofences);
-        result.setSerializationView(View.GeofenceCompleteView.class);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if ((auth instanceof AnonymousAuthenticationToken)) {
+            result.setSerializationView(View.GeofenceBaseView.class);
+        } else {
+            result.setSerializationView(View.GeofenceCompleteView.class);
+        }
         return result;
     }
 
@@ -151,10 +159,17 @@ public class GeofenceController {
             @ApiResponse(code = 200, message = "Geofence requested", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
     @JsonView(View.GeofenceCompleteView.class)
-    public Geofence getGeofence(@PathVariable("id") Long id) {
+    public MappingJacksonValue getGeofence(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/geofences/{id} GET method");
         if (geofenceRepository.exists(id)) {
-            return geofenceRepository.findOne(id);
+            final MappingJacksonValue result = new MappingJacksonValue(geofenceRepository.findOne(id));
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if ((auth instanceof AnonymousAuthenticationToken)) {
+                result.setSerializationView(View.GeofenceBaseView.class);
+            } else {
+                result.setSerializationView(View.GeofenceCompleteView.class);
+            }
+            return result;
         } else {
             throw new GeofenceNotFoundException();
         }
