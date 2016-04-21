@@ -8,4 +8,12 @@ public class View {
     public interface UserBaseView {}
 
     public interface UserCompleteView extends UserBaseView {}
+
+    public interface NotificationBaseView {}
+
+    public interface NotificationCompleteView extends NotificationBaseView {}
+
+    public interface RuleBaseView {}
+
+    public interface RuleCompleteView extends RuleBaseView {}
 }
