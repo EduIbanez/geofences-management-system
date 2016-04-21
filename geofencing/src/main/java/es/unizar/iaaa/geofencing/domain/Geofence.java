@@ -70,7 +70,7 @@ public class Geofence {
         this.type = type;
     }
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="PROPERTIES_KEY")
     @Column(name="PROPERTIES_VALUE")
     @CollectionTable(name="PROPERTIES_MAPPING", joinColumns=@JoinColumn(name="GEOFENCE_ID"))

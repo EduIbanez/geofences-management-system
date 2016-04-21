@@ -16,7 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashMap;
@@ -184,10 +183,10 @@ public class GeofenceControllerTest {
     }
 
     @Test
-    @Transactional
     public void modifyGeofence() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
         geofence.getProperties().put("name", "Proof");
+        String expectedValue = geofence.getProperties().get("name");
         this.mockMvc.perform(put("/api/geofences/"+geofence.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(geofence))
@@ -201,7 +200,7 @@ public class GeofenceControllerTest {
                 .andExpect(jsonPath("$.geometry.type").value(geofence.getGeometry().getGeometryType()))
                 .andExpect(jsonPath("$.user.id").value(geofence.getUser().getId().intValue()));
         Geofence geofenceNew = geofenceRepository.findOne(geofence.getId());
-        assertEquals(geofence.getProperties().get("name"), geofenceNew.getProperties().get("name"));
+        assertEquals(expectedValue, geofenceNew.getProperties().get("name"));
     }
 
     @Test
