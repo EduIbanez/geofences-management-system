@@ -8,18 +8,10 @@ import org.hibernate.annotations.Type;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import es.unizar.iaaa.geofencing.view.View;
 
@@ -35,17 +27,19 @@ public class Geofence {
     @Type(type="org.hibernate.spatial.GeometryType")
     private Geometry geometry;
     private User user;
+    private Set<Rule> rules;
 
     public Geofence() {}
 
     public Geofence(@JsonProperty("id") Long id, @JsonProperty("type") String type,
                     @JsonProperty("properties") Map<String, String> properties, @JsonProperty("geometry") Geometry geometry,
-                    @JsonProperty("user") User user) {
+                    @JsonProperty("user") User user, @JsonProperty("rules") Set<Rule> rules) {
         this.id = id;
         this.type = type;
         this.properties = properties;
         this.geometry = geometry;
         this.user = user;
+        this.rules = rules;
     }
 
     @Id
@@ -104,7 +98,31 @@ public class Geofence {
         this.user = user;
     }
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "geofence")
+    @JsonView(View.GeofenceCompleteView.class)
+    public Set<Rule> getRules() {
+        return rules;
+    }
+
+    public void setRules(Set<Rule> rules) {
+        this.rules = rules;
+    }
+
     public String toString() {
-        return "Geofence(id: "+id+" type: "+type+" properties: "+properties+" geom: "+geometry+" user id: "+user.getId()+")";
+        return "Geofence(id: "+id+" type: "+type+" properties: "+properties+" geom: "+geometry+" user id: "+user.getId()+
+                "rules"+rules+")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Geofence geofence = (Geofence) o;
+        return id == geofence.id &&
+                Objects.equals(type, geofence.type) &&
+                Objects.equals(properties, geofence.properties) &&
+                Objects.equals(geometry, geofence.geometry) &&
+                Objects.equals(user.getId(), geofence.getUser().getId()) &&
+                Objects.equals(rules, geofence.rules);
     }
 }

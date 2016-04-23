@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import es.unizar.iaaa.geofencing.view.View;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.Objects;
 
 @Entity
@@ -12,23 +13,21 @@ import java.util.Objects;
 public class Notification {
 
     private Long id;
-    private String sender;
-    private String receiver;
+    private Rule rule;
+    private User user;
     private String status;
-    private String title;
-    private String body;
+    private Date date;
 
     public Notification(){}
 
-    public Notification(@JsonProperty("id") Long id, @JsonProperty("sender") String sender,
-                        @JsonProperty("receiver") String receiver, @JsonProperty("status") String status,
-                        @JsonProperty("title") String title, @JsonProperty("body") String body) {
+    public Notification(@JsonProperty("id") Long id, @JsonProperty("rule") Rule rule,
+                        @JsonProperty("user") User user, @JsonProperty("status") String status,
+                        @JsonProperty("date") Date date) {
         this.id = id;
-        this.sender = sender;
-        this.receiver = receiver;
+        this.rule = rule;
+        this.user = user;
         this.status = status;
-        this.title = title;
-        this.body = body;
+        this.date = date;
     }
 
     @Id
@@ -43,24 +42,24 @@ public class Notification {
         this.id = id;
     }
 
-    @Column(name = "SENDER", nullable = false, length = 30)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonView(View.NotificationBaseView.class)
-    public String getSender() {
-        return sender;
+    public Rule getRule() {
+        return rule;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setRule(Rule rule) {
+        this.rule = rule;
     }
-
-    @Column(name = "RECEIVER", nullable = false, length = 30)
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonView(View.NotificationCompleteView.class)
-    public String getReceiver() {
-        return receiver;
+    public User getUser() {
+        return user;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Column(name = "STATUS", nullable = false, length = 15)
@@ -73,41 +72,30 @@ public class Notification {
         this.status = status;
     }
 
-    @Column(name = "TITLE", nullable = false, length = 30)
+    @Column(name = "DATE", nullable = false, length = 15)
     @JsonView(View.NotificationCompleteView.class)
-    public String getTitle() {
-        return title;
+    public Date getDate() {
+        return date;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Column(name = "BODY", nullable = false, length = 150)
-    @JsonView(View.NotificationCompleteView.class)
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String toString() {
-        return "Notification(id: "+id+" sender: "+sender+" receiver: "+receiver+" status: "+status+
-                " title: "+title+" body: "+body+")";
+        return "Notification(id: "+id+" rule id: "+rule.getId()+" user id: "+user.getId()+" status: "+status+
+                " date: "+date+")";
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Notification user = (Notification) o;
-        return id == user.id &&
-                Objects.equals(sender, user.sender) &&
-                Objects.equals(receiver, user.receiver) &&
-                Objects.equals(status, user.status) &&
-                Objects.equals(title, user.title) &&
-                Objects.equals(body, user.body);
+        Notification notification = (Notification) o;
+        return id == notification.id &&
+                Objects.equals(rule, notification.rule) &&
+                Objects.equals(user, notification.user) &&
+                Objects.equals(status, notification.status) &&
+                Objects.equals(date, notification.date);
     }
 }

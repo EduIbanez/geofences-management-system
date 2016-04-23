@@ -30,14 +30,16 @@ public class User {
     private Set<Geofence> geofences;
     private Boolean enabled;
     private String role;
+    private Set<Notification> notifications;
 
     public User(){}
 
     public User(@JsonProperty("id") Long id, @JsonProperty("email") String email,
                 @JsonProperty("password") String password, @JsonProperty("first_name") String first_name,
                 @JsonProperty("last_name") String last_name, @JsonProperty("birthday") String birthday,
-                @JsonProperty("imei") String imei, @JsonProperty("geofence") Set<Geofence> geofences,
-                @JsonProperty("enabled") Boolean enabled, @JsonProperty("role") String role) {
+                @JsonProperty("imei") String imei, @JsonProperty("geofences") Set<Geofence> geofences,
+                @JsonProperty("enabled") Boolean enabled, @JsonProperty("role") String role,
+                @JsonProperty("notifications") Set<Notification> notifications) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -48,6 +50,7 @@ public class User {
         this.geofences = geofences;
         this.enabled = enabled;
         this.role = role;
+        this.notifications = notifications;
     }
 
     @Id
@@ -152,10 +155,20 @@ public class User {
         this.role = role;
     }
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonView(View.UserCompleteView.class)
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
     public String toString() {
         return "User(id: "+id+" email: "+email+" password: "+password+" first_name: "+first_name+
                 " last_name: "+last_name+" birthday: "+birthday+" imei: "+imei+" geofence: "+geofences+
-                " enabled: "+enabled+" role: "+role+")";
+                " enabled: "+enabled+" role: "+role+" notifications: "+notifications+")";
     }
 
     @Override
@@ -172,6 +185,7 @@ public class User {
                 Objects.equals(imei, user.imei) &&
                 Objects.equals(geofences, user.geofences) &&
                 Objects.equals(enabled, user.enabled) &&
-                Objects.equals(role, user.role);
+                Objects.equals(role, user.role) &&
+                Objects.equals(notifications, user.notifications);
     }
 }

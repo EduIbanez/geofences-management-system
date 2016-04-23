@@ -51,7 +51,7 @@ public class UserControllerTest {
     private MockMvc mockMvc;
 
     private static final User USER1 = new User(null, "example.gmail.com", "password", "First",
-            "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user");
+            "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user", new HashSet<>());
 
 
     @Before
@@ -78,7 +78,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.imei").value(USER1.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(USER1.getEnabled()))
-                .andExpect(jsonPath("$.role").value(USER1.getRole()));
+                .andExpect(jsonPath("$.role").value(USER1.getRole()))
+                .andExpect(jsonPath("$.notifications").isEmpty());
         assertEquals(1, userRepository.count());
     }
 
@@ -102,7 +103,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.imei").value(usuario.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
-                .andExpect(jsonPath("$.role").value(usuario.getRole()));
+                .andExpect(jsonPath("$.role").value(usuario.getRole()))
+                .andExpect(jsonPath("$.notifications").isEmpty());
         User usuarioNew = userRepository.findOne(usuario.getId());
         assertEquals(usuario.getBirthday(), usuarioNew.getBirthday());
     }
@@ -133,7 +135,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.imei").value(usuario.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
-                .andExpect(jsonPath("$.role").value(usuario.getRole()));
+                .andExpect(jsonPath("$.role").value(usuario.getRole()))
+                .andExpect(jsonPath("$.notifications").isEmpty());
     }
 
     @Test

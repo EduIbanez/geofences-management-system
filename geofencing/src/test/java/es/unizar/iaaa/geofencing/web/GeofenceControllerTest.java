@@ -61,10 +61,10 @@ public class GeofenceControllerTest {
     private MockMvc mockMvc;
 
     private static final User USER1 = new User(null, "example.gmail.com", "password", "First",
-            "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user");
+            "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user", new HashSet<>());
 
     private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
-            new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1);
+            new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());
 
     private final int[] COORDINATES = {1, 2};
     private final int COUNT = 10;
@@ -100,7 +100,8 @@ public class GeofenceControllerTest {
                 .andExpect(jsonPath("$.type").value(GEOFENCE1.getType()))
                 .andExpect(jsonPath("$.properties.name").value(GEOFENCE1.getProperties().get("name")))
                 .andExpect(jsonPath("$.geometry.type").value(GEOFENCE1.getGeometry().getGeometryType()))
-                .andExpect(jsonPath("$.user.id").value(GEOFENCE1.getUser().getId().intValue()));
+                .andExpect(jsonPath("$.user.id").value(GEOFENCE1.getUser().getId().intValue()))
+                .andExpect(jsonPath("$.rules").isEmpty());
         assertEquals(1, geofenceRepository.count());
     }
 
@@ -198,7 +199,8 @@ public class GeofenceControllerTest {
                 .andExpect(jsonPath("$.type").value(geofence.getType()))
                 .andExpect(jsonPath("$.properties.name").value(geofence.getProperties().get("name")))
                 .andExpect(jsonPath("$.geometry.type").value(geofence.getGeometry().getGeometryType()))
-                .andExpect(jsonPath("$.user.id").value(geofence.getUser().getId().intValue()));
+                .andExpect(jsonPath("$.user.id").value(geofence.getUser().getId().intValue()))
+                .andExpect(jsonPath("$.rules").isEmpty());
         Geofence geofenceNew = geofenceRepository.findOne(geofence.getId());
         assertEquals(expectedValue, geofenceNew.getProperties().get("name"));
     }
@@ -224,7 +226,8 @@ public class GeofenceControllerTest {
                 .andExpect(jsonPath("$.type").value(geofence.getType()))
                 .andExpect(jsonPath("$.properties.name").value(geofence.getProperties().get("name")))
                 .andExpect(jsonPath("$.geometry.type").value(geofence.getGeometry().getGeometryType()))
-                .andExpect(jsonPath("$.user.id").value(geofence.getUser().getId().intValue()));
+                .andExpect(jsonPath("$.user.id").value(geofence.getUser().getId().intValue()))
+                .andExpect(jsonPath("$.rules").isEmpty());
     }
 
     @Test

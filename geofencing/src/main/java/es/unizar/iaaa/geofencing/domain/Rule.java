@@ -14,30 +14,31 @@ public class Rule {
 
     private Long id;
     private Boolean enabled;
-    private Boolean entering;
-    private Boolean leaving;
-    private Boolean inside;
-    private Integer time_entering;
-    private Integer time_leaving;
-    private Integer time_inside;
-    private Set<Geofence> geofences;
+    private Type type;
+    private Integer time;
+    private String message;
+    private Set<Day> days;
+    private Set<Notification> notifications;
+    private Geofence geofence;
+
+    private enum Type {
+        ENTERING, LEAVING, INSIDE
+    }
 
     public Rule(){}
 
     public Rule(@JsonProperty("id") Long id, @JsonProperty("enabled") Boolean enabled,
-                @JsonProperty("entering") Boolean entering, @JsonProperty("leaving") Boolean leaving,
-                @JsonProperty("inside") Boolean inside, @JsonProperty("time_entering") Integer time_entering,
-                @JsonProperty("time_leaving") Integer time_leaving, @JsonProperty("time_inside") Integer time_inside,
-                @JsonProperty("geofence") Set<Geofence> geofences) {
+                @JsonProperty("type") Type type, @JsonProperty("time") Integer time,
+                @JsonProperty("message") String message, @JsonProperty("days") Set<Day> days,
+                @JsonProperty("notifications") Set<Notification> notifications,
+                @JsonProperty("geofence") Geofence geofence) {
         this.id = id;
         this.enabled = enabled;
-        this.entering = entering;
-        this.leaving = leaving;
-        this.inside = inside;
-        this.time_entering = time_entering;
-        this.time_leaving = time_leaving;
-        this.time_inside = time_inside;
-        this.geofences = geofences;
+        this.type = type;
+        this.time = time;
+        this.message = message;
+        this.days = days;
+        this.geofence = geofence;
     }
 
     @Id
@@ -58,98 +59,90 @@ public class Rule {
         return enabled;
     }
 
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public void getEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
-    @Column(name = "ENTERING", nullable = false, length = 5)
+    @Column(name = "TYPE", nullable = false, length = 10)
     @JsonView(View.RuleBaseView.class)
-    public Boolean getEntering() {
-        return entering;
+    public Type getType() {
+        return type;
     }
 
-    public void setEntering(Boolean entering) {
-        this.entering = entering;
+    public void setType(Type type) {
+        this.type = type;
     }
 
-    @Column(name = "LEAVING", nullable = false, length = 5)
+    @Column(name = "TIME", nullable = false, length = 5)
     @JsonView(View.RuleBaseView.class)
-    public Boolean getLeaving() {
-        return leaving;
+    public Integer getTime() {
+        return time;
     }
 
-    public void setLeaving(Boolean leaving) {
-        this.leaving = leaving;
+    public void setTime(Integer time) {
+        this.time = time;
     }
 
-    @Column(name = "INSIDE", nullable = false, length = 5)
-    @JsonView(View.RuleBaseView.class)
-    public Boolean getInside() {
-        return inside;
-    }
-
-    public void setInside(Boolean inside) {
-        this.inside = inside;
-    }
-
-    @Column(name = "TIME_ENTERING", nullable = false, length = 5)
-    @JsonView(View.RuleBaseView.class)
-    public Integer getTimeEntering() {
-        return time_entering;
-    }
-
-    public void setTimeEntering(Integer time_entering) {
-        this.time_entering = time_entering;
-    }
-
-    @Column(name = "TIME_LEAVING", nullable = false, length = 5)
-    @JsonView(View.RuleBaseView.class)
-    public Integer getTimeLeaving() {
-        return time_leaving;
-    }
-
-    public void setTimeLeaving(Integer time_leaving) {
-        this.time_leaving = time_leaving;
-    }
-
-    @Column(name = "TIME_INSIDE", nullable = false, length = 5)
-    @JsonView(View.RuleBaseView.class)
-    public Boolean getTimeInside() {
-        return inside;
-    }
-
-    public void setTimeInside(Integer time_inside) {
-        this.time_inside = time_inside;
-    }
-
+    @Column(name = "MESSAGE", nullable = false, length = 130)
     @JsonView(View.RuleCompleteView.class)
-    public Set<Geofence> getGeofences() {
-        return geofences;
+    public String getMessage() {
+        return message;
     }
 
-    public void setGeofences(Set<Geofence> geofences) {
-        this.geofences = geofences;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rule")
+    @JsonView(View.RuleCompleteView.class)
+    public Set<Day> getDays() {
+        return days;
+    }
+
+    public void setDays(Set<Day> days) {
+        this.days = days;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rule")
+    @JsonView(View.RuleCompleteView.class)
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonView(View.RuleCompleteView.class)
+    public Geofence getGeofence() {
+        return geofence;
+    }
+
+    public void setGeofence(Geofence geofence) {
+        this.geofence = geofence;
     }
 
     public String toString() {
-        return "Rule(id: "+id+" enabled: "+enabled+" entering: "+entering+" leaving: "+leaving+
-                " inside: "+inside+" time_entering: "+time_entering+" time_leaving: "+time_leaving+
-                " time_inside: "+time_inside+" geofence: "+geofences+")";
+        return "Rule(id: "+id+" enabled: "+enabled+" type: "+type.toString()+" time: "+time+
+                " days: "+days+" notifications: "+notifications+" geofence: "+geofence+")";
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Rule user = (Rule) o;
-        return id == user.id &&
-                Objects.equals(enabled, user.enabled) &&
-                Objects.equals(entering, user.entering) &&
-                Objects.equals(leaving, user.leaving) &&
-                Objects.equals(inside, user.inside) &&
-                Objects.equals(time_entering, user.time_entering) &&
-                Objects.equals(time_leaving, user.time_leaving) &&
-                Objects.equals(time_inside, user.time_inside) &&
-                Objects.equals(geofences, user.geofences);
+        Rule rule = (Rule) o;
+        return id == rule.id &&
+                Objects.equals(enabled, rule.enabled) &&
+                Objects.equals(type, rule.type) &&
+                Objects.equals(time, rule.time) &&
+                Objects.equals(days, rule.days) &&
+                Objects.equals(notifications, rule.notifications) &&
+                Objects.equals(geofence, rule.geofence);
     }
 }
