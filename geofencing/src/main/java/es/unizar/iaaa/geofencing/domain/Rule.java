@@ -14,7 +14,7 @@ public class Rule {
 
     private Long id;
     private Boolean enabled;
-    private Type type;
+    private String type;
     private Integer time;
     private String message;
     private Set<Day> days;
@@ -28,16 +28,22 @@ public class Rule {
     public Rule(){}
 
     public Rule(@JsonProperty("id") Long id, @JsonProperty("enabled") Boolean enabled,
-                @JsonProperty("type") Type type, @JsonProperty("time") Integer time,
+                @JsonProperty("type") String type, @JsonProperty("time") Integer time,
                 @JsonProperty("message") String message, @JsonProperty("days") Set<Day> days,
                 @JsonProperty("notifications") Set<Notification> notifications,
                 @JsonProperty("geofence") Geofence geofence) {
         this.id = id;
         this.enabled = enabled;
-        this.type = type;
+        if (Type.ENTERING.toString().equals(type) || Type.LEAVING.toString().equals(type) ||
+                Type.INSIDE.toString().equals(type)) {
+            this.type = type;
+        } else {
+            this.type = "ENTERING";
+        }
         this.time = time;
         this.message = message;
         this.days = days;
+        this.notifications = notifications;
         this.geofence = geofence;
     }
 
@@ -63,17 +69,13 @@ public class Rule {
         this.enabled = enabled;
     }
 
-    public void getEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
     @Column(name = "TYPE", nullable = false, length = 10)
     @JsonView(View.RuleBaseView.class)
-    public Type getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(String type) {
         this.type = type;
     }
 

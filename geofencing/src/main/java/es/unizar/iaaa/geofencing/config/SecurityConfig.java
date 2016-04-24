@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/api/geofences/*").fullyAuthenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/geofences/*").fullyAuthenticated()
                 .antMatchers(HttpMethod.GET, "/api/geofences/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/rules").fullyAuthenticated()
                 .anyRequest().denyAll()
                 .and()
                 .httpBasic()
