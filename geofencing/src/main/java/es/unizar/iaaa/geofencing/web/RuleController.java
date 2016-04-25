@@ -1,13 +1,7 @@
 package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import es.unizar.iaaa.geofencing.domain.Geofence;
-import es.unizar.iaaa.geofencing.domain.Rule;
-import es.unizar.iaaa.geofencing.repository.RuleRepository;
-import es.unizar.iaaa.geofencing.view.View;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.ResponseHeader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +12,23 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+
+import es.unizar.iaaa.geofencing.domain.Geofence;
+import es.unizar.iaaa.geofencing.domain.Rule;
+import es.unizar.iaaa.geofencing.repository.RuleRepository;
+import es.unizar.iaaa.geofencing.view.View;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ResponseHeader;
 
 @RestController
 public class RuleController {
@@ -108,7 +115,6 @@ public class RuleController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Rule requested", response = Rule.class),
             @ApiResponse(code = 404, message = "Rule not found", response = RuleNotFoundException.class)})
-    @JsonView(View.GeofenceCompleteView.class)
     public MappingJacksonValue getRule(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/rules/{id} GET method");
         if (ruleRepository.exists(id)) {
