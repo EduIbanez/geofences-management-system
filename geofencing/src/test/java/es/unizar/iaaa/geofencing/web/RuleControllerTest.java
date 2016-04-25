@@ -30,8 +30,10 @@ import es.unizar.iaaa.geofencing.repository.UserRepository;
 
 import static es.unizar.iaaa.geofencing.domain.RuleType.INSIDE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -93,5 +95,69 @@ public class RuleControllerTest {
                 .andExpect(jsonPath("$.notifications").isEmpty())
                 .andExpect(jsonPath("$.geofence.id").value(RULE1.getGeofence().getId().intValue()));
         assertEquals(1, ruleRepository.count());
+    }
+
+    @Test
+    public void modifyRule() throws Exception {
+        Rule rule = ruleRepository.save(RULE1);
+        rule.setEnabled(false);
+        Boolean expectedValue = rule.getEnabled();
+        this.mockMvc.perform(put("/api/rules/"+rule.getId())
+                .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
+                .content(objectMapper.writeValueAsString(rule))
+                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json; charset=UTF-8"))
+                .andExpect(jsonPath("$.id").value(rule.getId().intValue()))
+                .andExpect(jsonPath("$.enabled").value(RULE1.getEnabled()))
+                .andExpect(jsonPath("$.type").value(RULE1.getType().name()))
+                .andExpect(jsonPath("$.time").value(RULE1.getTime()))
+                .andExpect(jsonPath("$.message").value(RULE1.getMessage()))
+                .andExpect(jsonPath("$.days").isEmpty())
+                .andExpect(jsonPath("$.notifications").isEmpty())
+                .andExpect(jsonPath("$.geofence.id").value(RULE1.getGeofence().getId().intValue()));
+        Rule ruleNew = ruleRepository.findOne(rule.getId());
+        assertEquals(expectedValue, ruleNew.getEnabled());
+    }
+
+    @Test
+    public void deleteRule() throws Exception {
+        Rule rule = ruleRepository.save(RULE1);
+        this.mockMvc.perform(delete("/api/rules/"+rule.getId())
+                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .andExpect(status().isOk());
+        assertNull(userRepository.findOne(rule.getId()));
+    }
+
+    @Test
+    public void getRuleAuthenticated() throws Exception {
+        Rule rule = ruleRepository.save(RULE1);
+        this.mockMvc.perform(get("/api/rules/"+rule.getId())
+                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json; charset=UTF-8"))
+                .andExpect(jsonPath("$.id").value(rule.getId().intValue()))
+                .andExpect(jsonPath("$.enabled").value(RULE1.getEnabled()))
+                .andExpect(jsonPath("$.type").value(RULE1.getType().name()))
+                .andExpect(jsonPath("$.time").value(RULE1.getTime()))
+                .andExpect(jsonPath("$.message").value(RULE1.getMessage()))
+                .andExpect(jsonPath("$.days").isEmpty())
+                .andExpect(jsonPath("$.notifications").isEmpty())
+                .andExpect(jsonPath("$.geofence.id").value(RULE1.getGeofence().getId().intValue()));
+    }
+
+    @Test
+    public void getRuleNotAuthenticated() throws Exception {
+        Rule rule = ruleRepository.save(RULE1);
+        this.mockMvc.perform(get("/api/rules/"+rule.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json; charset=UTF-8"))
+                .andExpect(jsonPath("$.id").value(rule.getId().intValue()))
+                .andExpect(jsonPath("$.enabled").value(RULE1.getEnabled()))
+                .andExpect(jsonPath("$.type").value(RULE1.getType().name()))
+                .andExpect(jsonPath("$.time").value(RULE1.getTime()));
     }
 }
