@@ -158,7 +158,6 @@ public class GeofenceController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Geofence requested", response = Geofence.class),
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
-    @JsonView(View.GeofenceCompleteView.class)
     public MappingJacksonValue getGeofence(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/geofences/{id} GET method");
         if (geofenceRepository.exists(id)) {

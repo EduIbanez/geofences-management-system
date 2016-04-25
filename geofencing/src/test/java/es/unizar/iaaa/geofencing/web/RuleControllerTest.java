@@ -67,12 +67,12 @@ public class RuleControllerTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
         USER1 = new User(null, "example.gmail.com", "password", "First",
                 "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user", new HashSet<>());
-        USER1 = userRepository.save(USER1);
+        userRepository.save(USER1);
 
         GEOFENCE1 = new Geofence(null, "Feature", null,
                 new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());
 
-        GEOFENCE1 = geofenceRepository.save(GEOFENCE1);
+        geofenceRepository.save(GEOFENCE1);
 
         RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
                 new HashSet<>(), GEOFENCE1);
@@ -118,13 +118,13 @@ public class RuleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(rule.getId().intValue()))
-                .andExpect(jsonPath("$.enabled").value(RULE1.getEnabled()))
-                .andExpect(jsonPath("$.type").value(RULE1.getType().name()))
-                .andExpect(jsonPath("$.time").value(RULE1.getTime()))
-                .andExpect(jsonPath("$.message").value(RULE1.getMessage()))
+                .andExpect(jsonPath("$.enabled").value(rule.getEnabled()))
+                .andExpect(jsonPath("$.type").value(rule.getType().name()))
+                .andExpect(jsonPath("$.time").value(rule.getTime()))
+                .andExpect(jsonPath("$.message").value(rule.getMessage()))
                 .andExpect(jsonPath("$.days").isEmpty())
                 .andExpect(jsonPath("$.notifications").isEmpty())
-                .andExpect(jsonPath("$.geofence.id").value(RULE1.getGeofence().getId().intValue()));
+                .andExpect(jsonPath("$.geofence.id").value(rule.getGeofence().getId().intValue()));
         Rule ruleNew = ruleRepository.findOne(rule.getId());
         assertEquals(expectedValue, ruleNew.getEnabled());
     }
@@ -147,13 +147,13 @@ public class RuleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(rule.getId().intValue()))
-                .andExpect(jsonPath("$.enabled").value(RULE1.getEnabled()))
-                .andExpect(jsonPath("$.type").value(RULE1.getType().name()))
-                .andExpect(jsonPath("$.time").value(RULE1.getTime()))
-                .andExpect(jsonPath("$.message").value(RULE1.getMessage()))
+                .andExpect(jsonPath("$.enabled").value(rule.getEnabled()))
+                .andExpect(jsonPath("$.type").value(rule.getType().name()))
+                .andExpect(jsonPath("$.time").value(rule.getTime()))
+                .andExpect(jsonPath("$.message").value(rule.getMessage()))
                 .andExpect(jsonPath("$.days").isEmpty())
                 .andExpect(jsonPath("$.notifications").isEmpty())
-                .andExpect(jsonPath("$.geofence.id").value(RULE1.getGeofence().getId().intValue()));
+                .andExpect(jsonPath("$.geofence.id").value(rule.getGeofence().getId().intValue()));
     }
 
     @Test
@@ -164,8 +164,8 @@ public class RuleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(rule.getId().intValue()))
-                .andExpect(jsonPath("$.enabled").value(RULE1.getEnabled()))
-                .andExpect(jsonPath("$.type").value(RULE1.getType().name()))
-                .andExpect(jsonPath("$.time").value(RULE1.getTime()));
+                .andExpect(jsonPath("$.enabled").value(rule.getEnabled()))
+                .andExpect(jsonPath("$.type").value(rule.getType().name()))
+                .andExpect(jsonPath("$.time").value(rule.getTime()));
     }
 }

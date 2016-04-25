@@ -63,8 +63,8 @@ public class RuleController {
     /**
      * This method modifies the data of a previously created rule.
      *
-     * @param id       unique identifier representing a specific rule
-     * @param rule data of the rule
+     * @param id    unique identifier representing a specific rule
+     * @param rule  data of the rule
      * @return the rule modified
      */
     @RequestMapping(path = "/api/rules/{id}", method = RequestMethod.PUT)
@@ -72,7 +72,7 @@ public class RuleController {
             @ApiResponse(code = 200, message = "Rule modified", response = Rule.class),
             @ApiResponse(code = 409, message = "Rule state doesn't permit request", response = RuleResourceConflictException.class),
             @ApiResponse(code = 404, message = "Rule not found", response = RuleNotFoundException.class)})
-    @JsonView(View.GeofenceCompleteView.class)
+    @JsonView(View.RuleCompleteView.class)
     public Rule modifyRule(@PathVariable("id") Long id, @RequestBody Rule rule) {
         LOGGER.info("Requested /api/rules/{id} PUT method");
         if (!ruleRepository.exists(id)) {
@@ -96,7 +96,7 @@ public class RuleController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Rule deleted", response = Rule.class),
             @ApiResponse(code = 404, message = "Rule not found", response = RuleNotFoundException.class)})
-    public Geofence deleteRule(@PathVariable("id") Long id) {
+    public Rule deleteRule(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/rules/{id} DELETE method");
         if (ruleRepository.exists(id)) {
             ruleRepository.delete(id);
