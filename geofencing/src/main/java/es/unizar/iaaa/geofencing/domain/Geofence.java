@@ -45,7 +45,7 @@ public class Geofence {
     @Id
     @GeneratedValue
     @Column(name = "ID", unique = true, nullable = false)
-    @JsonView(View.GeofenceBaseView.class)
+    @JsonView({View.GeofenceBaseView.class, View.RuleCompleteView.class})
     public Long getId() {
         return id;
     }
