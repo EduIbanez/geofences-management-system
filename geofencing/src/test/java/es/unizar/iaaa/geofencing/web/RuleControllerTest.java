@@ -44,12 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringApplicationConfiguration(classes = Application.class)
 public class RuleControllerTest {
 
-    private static final User USER1 = new User(null, "example.gmail.com", "password", "First",
-            "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user", new HashSet<>());
-    private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
-            new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());
-    private static final Rule RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
-            new HashSet<>(), GEOFENCE1);
     @Autowired
     private WebApplicationContext wac;
     @Autowired
@@ -62,12 +56,26 @@ public class RuleControllerTest {
     private ObjectMapper objectMapper;
     private MockMvc mockMvc;
 
+    private User USER1;
+    private Geofence GEOFENCE1;
+    private Rule RULE1;
+
+
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
-        userRepository.save(USER1);
-        geofenceRepository.save(GEOFENCE1);
+        USER1 = new User(null, "example.gmail.com", "password", "First",
+                "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user", new HashSet<>());
+        USER1 = userRepository.save(USER1);
+
+        GEOFENCE1 = new Geofence(null, "Feature", null,
+                new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());
+
+        GEOFENCE1 = geofenceRepository.save(GEOFENCE1);
+
+        RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
+                new HashSet<>(), GEOFENCE1);
     }
 
     @After
