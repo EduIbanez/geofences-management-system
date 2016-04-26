@@ -3,7 +3,15 @@ package es.unizar.iaaa.geofencing.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-
+import es.unizar.iaaa.geofencing.Application;
+import es.unizar.iaaa.geofencing.domain.Geofence;
+import es.unizar.iaaa.geofencing.domain.Notification;
+import es.unizar.iaaa.geofencing.domain.Rule;
+import es.unizar.iaaa.geofencing.domain.User;
+import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
+import es.unizar.iaaa.geofencing.repository.NotificationRepository;
+import es.unizar.iaaa.geofencing.repository.RuleRepository;
+import es.unizar.iaaa.geofencing.repository.UserRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,34 +26,26 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.sql.Date;
 import java.util.HashSet;
-
-import es.unizar.iaaa.geofencing.Application;
-import es.unizar.iaaa.geofencing.domain.Geofence;
-import es.unizar.iaaa.geofencing.domain.Rule;
-import es.unizar.iaaa.geofencing.domain.User;
-import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
-import es.unizar.iaaa.geofencing.repository.RuleRepository;
-import es.unizar.iaaa.geofencing.repository.UserRepository;
 
 import static es.unizar.iaaa.geofencing.domain.RuleType.INSIDE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @SpringApplicationConfiguration(classes = Application.class)
-public class RuleControllerTest {
+public class NotificationControllerTest {
 
     @Autowired
     private WebApplicationContext wac;
+    @Autowired
+    private NotificationRepository notificationRepository;
     @Autowired
     private RuleRepository ruleRepository;
     @Autowired
@@ -59,6 +59,7 @@ public class RuleControllerTest {
     private User USER1;
     private Geofence GEOFENCE1;
     private Rule RULE1;
+    private Notification NOTIFICATION1;
 
 
     @Before
@@ -76,96 +77,91 @@ public class RuleControllerTest {
 
         RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
                 new HashSet<>(), GEOFENCE1);
+
+        RULE1 = ruleRepository.save(RULE1);
+
+        NOTIFICATION1 = new Notification(null, RULE1, USER1, "No leído", Date.valueOf("2016-01-19"));
     }
 
     @After
     public void cleanup() {
+        notificationRepository.deleteAll();
         ruleRepository.deleteAll();
         geofenceRepository.deleteAll();
         userRepository.deleteAll();
     }
 
     @Test
-    public void createRule() throws Exception {
-        this.mockMvc.perform(post("/api/rules")
+    public void createNotification() throws Exception {
+        this.mockMvc.perform(post("/api/notifications")
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
-                .content(objectMapper.writeValueAsString(RULE1))
+                .content(objectMapper.writeValueAsString(NOTIFICATION1))
                 .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.enabled").value(RULE1.getEnabled()))
-                .andExpect(jsonPath("$.type").value(RULE1.getType().name()))
-                .andExpect(jsonPath("$.time").value(RULE1.getTime()))
-                .andExpect(jsonPath("$.message").value(RULE1.getMessage()))
-                .andExpect(jsonPath("$.days").isEmpty())
-                .andExpect(jsonPath("$.notifications").isEmpty())
-                .andExpect(jsonPath("$.geofence.id").value(RULE1.getGeofence().getId().intValue()));
-        assertEquals(1, ruleRepository.count());
+                .andExpect(jsonPath("$.rule.id").value(NOTIFICATION1.getRule().getId().intValue()))
+                .andExpect(jsonPath("$.user.id").value(NOTIFICATION1.getUser().getId().intValue()))
+                .andExpect(jsonPath("$.status").value(NOTIFICATION1.getStatus()))
+                .andExpect(jsonPath("$.date").value(NOTIFICATION1.getDate().toString()));
+        assertEquals(1, notificationRepository.count());
     }
 
     @Test
-    public void modifyRule() throws Exception {
-        Rule rule = ruleRepository.save(RULE1);
-        rule.setEnabled(false);
-        Boolean expectedValue = rule.getEnabled();
-        this.mockMvc.perform(put("/api/rules/"+rule.getId())
+    public void modifyNotification() throws Exception {
+        Notification notification = notificationRepository.save(NOTIFICATION1);
+        notification.setStatus("Leído");
+        String expectedValue = notification.getStatus();
+        this.mockMvc.perform(put("/api/notifications/"+notification.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
-                .content(objectMapper.writeValueAsString(rule))
+                .content(objectMapper.writeValueAsString(notification))
                 .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
-                .andExpect(jsonPath("$.id").value(rule.getId().intValue()))
-                .andExpect(jsonPath("$.enabled").value(rule.getEnabled()))
-                .andExpect(jsonPath("$.type").value(rule.getType().name()))
-                .andExpect(jsonPath("$.time").value(rule.getTime()))
-                .andExpect(jsonPath("$.message").value(rule.getMessage()))
-                .andExpect(jsonPath("$.days").isEmpty())
-                .andExpect(jsonPath("$.notifications").isEmpty())
-                .andExpect(jsonPath("$.geofence.id").value(rule.getGeofence().getId().intValue()));
-        Rule ruleNew = ruleRepository.findOne(rule.getId());
-        assertEquals(expectedValue, ruleNew.getEnabled());
+                .andExpect(jsonPath("$.id").value(notification.getId().intValue()))
+                .andExpect(jsonPath("$.rule.id").value(notification.getRule().getId().intValue()))
+                .andExpect(jsonPath("$.user.id").value(notification.getUser().getId().intValue()))
+                .andExpect(jsonPath("$.status").value(notification.getStatus()))
+                .andExpect(jsonPath("$.date").value(notification.getDate().toString()));
+        Notification notificationNew = notificationRepository.findOne(notification.getId());
+        assertEquals(expectedValue, notificationNew.getStatus());
     }
 
     @Test
-    public void deleteRule() throws Exception {
-        Rule rule = ruleRepository.save(RULE1);
-        this.mockMvc.perform(delete("/api/rules/"+rule.getId())
+    public void deleteNotification() throws Exception {
+        Notification notification = notificationRepository.save(NOTIFICATION1);
+        this.mockMvc.perform(delete("/api/notifications/"+notification.getId())
                 .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
                 .andExpect(status().isOk());
-        assertNull(userRepository.findOne(rule.getId()));
+        assertNull(notificationRepository.findOne(notification.getId()));
     }
 
     @Test
-    public void getRuleAuthenticated() throws Exception {
-        Rule rule = ruleRepository.save(RULE1);
-        this.mockMvc.perform(get("/api/rules/"+rule.getId())
+    public void getNotificationAuthenticated() throws Exception {
+        Notification notification = notificationRepository.save(NOTIFICATION1);
+        this.mockMvc.perform(get("/api/notifications/"+notification.getId())
                 .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
-                .andExpect(jsonPath("$.id").value(rule.getId().intValue()))
-                .andExpect(jsonPath("$.enabled").value(rule.getEnabled()))
-                .andExpect(jsonPath("$.type").value(rule.getType().name()))
-                .andExpect(jsonPath("$.time").value(rule.getTime()))
-                .andExpect(jsonPath("$.message").value(rule.getMessage()))
-                .andExpect(jsonPath("$.days").isEmpty())
-                .andExpect(jsonPath("$.notifications").isEmpty())
-                .andExpect(jsonPath("$.geofence.id").value(rule.getGeofence().getId().intValue()));
+                .andExpect(jsonPath("$.id").value(notification.getId().intValue()))
+                .andExpect(jsonPath("$.rule.id").value(notification.getRule().getId().intValue()))
+                .andExpect(jsonPath("$.user.id").value(notification.getUser().getId().intValue()))
+                .andExpect(jsonPath("$.status").value(notification.getStatus()))
+                .andExpect(jsonPath("$.date").value(notification.getDate().toString()));
     }
 
     @Test
-    public void getRuleNotAuthenticated() throws Exception {
-        Rule rule = ruleRepository.save(RULE1);
-        this.mockMvc.perform(get("/api/rules/"+rule.getId()))
+    public void getNotificationNotAuthenticated() throws Exception {
+        Notification notification = notificationRepository.save(NOTIFICATION1);
+        this.mockMvc.perform(get("/api/notifications/"+notification.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
-                .andExpect(jsonPath("$.id").value(rule.getId().intValue()))
-                .andExpect(jsonPath("$.enabled").value(rule.getEnabled()))
-                .andExpect(jsonPath("$.type").value(rule.getType().name()))
-                .andExpect(jsonPath("$.time").value(rule.getTime()));
+                .andExpect(jsonPath("$.id").value(notification.getId().intValue()))
+                .andExpect(jsonPath("$.rule.id").value(notification.getRule().getId().intValue()))
+                .andExpect(jsonPath("$.status").value(notification.getStatus()));
     }
 }

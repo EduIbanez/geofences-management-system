@@ -56,7 +56,7 @@ public class User {
     @Id
     @GeneratedValue
     @Column(name = "ID", unique = true, nullable = false)
-    @JsonView({View.GeofenceCompleteView.class, View.UserBaseView.class})
+    @JsonView({View.NotificationCompleteView.class, View.GeofenceCompleteView.class, View.UserBaseView.class})
     public Long getId() {
         return id;
     }

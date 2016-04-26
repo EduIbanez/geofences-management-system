@@ -50,7 +50,7 @@ public class Rule {
     @Id
     @GeneratedValue
     @Column(name = "ID", unique = true, nullable = false)
-    @JsonView(View.RuleBaseView.class)
+    @JsonView({View.NotificationBaseView.class, View.RuleBaseView.class})
     public Long getId() {
         return id;
     }
