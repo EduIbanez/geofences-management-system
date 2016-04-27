@@ -10,6 +10,7 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,7 +79,10 @@ public class UserController {
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
     public User modifyUser(@PathVariable("id") Long id, @RequestBody User user) {
         LOGGER.info("Requested /api/users/{id} PUT method");
-        if (userRepository.exists(id)) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        if (userRepository.existsByUsername(id, email)) {
             String hashedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(hashedPassword);
             User userModified = userRepository.save(user);
@@ -104,7 +108,10 @@ public class UserController {
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
     public User deleteUser(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/users/{id} DELETE method");
-        if (userRepository.exists(id)) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        if (userRepository.existsByUsername(id, email)) {
             userRepository.delete(id);
             return null;
         } else {
