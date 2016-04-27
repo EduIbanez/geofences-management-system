@@ -10,6 +10,8 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     /**
@@ -49,6 +54,8 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody final User user) {
         LOGGER.info("Requested /api/users POST method");
         user.setId(null);
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
         User userCreated = userRepository.save(user);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder
@@ -72,6 +79,8 @@ public class UserController {
     public User modifyUser(@PathVariable("id") Long id, @RequestBody User user) {
         LOGGER.info("Requested /api/users/{id} PUT method");
         if (userRepository.exists(id)) {
+            String hashedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(hashedPassword);
             User userModified = userRepository.save(user);
             if (user.equals(userModified)) {
                 return userModified;

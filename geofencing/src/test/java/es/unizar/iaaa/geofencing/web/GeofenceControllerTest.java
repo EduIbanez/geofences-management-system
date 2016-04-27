@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -58,9 +59,14 @@ public class GeofenceControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private MockMvc mockMvc;
 
-    private static final User USER1 = new User(null, "example.gmail.com", "password", "First",
+    private static final String PASSWORD = "password";
+
+    private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First",
             "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user", new HashSet<>());
 
     private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
@@ -74,7 +80,11 @@ public class GeofenceControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
+        String hashedPassword = passwordEncoder.encode(PASSWORD);
+        USER1.setPassword(hashedPassword);
         User currentUser = userRepository.save(USER1);
+        USER1.setPassword(PASSWORD);
+        currentUser.setPassword(PASSWORD);
         Map<String, String> properties = new HashMap<>();
         properties.put("name", "Prueba");
         GEOFENCE1.setProperties(properties);

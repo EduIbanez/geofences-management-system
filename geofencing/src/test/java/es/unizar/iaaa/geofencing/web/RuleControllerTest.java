@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -54,8 +55,11 @@ public class RuleControllerTest {
     private UserRepository userRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private MockMvc mockMvc;
 
+    private final String PASSWORD = "password";
     private User USER1;
     private Geofence GEOFENCE1;
     private Rule RULE1;
@@ -65,9 +69,13 @@ public class RuleControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
-        USER1 = new User(null, "example.gmail.com", "password", "First",
+        USER1 = new User(null, "example.gmail.com", PASSWORD, "First",
                 "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user", new HashSet<>());
-        USER1 = userRepository.save(USER1);
+
+        String hashedPassword = passwordEncoder.encode(PASSWORD);
+        USER1.setPassword(hashedPassword);
+        userRepository.save(USER1);
+        USER1.setPassword(PASSWORD);
 
         GEOFENCE1 = new Geofence(null, "Feature", null,
                 new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());

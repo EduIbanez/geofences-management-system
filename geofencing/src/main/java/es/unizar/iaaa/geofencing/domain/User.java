@@ -75,7 +75,7 @@ public class User {
         this.email = email;
     }
 
-    @Column(name = "PASSWORD", nullable = false, length = 30)
+    @Column(name = "PASSWORD", nullable = false, length = 60)
     @JsonView(View.UserCompleteView.class)
     public String getPassword() {
         return password;
