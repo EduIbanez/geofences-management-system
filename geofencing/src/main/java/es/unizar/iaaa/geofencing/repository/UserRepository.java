@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface UserRepository extends CrudRepository<User, Long> {
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN 'true' ELSE 'false' END FROM User u WHERE u.id = ?1 AND u.email = ?2")
-    public Boolean existsByUsername(Long id,String username);
+    Boolean existsByUsername(Long id,String username);
 }
