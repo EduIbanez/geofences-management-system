@@ -2,6 +2,8 @@ package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +26,7 @@ import es.unizar.iaaa.geofencing.repository.UserRepository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,8 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -51,6 +52,7 @@ public class UserControllerTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
 
     private MockMvc mockMvc;
 
@@ -78,7 +80,7 @@ public class UserControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.email").value(USER1.getEmail()))
-                .andExpect(jsonPath("$.password").value(hashedPassword))
+                .andExpect(jsonPath("$.password").value(password(PASSWORD)))
                 .andExpect(jsonPath("$.firstName").value(USER1.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(USER1.getLastName()))
                 .andExpect(jsonPath("$.birthday").value(USER1.getBirthday()))
@@ -107,7 +109,7 @@ public class UserControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
                 .andExpect(jsonPath("$.email").value(usuario.getEmail()))
-                .andExpect(jsonPath("$.password").value(hashedPassword))
+                .andExpect(jsonPath("$.password").value(password(PASSWORD)))
                 .andExpect(jsonPath("$.firstName").value(usuario.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(usuario.getLastName()))
                 .andExpect(jsonPath("$.birthday").value(usuario.getBirthday()))
@@ -173,5 +175,29 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email").value(usuario.getEmail()))
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()));
+    }
+
+    public PasswordMatcher password(String password) {
+        return new PasswordMatcher(password);
+    }
+
+    class PasswordMatcher extends BaseMatcher<String> {
+
+        private String password;
+
+        public PasswordMatcher(String password) {
+            this.password = password;
+        }
+
+        @Override
+        public boolean matches(Object item) {
+            return passwordEncoder.matches(password, item.toString());
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("encoded value of ");
+            description.appendValue(password);
+        }
     }
 }
