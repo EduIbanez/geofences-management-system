@@ -15,6 +15,7 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -118,7 +119,10 @@ public class GeofenceController {
     @JsonView(View.GeofenceCompleteView.class)
     public Geofence modifyGeofence(@PathVariable("id") Long id, @RequestBody Geofence geofence) {
         LOGGER.info("Requested /api/geofences/{id} PUT method");
-        if (!geofenceRepository.exists(id)) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        if (!geofenceRepository.existsByUsername(id, email)) {
             throw new GeofenceNotFoundException();
         }
         geofence.setId(id);
@@ -141,7 +145,10 @@ public class GeofenceController {
             @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
     public Geofence deleteGeofence(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/geofences/{id} DELETE method");
-        if (geofenceRepository.exists(id)) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        if (geofenceRepository.existsByUsername(id, email)) {
             geofenceRepository.delete(id);
             return null;
         } else {

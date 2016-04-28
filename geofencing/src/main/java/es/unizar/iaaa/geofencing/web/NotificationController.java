@@ -17,6 +17,7 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -67,7 +68,10 @@ public class NotificationController {
     @JsonView(View.NotificationCompleteView.class)
     public Notification modifyNotification(@PathVariable("id") Long id, @RequestBody Notification notification) {
         LOGGER.info("Requested /api/notifications/{id} PUT method");
-        if (!notificationRepository.exists(id)) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        if (!notificationRepository.existsByUsername(id, email)) {
             throw new NotificationNotFoundException();
         }
         notification.setId(id);
@@ -90,7 +94,10 @@ public class NotificationController {
             @ApiResponse(code = 404, message = "Notification not found", response = NotificationNotFoundException.class)})
     public Notification deleteNotification(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/notifications/{id} DELETE method");
-        if (notificationRepository.exists(id)) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        if (notificationRepository.existsByUsername(id, email)) {
             notificationRepository.delete(id);
             return null;
         } else {

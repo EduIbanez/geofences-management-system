@@ -12,6 +12,7 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -75,7 +76,10 @@ public class RuleController {
     @JsonView(View.RuleCompleteView.class)
     public Rule modifyRule(@PathVariable("id") Long id, @RequestBody Rule rule) {
         LOGGER.info("Requested /api/rules/{id} PUT method");
-        if (!ruleRepository.exists(id)) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        if (!ruleRepository.existsByUsername(id, email)) {
             throw new RuleNotFoundException();
         }
         rule.setId(id);
@@ -98,7 +102,10 @@ public class RuleController {
             @ApiResponse(code = 404, message = "Rule not found", response = RuleNotFoundException.class)})
     public Rule deleteRule(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/rules/{id} DELETE method");
-        if (ruleRepository.exists(id)) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        if (ruleRepository.existsByUsername(id, email)) {
             ruleRepository.delete(id);
             return null;
         } else {
