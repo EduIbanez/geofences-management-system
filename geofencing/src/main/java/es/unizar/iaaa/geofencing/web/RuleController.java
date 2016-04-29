@@ -23,7 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-import es.unizar.iaaa.geofencing.domain.Geofence;
 import es.unizar.iaaa.geofencing.domain.Rule;
 import es.unizar.iaaa.geofencing.repository.RuleRepository;
 import es.unizar.iaaa.geofencing.view.View;

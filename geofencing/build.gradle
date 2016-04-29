@@ -44,11 +44,6 @@ dependencies {
     compile('org.hibernate:hibernate-spatial:4.3')
     compile('com.bedatadriven:jackson-datatype-jts:2.2')
     compile('commons-codec:commons-codec:1.5')
-    compile('com.nimbusds:nimbus-jose-jwt:4.13.1')
-    compile('joda-time:joda-time:2.9.2')
-    compile('org.powermock:powermock-core:1.6.4')
-    compile('org.powermock:powermock-module-junit4:1.6.4')
-    compile('org.powermock:powermock-api-mockito:1.6.4')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
