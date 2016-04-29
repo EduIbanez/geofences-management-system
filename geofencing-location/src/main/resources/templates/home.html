@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+        body {
+        padding-top: 60px;
+        padding-bottom: 100px;
+        }
+        #map-canvas {
+        height: 500px;
+        }
+    </style>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/jquery.loadmask.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse"
+                    data-target=".nav-collapse">
+                <span class="icon-bar"></span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span>
+            </button>
+            <a class="brand" href="#">MessageOnMap</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li class="active"><a href="#">Home</a></li>
+                </ul>
+            </div>
+
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div id="main" class="container">
+    <div class="row">
+        <div class="span12">
+            <div class="hero-unit">
+                <h2>MessageOnMap</h2>
+                <small>Realtime messaging on the map</small>
+                <p>The App allows you to post messages in realtime messaging
+                    on the map. It is an awesome way to discover people near you.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span4">
+            <form id="messageForm" class="form" method="POST">
+                <div class="control-group">
+                    <div class="controls">
+                                <textarea id="message" name="message" class="input-xlarge"
+                                          placeholder="Say Something !!" required rows="5"></textarea>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-success">Render Me on Map</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <div id="map-canvas" class="span8"></div>
+    </div>
+
+    <footer>
+        <p>&copy; Shekhar Gulati 2013</p>
+    </footer>
+
+
+</div>
+
+<script src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery.loadmask.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+
+<script type="text/javascript">
+        if (!navigator.geolocation) {
+            alert('Your browser does not support geolocation. Please download latest browser version.');
+            $("button").attr("disabled", "disabled");
+        }
+    </script>
+
+
+<script src="js/app.js"></script>
+</body>
+</html>
