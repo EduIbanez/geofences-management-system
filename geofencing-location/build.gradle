@@ -33,7 +33,7 @@ compileJava {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
-    
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 }
 
 task wrapper(type: Wrapper) {
