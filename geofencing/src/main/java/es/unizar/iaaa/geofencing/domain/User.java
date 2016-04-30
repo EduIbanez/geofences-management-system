@@ -31,6 +31,7 @@ public class User {
     private Boolean enabled;
     private String role;
     private Set<Notification> notifications;
+    private Set<Position> positions;
 
     public User(){}
 
@@ -39,7 +40,8 @@ public class User {
                 @JsonProperty("last_name") String last_name, @JsonProperty("birthday") String birthday,
                 @JsonProperty("imei") String imei, @JsonProperty("geofences") Set<Geofence> geofences,
                 @JsonProperty("enabled") Boolean enabled, @JsonProperty("role") String role,
-                @JsonProperty("notifications") Set<Notification> notifications) {
+                @JsonProperty("notifications") Set<Notification> notifications,
+                @JsonProperty("locations") Set<Position> positions) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -51,6 +53,7 @@ public class User {
         this.enabled = enabled;
         this.role = role;
         this.notifications = notifications;
+        this.positions = positions;
     }
 
     @Id
@@ -165,10 +168,20 @@ public class User {
         this.notifications = notifications;
     }
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonView(View.UserCompleteView.class)
+    public Set<Position> getPositions() {
+        return positions;
+    }
+
+    public void setPositions(Set<Position> positions) {
+        this.positions = positions;
+    }
+
     public String toString() {
         return "User(id: "+id+" email: "+email+" password: "+password+" first_name: "+first_name+
                 " last_name: "+last_name+" birthday: "+birthday+" imei: "+imei+" geofence: "+geofences+
-                " enabled: "+enabled+" role: "+role+" notifications: "+notifications+")";
+                " enabled: "+enabled+" role: "+role+" notifications: "+notifications+" positions:"+positions+")";
     }
 
     @Override
@@ -186,6 +199,7 @@ public class User {
                 Objects.equals(geofences, user.geofences) &&
                 Objects.equals(enabled, user.enabled) &&
                 Objects.equals(role, user.role) &&
-                Objects.equals(notifications, user.notifications);
+                Objects.equals(notifications, user.notifications) &&
+                Objects.equals(positions, user.positions);
     }
 }

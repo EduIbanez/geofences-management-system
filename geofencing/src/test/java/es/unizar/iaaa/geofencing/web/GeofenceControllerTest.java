@@ -66,8 +66,8 @@ public class GeofenceControllerTest {
 
     private static final String PASSWORD = "password";
 
-    private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First",
-            "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user", new HashSet<>());
+    private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", "07/08/1992",
+            "356938035643809", new HashSet<>(), true, "user", new HashSet<>(), new HashSet<>());
 
     private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
             new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());

@@ -14,48 +14,48 @@ var mapOptions = {
 var map = new google.maps.Map(document.getElementById('map-canvas'),
 				mapOptions);
 
-$("#messageForm").submit(function(event){
+$("#messageForm").submit(function(event) {
 	event.preventDefault();
 	$("#messageForm").mask("Sending Message ...");
 	findUserCurrentLocation(saveMessage);
 });
 
-function findUserCurrentLocation(callback){
+function findUserCurrentLocation(callback) {
 	
 	navigator.geolocation.getCurrentPosition(function(position){
-					var longitude = position.coords.longitude;
-			    	var latitude = position.coords.latitude;
-			    	console.log('longitude .. '+longitude);
-			    	console.log('latitude .. '+latitude);
-			    	
-			    	var location = new Array(longitude , latitude);
-			    	callback(location);
-				}, function(e){
-					$("#messageForm").unmask();
-					switch (e.code) {
-						case e.PERMISSION_DENIED:
-							alert('You have denied access to your position. You will ' +
-									'not get the most out of the application now.'); 
-							break;
-						case e.POSITION_UNAVAILABLE:
-							alert('There was a problem getting your position.'); 
-							break;
-						case e.TIMEOUT:
-									alert('The application has timed out attempting to get ' +
-											'your location.'); 
-							break;
-						default:
-							alert('There was a horrible Geolocation error that has ' +
-									'not been defined.');
-					}
-				},
-				{ timeout: 45000 }
-				
-				);
+        var longitude = position.coords.longitude;
+        var latitude = position.coords.latitude;
+        console.log('longitude .. '+longitude);
+        console.log('latitude .. '+latitude);
+
+        var location = new Array(longitude , latitude);
+        callback(location);
+    }, function(e){
+        $("#messageForm").unmask();
+        switch (e.code) {
+            case e.PERMISSION_DENIED:
+                alert('You have denied access to your position. You will ' +
+                        'not get the most out of the application now.');
+                break;
+            case e.POSITION_UNAVAILABLE:
+                alert('There was a problem getting your position.');
+                break;
+            case e.TIMEOUT:
+                alert('The application has timed out attempting to get ' +
+                        'your location.');
+                break;
+            default:
+                alert('There was a horrible Geolocation error that has ' +
+                        'not been defined.');
+        }
+    },
+    { timeout: 45000 }
+
+    );
 
 }
 
-function saveMessage(location){
+function saveMessage(location) {
 	
 	var message = this.$('textarea#message').val();
 	
@@ -79,7 +79,7 @@ function saveMessage(location){
 	
 }
 
-function renderMessageOnMap(data){
+function renderMessageOnMap(data) {
 	var latLng = new google.maps.LatLng(data.location[1], data.location[0]);
 	map.setCenter(latLng);
 	var marker = new google.maps.Marker({
@@ -100,27 +100,27 @@ function renderMessageOnMap(data){
 	map.setZoom(4);
 }
 
-	// Log debug information to the JavaScript console, if possible
-		Pusher.log = function(msg) {
-			if (window.console && window.console.log) {
-				window.console.log(msg);
-			}
-			$('#debug').prepend("  " + msg + "\n");
-		};
+// Log debug information to the JavaScript console, if possible
+Pusher.log = function(msg) {
+    if (window.console && window.console.log) {
+        window.console.log(msg);
+    }
+    $('#debug').prepend("  " + msg + "\n");
+};
 
-		// Create new Pusher instance and connect
-		var pusher = new Pusher("4bdf7582340af0cfeca8");
+// Create new Pusher instance and connect
+var pusher = new Pusher("4bdf7582340af0cfeca8");
 
-		var counterChannel = pusher.subscribe("counter-channel");
-		counterChannel.bind('count-event' , function(counter){
-			$("#counter").html("<h2>Total Messages : "+counter.count+"</h2>");
-		
-		});
-	
-		// Subscribe to the channel that the event will be published on
-		var channel = pusher.subscribe('messages');
+var counterChannel = pusher.subscribe("counter-channel");
+counterChannel.bind('count-event' , function(counter) {
+    $("#counter").html("<h2>Total Messages : "+counter.count+"</h2>");
 
-		// Bind to the event on the channel and handle the event when triggered
-		channel.bind('new_msg', function(data){
-			renderMessageOnMap(data);
-		});
+});
+
+// Subscribe to the channel that the event will be published on
+var channel = pusher.subscribe('messages');
+
+// Bind to the event on the channel and handle the event when triggered
+channel.bind('new_msg', function(data) {
+    renderMessageOnMap(data);
+});

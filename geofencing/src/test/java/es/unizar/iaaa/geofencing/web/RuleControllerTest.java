@@ -69,8 +69,8 @@ public class RuleControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
-        USER1 = new User(null, "example.gmail.com", PASSWORD, "First",
-                "Last", "07/08/1992", "356938035643809", new HashSet<>(), true, "user", new HashSet<>());
+        USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", "07/08/1992",
+                "356938035643809", new HashSet<>(), true, "user", new HashSet<>(), new HashSet<>());
 
         String hashedPassword = passwordEncoder.encode(PASSWORD);
         USER1.setPassword(hashedPassword);
