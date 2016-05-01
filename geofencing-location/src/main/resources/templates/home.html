@@ -8,12 +8,11 @@
     <meta charset="utf-8"/>
     <style>
         body {
-            padding-top: 60px;
-            padding-bottom: 60px;
+        padding-top: 60px;
+        padding-bottom: 60px;
         }
-
         #map-canvas {
-            height: 500px;
+        height: 500px;
         }
     </style>
     <link th:href="@{/css/bootstrap.css}" href="../static/css/bootstrap.css" rel="stylesheet"/>
@@ -21,7 +20,7 @@
           rel="stylesheet" type="text/css"/>
 
 </head>
-<body>
+<body onload="disconnect()">
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -57,6 +56,8 @@
 
     <div class="row">
         <div class="col-lg-4">
+            <button id="connect" onclick="connect();">Connect</button>
+            <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
             <form id="messageForm" class="form" method="POST">
                 <div class="form-group">
                     <textarea id="message" name="message" class="input-xlarge"
@@ -76,8 +77,9 @@
 
 <script th:src="@{/js/jquery.js}" src="../static/js/jquery.js"></script>
 <script th:src="@{/js/jquery.loadmask.min.js}" src="../static/js/jquery.loadmask.min.js"></script>
+<script th:src="@{/js/sockjs.js}" src="../static/js/sockjs.js"></script>
+<script th:src="@{/js/stomp.js}" src="../static/js/stomp.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
-<script th:src="@{/js/pusher.min.js}" src="../static/js/pusher.min.js"></script>
 
 <script type="text/javascript">
     if (!navigator.geolocation) {

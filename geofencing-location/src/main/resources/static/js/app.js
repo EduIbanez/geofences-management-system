@@ -17,11 +17,11 @@ var map = new google.maps.Map(document.getElementById('map-canvas'),
 $("#messageForm").submit(function(event) {
 	event.preventDefault();
 	$("#messageForm").mask("Sending Message ...");
-	findUserCurrentLocation(saveMessage);
+	findUserCurrentLocation(sendLocation);
 });
 
 function findUserCurrentLocation(callback) {
-	
+
 	navigator.geolocation.getCurrentPosition(function(position){
         var longitude = position.coords.longitude;
         var latitude = position.coords.latitude;
@@ -55,30 +55,6 @@ function findUserCurrentLocation(callback) {
 
 }
 
-function saveMessage(location) {
-	
-	var message = this.$('textarea#message').val();
-	
-	var url = "api/messages";
-	var data = {message : message , location : location};
-	$.ajax(url , {
-		data : JSON.stringify(data),
-		contentType : 'application/json',
-		type : 'POST',
-		success :function(){
-			alert("Message Sent Successfully");
-			renderMessageOnMap(data);
-			$('#messageForm')[0].reset();
-		},
-		error :function(){
-			alert("Message Delivery Failed");
-		}
-	});
-	
-	$("#messageForm").unmask();
-	
-}
-
 function renderMessageOnMap(data) {
 	var latLng = new google.maps.LatLng(data.location[1], data.location[0]);
 	map.setCenter(latLng);
@@ -87,40 +63,56 @@ function renderMessageOnMap(data) {
 		animation : google.maps.Animation.DROP,
 		html : "<p>" + data.message + "</p>"
 	});
-	
+
 	var infoWindow = new google.maps.InfoWindow();
 	google.maps.event.addListener(marker, 'click', function() {
 		map.setCenter(marker.getPosition());
 		infoWindow.setContent(this.html);
 		infoWindow.open(map, this);
 	});
-	
+
 	marker.setMap(map);
 	map.setCenter(latLng);
 	map.setZoom(4);
 }
 
-// Log debug information to the JavaScript console, if possible
-Pusher.log = function(msg) {
-    if (window.console && window.console.log) {
-        window.console.log(msg);
+var stompClient = null;
+
+function setConnected(connected) {
+    document.getElementById('connect').disabled = connected;
+    document.getElementById('disconnect').disabled = !connected;
+}
+
+function connect() {
+    var socket = new SockJS('http://localhost:8080/locations');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function(frame) {
+        setConnected(true);
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/positions', function(positions) {
+            showPosition(JSON.parse(positions.body).content);
+        });
+    });
+}
+
+function disconnect() {
+    if (stompClient != null) {
+        stompClient.disconnect();
     }
-    $('#debug').prepend("  " + msg + "\n");
-};
+    setConnected(false);
+    console.log("Disconnected");
+}
 
-// Create new Pusher instance and connect
-var pusher = new Pusher("4bdf7582340af0cfeca8");
+function sendLocation(location) {
+    stompClient.send("/api/locations", {}, JSON.stringify({ "geometry": {"type": "Point", "coordinates": location } }), function(location) {
+        renderMessageOnMap(location);
+        });
+}
 
-var counterChannel = pusher.subscribe("counter-channel");
-counterChannel.bind('count-event' , function(counter) {
-    $("#counter").html("<h2>Total Messages : "+counter.count+"</h2>");
-
-});
-
-// Subscribe to the channel that the event will be published on
-var channel = pusher.subscribe('messages');
-
-// Bind to the event on the channel and handle the event when triggered
-channel.bind('new_msg', function(data) {
-    renderMessageOnMap(data);
-});
+function showPosition(message) {
+    var response = document.getElementById('response');
+    var p = document.createElement('p');
+    p.style.wordWrap = 'break-word';
+    p.appendChild(document.createTextNode(message));
+    response.appendChild(p);
+}
