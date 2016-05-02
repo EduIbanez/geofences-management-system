@@ -84,7 +84,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('http://localhost:8080/locations');
+    var socket = new SockJS('http://localhost:8080/api/locations');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function(frame) {
         setConnected(true);

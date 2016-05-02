@@ -11,13 +11,11 @@ CREATE ROLE test WITH LOGIN PASSWORD 'test';
 Ahora se crea un fichero `application.properties` con el siguiente texto sustituyendo `${IP}` por la IP donde está la base de datos:
 
 ```
-spring.datasource.url=jdbc:postgresql://${ip}:5432/geofencing
+spring.datasource.driverClassName=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://${IP}:5432/geofencing
 spring.datasource.username=test
 spring.datasource.password=test
 spring.jpa.database-platform=org.hibernate.spatial.dialect.postgis.PostgisDialect
 spring.jpa.hibernate.ddl-auto=create-drop
-logging.level.=ERROR
-
-spring.jpa.database-platform=org.hibernate.spatial.dialect.postgis.PostgisDialect
-spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
 ```
