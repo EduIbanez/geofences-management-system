@@ -1,7 +1,7 @@
 package es.unizar.iaaa.geofencing.repository;
 
 import com.vividsolutions.jts.geom.Geometry;
-import es.unizar.iaaa.geofencing.domain.Geofence;
+import es.unizar.iaaa.geofencing.model.Geofence;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

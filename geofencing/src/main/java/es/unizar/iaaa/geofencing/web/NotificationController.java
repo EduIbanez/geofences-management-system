@@ -1,7 +1,7 @@
 package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import es.unizar.iaaa.geofencing.domain.Notification;
+import es.unizar.iaaa.geofencing.model.Notification;
 import es.unizar.iaaa.geofencing.repository.NotificationRepository;
 import es.unizar.iaaa.geofencing.view.View;
 import io.swagger.annotations.ApiResponse;

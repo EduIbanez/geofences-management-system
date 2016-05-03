@@ -13,4 +13,12 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
                 .simpDestMatchers("/api/locations").permitAll()
                 .simpSubscribeDestMatchers("/topic/positions").permitAll();
     }
+
+    /**
+     * Disables CSRF for websockets
+     */
+    @Override
+    protected boolean sameOriginDisabled() {
+        return true;
+    }
 }

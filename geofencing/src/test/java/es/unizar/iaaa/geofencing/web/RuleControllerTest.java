@@ -22,14 +22,14 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.HashSet;
 
 import es.unizar.iaaa.geofencing.Application;
-import es.unizar.iaaa.geofencing.domain.Geofence;
-import es.unizar.iaaa.geofencing.domain.Rule;
-import es.unizar.iaaa.geofencing.domain.User;
+import es.unizar.iaaa.geofencing.model.Geofence;
+import es.unizar.iaaa.geofencing.model.Rule;
+import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
 import es.unizar.iaaa.geofencing.repository.RuleRepository;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 
-import static es.unizar.iaaa.geofencing.domain.RuleType.INSIDE;
+import static es.unizar.iaaa.geofencing.model.RuleType.INSIDE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
