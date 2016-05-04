@@ -13,4 +13,9 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
                 .simpDestMatchers("/api/locations").permitAll()
                 .simpSubscribeDestMatchers("/topic/positions").permitAll();
     }
+
+    @Override
+    protected boolean sameOriginDisabled() {
+        return true;
+    }
 }

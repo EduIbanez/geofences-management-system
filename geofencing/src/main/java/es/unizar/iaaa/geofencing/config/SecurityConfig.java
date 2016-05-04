@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 import javax.sql.DataSource;
 
@@ -42,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/api/notifications/*").fullyAuthenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/notifications/*").fullyAuthenticated()
                 .antMatchers(HttpMethod.GET, "/api/notifications/*").permitAll()
-                .antMatchers("/api/locations/*").permitAll()
+                .antMatchers("/locations/**").permitAll()
                 .anyRequest().denyAll()
                 .and()
                 .httpBasic()
