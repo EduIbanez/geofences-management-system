@@ -105,7 +105,7 @@ function disconnect() {
 }
 
 function sendLocation(location) {
-    stompClient.send("/api/locations", {}, JSON.stringify({ "geometry": {"type": "Point", "coordinates": location } }));
+    stompClient.send("/api/locations", {'content-type':'application/json'}, JSON.stringify({ type : "Point", coordinates : location}));
 }
 
 function showPosition(message) {
