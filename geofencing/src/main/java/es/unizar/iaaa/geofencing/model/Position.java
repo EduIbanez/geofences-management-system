@@ -1,4 +1,4 @@
-package es.unizar.iaaa.geofencing.domain;
+package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;

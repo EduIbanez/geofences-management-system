@@ -1,4 +1,4 @@
-package es.unizar.iaaa.geofencing.domain;
+package es.unizar.iaaa.geofencing.model;
 
 public enum RuleType {
     ENTERING, LEAVING, INSIDE

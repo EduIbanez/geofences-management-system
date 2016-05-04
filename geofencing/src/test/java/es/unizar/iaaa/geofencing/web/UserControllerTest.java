@@ -21,7 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.HashSet;
 
 import es.unizar.iaaa.geofencing.Application;
-import es.unizar.iaaa.geofencing.domain.User;
+import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 
 import static org.junit.Assert.assertEquals;

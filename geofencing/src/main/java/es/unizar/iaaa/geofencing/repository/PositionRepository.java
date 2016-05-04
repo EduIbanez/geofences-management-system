@@ -1,6 +1,6 @@
 package es.unizar.iaaa.geofencing.repository;
 
-import es.unizar.iaaa.geofencing.domain.Position;
+import es.unizar.iaaa.geofencing.model.Position;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

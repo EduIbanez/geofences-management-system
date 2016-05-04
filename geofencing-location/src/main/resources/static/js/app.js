@@ -84,12 +84,13 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('http://localhost:8080/locations');
+    var socket = new SockJS('http://localhost:8080/api/locations');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function(frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/positions', function(positions) {
+            renderMessageOnMap(JSON.parse(positions.coordinates).content);
             showPosition(JSON.parse(positions.body).content);
         });
     });
@@ -104,9 +105,7 @@ function disconnect() {
 }
 
 function sendLocation(location) {
-    stompClient.send("/api/locations", {}, JSON.stringify({ "geometry": {"type": "Point", "coordinates": location } }), function(location) {
-        renderMessageOnMap(location);
-        });
+    stompClient.send("/api/locations", {}, JSON.stringify({ "geometry": {"type": "Point", "coordinates": location } }));
 }
 
 function showPosition(message) {
