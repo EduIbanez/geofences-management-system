@@ -56,7 +56,7 @@ function findUserCurrentLocation(callback) {
 }
 
 function renderMessageOnMap(data) {
-	var latLng = new google.maps.LatLng(data.location[1], data.location[0]);
+	var latLng = new google.maps.LatLng(data[1], data[0]);
 	map.setCenter(latLng);
 	var marker = new google.maps.Marker({
 		position : latLng,
@@ -90,8 +90,8 @@ function connect() {
         setConnected(true);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/positions', function(positions) {
-            renderMessageOnMap(JSON.parse(positions.coordinates).content);
-            showPosition(JSON.parse(positions.body).content);
+            renderMessageOnMap(JSON.parse(positions.body).coordinates.coordinates);
+            showPosition(positions.body);
         });
     });
 }
