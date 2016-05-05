@@ -20,7 +20,7 @@
           rel="stylesheet" type="text/css"/>
 
 </head>
-<body onload="disconnect()">
+<body onload="starting();" onunload="disconnect();">
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -56,19 +56,7 @@
 
     <div class="row">
         <div class="col-lg-4">
-            <button id="connect" th:onclick="'connect();'">Connect</button>
-            <button id="disconnect" disabled="disabled" th:onclick="'disconnect();'">Disconnect</button>
-            <form id="messageForm" class="form" method="POST">
-                <div class="form-group">
-                    <textarea id="message" name="message" class="input-xlarge"
-                              placeholder="Say Something !!" required="required"
-                              rows="5"></textarea>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-success">Render Me on Map</button>
-                </div>
-            </form>
-            <div id="response"/>
+
         </div>
         <div id="map-canvas" class="col-lg-8"></div>
     </div>

@@ -1,3 +1,32 @@
+var stompClient = null;
+
+function connect() {
+    var socket = new SockJS('http://localhost:8080/api/locations');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function(frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/positions', function(positions) {
+            renderMessageOnMap(JSON.parse(positions.body));
+        });
+    });
+}
+
+function disconnect() {
+    if (stompClient != null) {
+        stompClient.disconnect();
+    }
+    console.log("Disconnected");
+}
+
+function sendLocation(location) {
+    stompClient.send("/api/locations", {'content-type':'application/json'}, JSON.stringify({ type : "Point", coordinates : location}));
+}
+
+function starting() {
+    disconnect();
+    connect();
+}
+
 var mapOptions = {
 			zoom : 2,
 			center : new google.maps.LatLng(40.46366700000001,
@@ -14,12 +43,6 @@ var mapOptions = {
 var map = new google.maps.Map(document.getElementById('map-canvas'),
 				mapOptions);
 
-$("#messageForm").submit(function(event) {
-	event.preventDefault();
-	$("#messageForm").mask("Sending Message ...");
-	findUserCurrentLocation(sendLocation);
-});
-
 function findUserCurrentLocation(callback) {
 
 	navigator.geolocation.getCurrentPosition(function(position){
@@ -31,7 +54,6 @@ function findUserCurrentLocation(callback) {
         var location = new Array(longitude , latitude);
         callback(location);
     }, function(e){
-        $("#messageForm").unmask();
         switch (e.code) {
             case e.PERMISSION_DENIED:
                 alert('You have denied access to your position. You will ' +
@@ -56,7 +78,7 @@ function findUserCurrentLocation(callback) {
 }
 
 function renderMessageOnMap(data) {
-	var latLng = new google.maps.LatLng(data[1], data[0]);
+	var latLng = new google.maps.LatLng(data.coordinates.coordinates[1], data.coordinates.coordinates[0]);
 	map.setCenter(latLng);
 	var marker = new google.maps.Marker({
 		position : latLng,
@@ -76,42 +98,13 @@ function renderMessageOnMap(data) {
 	map.setZoom(4);
 }
 
-var stompClient = null;
+var timer = setTimeout(startingTimer, 5000);
 
-function setConnected(connected) {
-    document.getElementById('connect').disabled = connected;
-    document.getElementById('disconnect').disabled = !connected;
+function startingTimer() {
+    findUserCurrentLocation(sendLocation);
+    timer = setTimeout(startingTimer, 30000);
 }
 
-function connect() {
-    var socket = new SockJS('http://localhost:8080/api/locations');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
-        setConnected(true);
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/positions', function(positions) {
-            renderMessageOnMap(JSON.parse(positions.body).coordinates.coordinates);
-            showPosition(positions.body);
-        });
-    });
-}
-
-function disconnect() {
-    if (stompClient != null) {
-        stompClient.disconnect();
-    }
-    setConnected(false);
-    console.log("Disconnected");
-}
-
-function sendLocation(location) {
-    stompClient.send("/api/locations", {'content-type':'application/json'}, JSON.stringify({ type : "Point", coordinates : location}));
-}
-
-function showPosition(message) {
-    var response = document.getElementById('response');
-    var p = document.createElement('p');
-    p.style.wordWrap = 'break-word';
-    p.appendChild(document.createTextNode(message));
-    response.appendChild(p);
+function abortTimer() {
+    clearTimeout(timer);
 }
