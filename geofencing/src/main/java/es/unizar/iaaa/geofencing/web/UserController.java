@@ -8,19 +8,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
@@ -147,15 +146,27 @@ public class UserController {
     /**
      * This method authenticate user into the system.
      *
-     * @param user email and password of the user
+     * @param email email of the user
+     * @param password password of the user
      * @return the user logged in
      */
-    /*@RequestMapping(path = "/api/users/authenticate", method = RequestMethod.POST)
+    @RequestMapping(path = "/api/users/authenticate", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "User authenticated", response = User.class)})
-    public AuthenticatedUser authenticateUser(@RequestBody final LoginUser user, HttpServletResponse response) throws Exception {
-        return authenticationService.authenticate(user, response);
-    }*/
+            @ApiResponse(code = 200, message = "User authenticated", response = User.class),
+            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
+    public User authenticateUser(@RequestParam(value = "email") String email,
+                                              @RequestParam(value = "password") String password) {
+        User user = userRepository.findByUsernameAndPassword(email, password);
+        if (user != null) {
+            ArrayList<GrantedAuthority> authorities = new ArrayList();
+            authorities.add(new SimpleGrantedAuthority(user.getRole()));
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getEmail(),
+                    user.getPassword(), authorities));
+            return user;
+        } else {
+            throw new UserNotFoundException();
+        }
+    }
 
     /**
      * This method logs user out of the system.
