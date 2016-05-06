@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class GeofenceControllerTest {
 
     private static final String PASSWORD = "password";
 
-    private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", "07/08/1992",
+    private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", Date.valueOf("1992-08-07"),
             "356938035643809", new HashSet<>(), true, "user", new HashSet<>(), new HashSet<>());
 
     private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", null,

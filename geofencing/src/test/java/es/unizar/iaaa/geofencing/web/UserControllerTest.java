@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.sql.Date;
 import java.util.HashSet;
 
 import es.unizar.iaaa.geofencing.Application;
@@ -58,7 +59,7 @@ public class UserControllerTest {
 
     private static final String PASSWORD = "password";
 
-    private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", "07/08/1992",
+    private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", Date.valueOf("1992-08-07"),
             "356938035643809", new HashSet<>(), true, "user", new HashSet<>(), new HashSet<>());
 
 
@@ -83,7 +84,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.password").value(password(PASSWORD)))
                 .andExpect(jsonPath("$.firstName").value(USER1.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(USER1.getLastName()))
-                .andExpect(jsonPath("$.birthday").value(USER1.getBirthday()))
+                .andExpect(jsonPath("$.birthday").value(USER1.getBirthday().toString()))
                 .andExpect(jsonPath("$.imei").value(USER1.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(USER1.getEnabled()))
@@ -100,7 +101,7 @@ public class UserControllerTest {
         User usuario = userRepository.save(USER1);
         USER1.setPassword(PASSWORD);
         usuario.setPassword(PASSWORD);
-        usuario.setBirthday("07/08/1994");
+        usuario.setBirthday(Date.valueOf("1994-08-07"));
         this.mockMvc.perform(put("/api/users/"+usuario.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(usuario))
@@ -113,7 +114,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.password").value(password(PASSWORD)))
                 .andExpect(jsonPath("$.firstName").value(usuario.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(usuario.getLastName()))
-                .andExpect(jsonPath("$.birthday").value(usuario.getBirthday()))
+                .andExpect(jsonPath("$.birthday").value(usuario.getBirthday().toString()))
                 .andExpect(jsonPath("$.imei").value(usuario.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
@@ -154,7 +155,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.password").value(hashedPassword))
                 .andExpect(jsonPath("$.firstName").value(usuario.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(usuario.getLastName()))
-                .andExpect(jsonPath("$.birthday").value(usuario.getBirthday()))
+                .andExpect(jsonPath("$.birthday").value(usuario.getBirthday().toString()))
                 .andExpect(jsonPath("$.imei").value(usuario.getImei()))
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))

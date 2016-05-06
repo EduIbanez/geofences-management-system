@@ -3,6 +3,7 @@ package es.unizar.iaaa.geofencing.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import java.sql.Date;
 import java.util.Objects;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public class User {
     private String password;
     private String first_name;
     private String last_name;
-    private String birthday;
+    private Date birthday;
     private String imei;
     private Set<Geofence> geofences;
     private Boolean enabled;
@@ -37,7 +38,7 @@ public class User {
 
     public User(@JsonProperty("id") Long id, @JsonProperty("email") String email,
                 @JsonProperty("password") String password, @JsonProperty("first_name") String first_name,
-                @JsonProperty("last_name") String last_name, @JsonProperty("birthday") String birthday,
+                @JsonProperty("last_name") String last_name, @JsonProperty("birthday") Date birthday,
                 @JsonProperty("imei") String imei, @JsonProperty("geofences") Set<Geofence> geofences,
                 @JsonProperty("enabled") Boolean enabled, @JsonProperty("role") String role,
                 @JsonProperty("notifications") Set<Notification> notifications,
@@ -110,11 +111,11 @@ public class User {
 
     @Column(name = "BIRTHDAY", nullable = false, length = 10)
     @JsonView(View.UserCompleteView.class)
-    public String getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 
