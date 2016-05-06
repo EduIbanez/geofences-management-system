@@ -90,7 +90,7 @@ public class Rule {
     }
 
     @Column(name = "MESSAGE", nullable = false, length = 130)
-    @JsonView(View.RuleCompleteView.class)
+    @JsonView({View.NotificationCompleteView.class, View.RuleCompleteView.class})
     public String getMessage() {
         return message;
     }

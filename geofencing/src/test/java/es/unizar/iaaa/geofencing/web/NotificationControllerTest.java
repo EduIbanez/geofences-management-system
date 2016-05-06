@@ -60,6 +60,7 @@ public class NotificationControllerTest {
     private MockMvc mockMvc;
 
     private final String PASSWORD = "password";
+    private final int COUNT = 10;
     private User USER1;
     private Geofence GEOFENCE1;
     private Rule RULE1;
@@ -70,7 +71,7 @@ public class NotificationControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
-        USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", "07/08/1992",
+        USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", Date.valueOf("1992-08-07"),
                 "356938035643809", new HashSet<>(), true, "user", new HashSet<>(), new HashSet<>());
 
         String hashedPassword = passwordEncoder.encode(PASSWORD);
@@ -110,10 +111,26 @@ public class NotificationControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.rule.id").value(NOTIFICATION1.getRule().getId().intValue()))
+                .andExpect(jsonPath("$.rule.message").value(NOTIFICATION1.getRule().getMessage()))
                 .andExpect(jsonPath("$.user.id").value(NOTIFICATION1.getUser().getId().intValue()))
                 .andExpect(jsonPath("$.status").value(NOTIFICATION1.getStatus()))
                 .andExpect(jsonPath("$.date").value(NOTIFICATION1.getDate().toString()));
         assertEquals(1, notificationRepository.count());
+    }
+
+    @Test
+    public void getNotifications() throws Exception {
+        Notification auxNotification = NOTIFICATION1;
+        for (int i = COUNT*2; i > COUNT; i--) {
+            auxNotification.setId(null);
+            auxNotification.setDate(Date.valueOf("2016-01-" + i));
+            auxNotification = notificationRepository.save(auxNotification);
+        }
+        this.mockMvc.perform(get("/api/notifications")
+                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertEquals(COUNT, notificationRepository.count());
     }
 
     @Test
@@ -130,6 +147,7 @@ public class NotificationControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(notification.getId().intValue()))
                 .andExpect(jsonPath("$.rule.id").value(notification.getRule().getId().intValue()))
+                .andExpect(jsonPath("$.rule.message").value(notification.getRule().getMessage()))
                 .andExpect(jsonPath("$.user.id").value(notification.getUser().getId().intValue()))
                 .andExpect(jsonPath("$.status").value(notification.getStatus()))
                 .andExpect(jsonPath("$.date").value(notification.getDate().toString()));
@@ -156,6 +174,7 @@ public class NotificationControllerTest {
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(notification.getId().intValue()))
                 .andExpect(jsonPath("$.rule.id").value(notification.getRule().getId().intValue()))
+                .andExpect(jsonPath("$.rule.message").value(notification.getRule().getMessage()))
                 .andExpect(jsonPath("$.user.id").value(notification.getUser().getId().intValue()))
                 .andExpect(jsonPath("$.status").value(notification.getStatus()))
                 .andExpect(jsonPath("$.date").value(notification.getDate().toString()));

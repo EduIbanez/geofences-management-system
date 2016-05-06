@@ -4,7 +4,12 @@ import es.unizar.iaaa.geofencing.model.Notification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface NotificationRepository extends CrudRepository<Notification, Long> {
+
+    @Query("SELECT n FROM Notification n WHERE n.user.email = ?1 ORDER BY n.date DESC")
+    List<Notification> find(String email);
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN 'true' ELSE 'false' END FROM User u, Notification n" +
             " WHERE n.id = ?1 AND u.email = ?2 AND u.id = n.user.id")

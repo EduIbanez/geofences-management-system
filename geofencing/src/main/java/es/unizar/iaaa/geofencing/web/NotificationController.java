@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 public class NotificationController {
@@ -51,6 +52,26 @@ public class NotificationController {
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(notification.getId()).toUri());
         return new ResponseEntity<>(notificationCreated, httpHeaders, HttpStatus.CREATED);
+    }
+
+    /**
+     * This method returns an array of notifications of an authenticated user. If there is nobody authenticated, it
+     * returns an empty array.
+     *
+     * @return an array of notifications
+     */
+    @RequestMapping(path = "/api/notifications", method = RequestMethod.GET)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Array of notifications", response = List.class)})
+    public MappingJacksonValue getNotifications() {
+        LOGGER.info("Requested /api/notifications GET method");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        List<Notification> notifications = notificationRepository.find(email);
+        final MappingJacksonValue result = new MappingJacksonValue(notifications);
+        result.setSerializationView(View.NotificationCompleteView.class);
+        return result;
     }
 
     /**
@@ -104,6 +125,7 @@ public class NotificationController {
             throw new NotificationNotFoundException();
         }
     }
+
     /**
      * This method returns a notification by id.
      *

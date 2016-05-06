@@ -39,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/api/rules/*").fullyAuthenticated()
                 .antMatchers(HttpMethod.GET, "/api/rules/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/notifications").fullyAuthenticated()
+                .antMatchers(HttpMethod.GET, "/api/notifications").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/notifications/*").fullyAuthenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/notifications/*").fullyAuthenticated()
                 .antMatchers(HttpMethod.GET, "/api/notifications/*").permitAll()
