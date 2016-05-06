@@ -1,14 +1,13 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns="http://www.w3.org/1999/xhtml">
+<html ng-app="Controller" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Home</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <meta charset="utf-8"/>
     <style>
         body {
-            padding-top: 60px;
+            padding-top: 80px;
             padding-bottom: 60px;
         }
 
@@ -21,7 +20,7 @@
           rel="stylesheet" type="text/css"/>
 
 </head>
-<body onload="starting();" onunload="disconnect();">
+<body ng-controller="mainController" onload="starting();" onunload="disconnect();">
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -45,19 +44,21 @@
 
 <div id="main" class="container">
     <div class="row">
-        <div class="col-lg-12">
-            <div class="jumbotron">
-                <h2>MessageOnMap</h2>
-                <small>Realtime messaging on the map</small>
-                <p>The App allows you to post messages in realtime messaging
-                    on the map. It is an awesome way to discover people near you.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
         <div class="col-lg-4">
-
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-vertical-middle">
+                    <thead>
+                    <tr>
+                        <th>Notifications</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="notification in notifications">
+                        <td>{{ notification.rule.message }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div id="map-canvas" class="col-lg-8"></div>
     </div>
@@ -66,6 +67,7 @@
 
 <script th:src="@{/js/jquery.js}" src="../static/js/jquery.js"></script>
 <script th:src="@{/js/jquery.loadmask.min.js}" src="../static/js/jquery.loadmask.min.js"></script>
+<script th:src="@{/js/angular.min.js}" src="../static/js/angular.min.js"></script>
 <script th:src="@{/js/sockjs.js}" src="../static/js/sockjs.js"></script>
 <script th:src="@{/js/stomp.js}" src="../static/js/stomp.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
@@ -78,5 +80,6 @@
 </script>
 
 <script th:src="@{/js/app.js}" src="../static/js/app.js"></script>
+<script th:src="@{/js/core.js}" src="../static/js/core.js"></script>
 </body>
 </html>
