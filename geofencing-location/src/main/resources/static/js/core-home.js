@@ -1,4 +1,4 @@
-var Controller = angular.module('Controller', []);
+var Controller = angular.module('HomeController', []);
 
 function mainController($scope, $http) {
     $scope.formData = {};
