@@ -1,12 +1,13 @@
 package es.unizar.iaaa.springboot.spatial;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
@@ -51,16 +52,12 @@ public class Application implements CommandLineRunner {
         System.out.println("Customer found with findByLastName('Bauer'):");
         System.out.println("--------------------------------------------");
 
-        for(Customer c: repository.findByLastName("Bauer")) {
-            System.out.println(c);
-        }
+        repository.findByLastName("Bauer").forEach(System.out::println);
         System.out.println();
 
         System.out.println("Customers found within POLYGON((-107 39, -102 39, -102 41, -107 41, -107 39)):");
         System.out.println("--------------------------------");
-        for(Customer c: repository.findWithin(wktToGeometry("POLYGON((-107 39, -102 39, -102 41, -107 41, -107 39))"))) {
-            System.out.println(c);
-        }
+        repository.findWithin(wktToGeometry("POLYGON((-107 39, -102 39, -102 41, -107 41, -107 39))")).forEach(System.out::println);
         System.out.println();
     }
 

@@ -3,15 +3,7 @@ package es.unizar.iaaa.geofencing.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import es.unizar.iaaa.geofencing.Application;
-import es.unizar.iaaa.geofencing.model.Geofence;
-import es.unizar.iaaa.geofencing.model.Notification;
-import es.unizar.iaaa.geofencing.model.Rule;
-import es.unizar.iaaa.geofencing.model.User;
-import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
-import es.unizar.iaaa.geofencing.repository.NotificationRepository;
-import es.unizar.iaaa.geofencing.repository.RuleRepository;
-import es.unizar.iaaa.geofencing.repository.UserRepository;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,13 +22,28 @@ import org.springframework.web.context.WebApplicationContext;
 import java.sql.Date;
 import java.util.HashSet;
 
+import es.unizar.iaaa.geofencing.Application;
+import es.unizar.iaaa.geofencing.model.Geofence;
+import es.unizar.iaaa.geofencing.model.Notification;
+import es.unizar.iaaa.geofencing.model.Rule;
+import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
+import es.unizar.iaaa.geofencing.repository.NotificationRepository;
+import es.unizar.iaaa.geofencing.repository.RuleRepository;
+import es.unizar.iaaa.geofencing.repository.UserRepository;
+
 import static es.unizar.iaaa.geofencing.model.RuleType.INSIDE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -59,11 +66,7 @@ public class NotificationControllerTest {
     private PasswordEncoder passwordEncoder;
     private MockMvc mockMvc;
 
-    private final String PASSWORD = "password";
-    private final int COUNT = 10;
     private User USER1;
-    private Geofence GEOFENCE1;
-    private Rule RULE1;
     private Notification NOTIFICATION1;
 
 
@@ -71,6 +74,7 @@ public class NotificationControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
+        String PASSWORD = "password";
         USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", Date.valueOf("1992-08-07"),
                 "356938035643809", new HashSet<>(), true, "user", new HashSet<>(), new HashSet<>());
 
@@ -79,12 +83,12 @@ public class NotificationControllerTest {
         userRepository.save(USER1);
         USER1.setPassword(PASSWORD);
 
-        GEOFENCE1 = new Geofence(null, "Feature", null,
+        Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
                 new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());
 
         GEOFENCE1 = geofenceRepository.save(GEOFENCE1);
 
-        RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
+        Rule RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
                 new HashSet<>(), GEOFENCE1);
 
         RULE1 = ruleRepository.save(RULE1);
@@ -121,7 +125,8 @@ public class NotificationControllerTest {
     @Test
     public void getNotifications() throws Exception {
         Notification auxNotification = NOTIFICATION1;
-        for (int i = COUNT*2; i > COUNT; i--) {
+        int COUNT = 10;
+        for (int i = COUNT *2; i > COUNT; i--) {
             auxNotification.setId(null);
             auxNotification.setDate(Date.valueOf("2016-01-" + i));
             auxNotification = notificationRepository.save(auxNotification);

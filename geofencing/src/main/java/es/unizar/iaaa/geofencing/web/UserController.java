@@ -158,7 +158,7 @@ public class UserController {
                                               @RequestParam(value = "password") String password) {
         User user = userRepository.findByUsernameAndPassword(email, password);
         if (user != null) {
-            ArrayList<GrantedAuthority> authorities = new ArrayList();
+            ArrayList<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(user.getRole()));
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getEmail(),
                     user.getPassword(), authorities));

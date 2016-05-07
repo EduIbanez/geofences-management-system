@@ -60,9 +60,7 @@ public class RuleControllerTest {
     private PasswordEncoder passwordEncoder;
     private MockMvc mockMvc;
 
-    private final String PASSWORD = "password";
     private User USER1;
-    private Geofence GEOFENCE1;
     private Rule RULE1;
 
 
@@ -70,6 +68,7 @@ public class RuleControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
+        String PASSWORD = "password";
         USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", Date.valueOf("1992-08-07"),
                 "356938035643809", new HashSet<>(), true, "user", new HashSet<>(), new HashSet<>());
 
@@ -78,7 +77,7 @@ public class RuleControllerTest {
         userRepository.save(USER1);
         USER1.setPassword(PASSWORD);
 
-        GEOFENCE1 = new Geofence(null, "Feature", null,
+        Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
                 new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());
 
         GEOFENCE1 = geofenceRepository.save(GEOFENCE1);

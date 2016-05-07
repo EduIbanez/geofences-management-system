@@ -7,7 +7,8 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <meta charset="utf-8"/>
     <link th:href="@{/css/bootstrap.css}" href="../static/css/bootstrap.css" rel="stylesheet"/>
-    <link th:href="@{/css/form-elements.css}" href="../static/css/form-elements.css" rel="stylesheet"/>
+    <link th:href="@{/css/form-elements.css}" href="../static/css/form-elements.css"
+          rel="stylesheet"/>
     <link th:href="@{/css/style.css}" href="../static/css/style.css" rel="stylesheet"/>
 
 
@@ -38,13 +39,18 @@
                         <form role="form" action="" method="post" class="login-form">
                             <div class="form-group">
                                 <label class="sr-only" for="form-username">Username</label>
-                                <input type="text" name="form-username" placeholder="Email..." class="form-username form-control" id="form-username" ng-model="formData.email"/>
+                                <input type="text" name="form-username" placeholder="Email..."
+                                       class="form-username form-control" id="form-username"
+                                       ng-model="formData.email"/>
                             </div>
                             <div class="form-group">
                                 <label class="sr-only" for="form-password">Password</label>
-                                <input type="password" name="form-password" placeholder="Password..." class="form-password form-control" id="form-password" ng-model="formData.password"/>
+                                <input type="password" name="form-password"
+                                       placeholder="Password..." class="form-password form-control"
+                                       id="form-password" ng-model="formData.password"/>
                             </div>
-                            <button type="submit" class="btn" ng-click="loginUser()">Sign in!</button>
+                            <button type="submit" class="btn" ng-click="loginUser()">Sign in!
+                            </button>
                         </form>
                     </div>
                 </div>

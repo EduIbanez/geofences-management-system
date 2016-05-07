@@ -72,7 +72,6 @@ public class UserControllerTest {
 
     @Test
     public void createUser() throws Exception {
-        String hashedPassword = passwordEncoder.encode(USER1.getPassword());
         this.mockMvc.perform(post("/api/users")
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(USER1)))
