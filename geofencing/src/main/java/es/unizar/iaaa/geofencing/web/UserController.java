@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 
+import es.unizar.iaaa.geofencing.model.LoginUser;
 import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 import es.unizar.iaaa.geofencing.view.View;
@@ -146,23 +147,29 @@ public class UserController {
     /**
      * This method authenticate user into the system.
      *
-     * @param email email of the user
-     * @param password password of the user
+     * @param loginUser data of the user authenticating
      * @return the user logged in
      */
     @RequestMapping(path = "/api/users/authenticate", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User authenticated", response = User.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User authenticateUser(@RequestParam(value = "email") String email,
-                                              @RequestParam(value = "password") String password) {
-        User user = userRepository.findByUsernameAndPassword(email, password);
-        if (user != null) {
-            ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(user.getRole()));
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getEmail(),
-                    user.getPassword(), authorities));
-            return user;
+    public User authenticateUser(@RequestBody LoginUser loginUser) {
+        LOGGER.info("Requested /api/users/authenticate POST method");
+        if (loginUser.getEmail() != null && !loginUser.getEmail().equals("")
+                && loginUser.getPassword() != null && !loginUser.getPassword().equals("")) {
+            String hashedPassword = passwordEncoder.encode(loginUser.getPassword());
+            User user = userRepository.findByUsernameAndPassword(loginUser.getEmail(), hashedPassword);
+            LOGGER.info("" + user);
+            if (user != null) {
+                ArrayList<GrantedAuthority> authorities = new ArrayList<>();
+                authorities.add(new SimpleGrantedAuthority(user.getRole()));
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getEmail(),
+                        hashedPassword, authorities));
+                return user;
+            } else {
+                throw new UserNotFoundException();
+            }
         } else {
             throw new UserNotFoundException();
         }
