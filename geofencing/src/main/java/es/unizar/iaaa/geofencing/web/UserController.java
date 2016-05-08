@@ -158,20 +158,23 @@ public class UserController {
         LOGGER.info("Requested /api/users/authenticate POST method");
         if (loginUser.getEmail() != null && !loginUser.getEmail().equals("")
                 && loginUser.getPassword() != null && !loginUser.getPassword().equals("")) {
-            String hashedPassword = passwordEncoder.encode(loginUser.getPassword());
-            User user = userRepository.findByUsernameAndPassword(loginUser.getEmail(), hashedPassword);
-            LOGGER.info("" + user);
-            if (user != null) {
-                ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(user.getRole()));
-                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getEmail(),
-                        hashedPassword, authorities));
-                return user;
-            } else {
-                throw new UserNotFoundException();
+            User user = userRepository.findByUsername(loginUser.getEmail());
+            if (user == null) {
+                throw new UserNotAuthorizedException();
+            } else if (!passwordEncoder.matches(loginUser.getPassword(),user.getPassword())) {
+                throw new UserNotAuthorizedException();
             }
+
+            ArrayList<GrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(user.getRole()));
+            SecurityContextHolder.getContext().setAuthentication(
+                    new UsernamePasswordAuthenticationToken(
+                            loginUser.getEmail(),
+                            loginUser.getPassword(),
+                            authorities));
+            return user;
         } else {
-            throw new UserNotFoundException();
+            throw new UserNotAuthorizedException();
         }
     }
 
@@ -191,4 +194,6 @@ public class UserController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such User")
     public class UserNotFoundException extends RuntimeException { }
 
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Not authorized")
+    public class UserNotAuthorizedException extends RuntimeException { }
 }
