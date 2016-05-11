@@ -24,6 +24,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private RESTAuthenticationEntryPoint authenticationEntryPoint;
+
+    @Autowired
+    private RESTAuthenticationFailureHandler authenticationFailureHandler;
+
+    @Autowired
+    private RESTAuthenticationSuccessHandler authenticationSuccessHandler;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -46,14 +55,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(PUT, "/api/notifications/*").fullyAuthenticated()
                 .antMatchers(DELETE, "/api/notifications/*").fullyAuthenticated()
                 .antMatchers(GET, "/api/notifications/*").permitAll()
-                .antMatchers(POST, "/api/locations/**").permitAll()
-                .antMatchers(GET, "/api/locations/**").permitAll()
-                .antMatchers(OPTIONS, "/api/**").permitAll()
+                .antMatchers(POST, "/api/locations/**").fullyAuthenticated()
+                .antMatchers(GET, "/api/locations/**").fullyAuthenticated()
+                .antMatchers(OPTIONS, "/**").permitAll()
                 .anyRequest().denyAll()
                 .and()
                 .httpBasic()
                 .and()
                 .csrf().disable();
+        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+        http.formLogin().successHandler(authenticationSuccessHandler);
+        http.formLogin().failureHandler(authenticationFailureHandler);
     }
 
     @Bean
