@@ -63,9 +63,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .csrf().disable();
-        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
-        http.formLogin().successHandler(authenticationSuccessHandler);
-        http.formLogin().failureHandler(authenticationFailureHandler);
+       http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+        http.formLogin().loginPage("/login").permitAll().
+                successHandler(authenticationSuccessHandler).
+                failureHandler(authenticationFailureHandler);
     }
 
     @Bean
