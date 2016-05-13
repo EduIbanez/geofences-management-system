@@ -8,29 +8,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-
-import es.unizar.iaaa.geofencing.model.LoginUser;
 import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 import es.unizar.iaaa.geofencing.view.View;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class UserController {
@@ -144,39 +135,6 @@ public class UserController {
             return result;
         } else {
             throw new UserNotFoundException();
-        }
-    }
-
-    /**
-     * This method authenticate user into the system.
-     *
-     * @param loginUser data of the user authenticating
-     * @return the user logged in
-     */
-    @RequestMapping(path = "/api/users/authenticate", method = RequestMethod.POST)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "User authenticated", response = void.class),
-            @ApiResponse(code = 401, message = "User not authorized", response = UserNotAuthorizedException.class),
-            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public void authenticateUser(@RequestBody LoginUser loginUser, HttpServletRequest request) {
-        LOGGER.info("Requested /api/users/authenticate POST method");
-        if (loginUser.getEmail() != null && !loginUser.getEmail().equals("")
-                && loginUser.getPassword() != null && !loginUser.getPassword().equals("")) {
-            User user = userRepository.findByUsername(loginUser.getEmail());
-            if (user == null) {
-                throw new UserNotAuthorizedException();
-            } else if (!passwordEncoder.matches(loginUser.getPassword(), user.getPassword())) {
-                throw new UserNotAuthorizedException();
-            }
-
-            ArrayList<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(user.getRole()));
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                    loginUser.getEmail(), loginUser.getPassword(), authorities);
-            token.setDetails(new WebAuthenticationDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(token);
-        } else {
-            throw new UserNotAuthorizedException();
         }
     }
 

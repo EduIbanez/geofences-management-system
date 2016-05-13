@@ -5,7 +5,7 @@ function mainController($scope, $http, $window) {
 
     $scope.loginUser = function () {
         var data = 'username=' + $scope.formData.email + '&password=' + $scope.formData.password;
-        $http.post('http://localhost:8080/login', data)
+        $http.post('http://localhost:8080/api/users/login', data)
             .success(function (data) {
                 $scope.formData = {};
                 $window.location.href = '/home';

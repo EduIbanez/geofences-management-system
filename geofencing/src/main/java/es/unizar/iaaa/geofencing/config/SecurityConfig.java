@@ -3,7 +3,6 @@ package es.unizar.iaaa.geofencing.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,15 +23,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
-    @Autowired
-    private RESTAuthenticationEntryPoint authenticationEntryPoint;
-
-    @Autowired
-    private RESTAuthenticationFailureHandler authenticationFailureHandler;
-
-    @Autowired
-    private RESTAuthenticationSuccessHandler authenticationSuccessHandler;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -40,7 +30,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(PUT, "/api/users/*").fullyAuthenticated()
                 .antMatchers(DELETE, "/api/users/*").fullyAuthenticated()
                 .antMatchers(GET, "/api/users/*").permitAll()
-                .antMatchers(POST, "/api/users/authenticate").permitAll()
                 .antMatchers(POST, "/api/geofences").fullyAuthenticated()
                 .antMatchers(GET, "/api/geofences").permitAll()
                 .antMatchers(PUT, "/api/geofences/*").fullyAuthenticated()
@@ -57,16 +46,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(GET, "/api/notifications/*").permitAll()
                 .antMatchers(POST, "/api/locations/**").fullyAuthenticated()
                 .antMatchers(GET, "/api/locations/**").fullyAuthenticated()
-                .antMatchers(OPTIONS, "/**").permitAll()
+                .antMatchers(OPTIONS, "/api/**").permitAll()
                 .anyRequest().denyAll()
                 .and()
-                .httpBasic()
+                    .formLogin().loginProcessingUrl("/api/users/login").permitAll()
                 .and()
-                .csrf().disable();
-       http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
-        http.formLogin().loginPage("/login").permitAll().
-                successHandler(authenticationSuccessHandler).
-                failureHandler(authenticationFailureHandler);
+                    .logout().permitAll()
+                .and()
+                    .httpBasic()
+                .and()
+                    .csrf().disable();
     }
 
     @Bean

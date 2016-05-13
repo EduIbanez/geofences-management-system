@@ -54,7 +54,7 @@ public class SecurityTest {
         map.add("username", "user");
         map.add("password", "password");
         RestTemplate client = new RestTemplate();
-        ResponseEntity<String> response = client.postForEntity("http://localhost:{port}/login", map, String.class, port);
+        ResponseEntity<String> response = client.postForEntity("http://localhost:{port}/api/users/login", map, String.class, port);
     }
 
 }
