@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -103,7 +104,7 @@ public class GeofenceControllerTest {
         this.mockMvc.perform(post("/api/geofences")
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(GEOFENCE1))
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(user(USER1.getEmail())))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -202,7 +203,7 @@ public class GeofenceControllerTest {
         this.mockMvc.perform(put("/api/geofences/"+geofence.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(geofence))
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(user(USER1.getEmail())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -220,7 +221,7 @@ public class GeofenceControllerTest {
     public void deleteGeofence() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
         this.mockMvc.perform(delete("/api/geofences/"+geofence.getId())
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(user(USER1.getEmail())))
                 .andExpect(status().isOk());
         assertNull(userRepository.findOne(geofence.getId()));
     }
@@ -229,7 +230,7 @@ public class GeofenceControllerTest {
     public void getGeofenceAuthenticated() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
         this.mockMvc.perform(get("/api/geofences/"+geofence.getId())
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(user(USER1.getEmail())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))

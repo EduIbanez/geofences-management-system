@@ -33,9 +33,11 @@ import es.unizar.iaaa.geofencing.repository.UserRepository;
 import static es.unizar.iaaa.geofencing.model.RuleType.INSIDE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -98,7 +100,7 @@ public class RuleControllerTest {
         this.mockMvc.perform(post("/api/rules")
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(RULE1))
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(user(USER1.getEmail())))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -121,7 +123,7 @@ public class RuleControllerTest {
         this.mockMvc.perform(put("/api/rules/"+rule.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(rule))
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(user(USER1.getEmail())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -141,7 +143,7 @@ public class RuleControllerTest {
     public void deleteRule() throws Exception {
         Rule rule = ruleRepository.save(RULE1);
         this.mockMvc.perform(delete("/api/rules/"+rule.getId())
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(user(USER1.getEmail())))
                 .andExpect(status().isOk());
         assertNull(userRepository.findOne(rule.getId()));
     }
@@ -150,7 +152,7 @@ public class RuleControllerTest {
     public void getRuleAuthenticated() throws Exception {
         Rule rule = ruleRepository.save(RULE1);
         this.mockMvc.perform(get("/api/rules/"+rule.getId())
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(user(USER1.getEmail())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
