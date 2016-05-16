@@ -70,11 +70,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Handlers and entry points
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
-        http.formLogin().successHandler(authenticationSuccessHandler);
         http.formLogin().failureHandler(authenticationFailureHandler);
 
         // LOGIN
-        http.formLogin().loginProcessingUrl("/login");
+        http.formLogin().loginProcessingUrl("/login").successHandler(authenticationSuccessHandler);
 
         // LOGOUT
         http.logout().logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler);
