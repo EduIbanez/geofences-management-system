@@ -41,6 +41,7 @@ import es.unizar.iaaa.geofencing.repository.UserRepository;
 import es.unizar.iaaa.geofencing.view.View;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -97,7 +98,7 @@ public class SecurityTest {
 
         ResponseEntity<Geofence> response2 = client.postForEntity("http://localhost:{port}/api/geofences", entity, Geofence.class, port);
         assertEquals(HttpStatus.CREATED, response2.getStatusCode());
-        assertEquals(2L, response2.getBody().getId().longValue());
+        assertNotNull(response2.getBody().getId());
     }
 
     @Test(expected=ResourceAccessException.class)
