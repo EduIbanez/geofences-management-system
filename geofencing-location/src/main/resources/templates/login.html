@@ -1,6 +1,6 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 
-<html ng-app="LoginController"
+<html ng-app="core"
       xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Login</title>
@@ -13,7 +13,7 @@
 
 
 </head>
-<body ng-controller="mainController">
+<body ng-controller="login">
 
 <div class="top-content">
 
@@ -63,6 +63,7 @@
 <script th:src="@{/js/jquery.js}" src="../static/js/jquery.js"></script>
 <script th:src="@{/js/bootstrap.js}" src="../static/js/bootstrap.js"></script>
 <script th:src="@{/js/angular.min.js}" src="../static/js/angular.min.js"></script>
-<script th:src="@{/js/core-login.js}" src="../static/js/core-login.js"></script>
+<script th:src="@{/js/angular-cookies.js}" src="../static/js/angular-cookies.js"></script>
+<script th:src="@{/js/core.js}" src="../static/js/core.js"></script>
 </body>
 </html>
