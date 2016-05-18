@@ -26,15 +26,21 @@ angular.module('core', ['ngCookies'])
             });
     };
   })
-  .controller('home', function($scope, $http, $window) {
+  .controller('home', function($scope, $http, $window, $cookies) {
         $scope.notifications = {};
 
-        $http.get('http://localhost:8080/api/notifications')
-            .success(function (data) {
-                $scope.notifications = data.message;
-                console.log(data);
-            })
-            .error(function (data) {
-                console.log('Error: ' + data);
-            });
+        $.ajax({
+          type: 'GET',
+          url: 'http://localhost:8080/api/notifications',
+          xhrFields: {
+            withCredentials: true
+          },
+          success: function (data) {
+            $scope.notifications = data.message;
+            console.log(data);
+          },
+          error: function (data) {
+            console.log('Error: ' + data);
+          }
+        });
   });
