@@ -1,5 +1,5 @@
 angular.module('core', ['ngCookies'])
-  .controller('login', function($scope, $http, $window) {
+  .controller('login', function($scope, $http, $window, $cookies) {
     $scope.formData = {};
 
     $scope.loginUser = function () {

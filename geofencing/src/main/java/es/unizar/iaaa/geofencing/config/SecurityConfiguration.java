@@ -39,9 +39,7 @@ public class SecurityConfiguration {
                 response.setHeader("Access-Control-Allow-Credentials", "true");
                 response.setHeader("Access-Control-Allow-Headers", "accept, content-type, x-requested-with");
                 response.setHeader("Access-Control-Allow-Methods", "OPTIONS,HEAD,GET,PUT,POST,DELETE,PATCH");
-
-                // TODO http://localhost:8090 debe ser obtenido dinámicamente
-                response.setHeader("Access-Control-Allow-Origin", "http://localhost:8090");
+                response.setHeader("Access-Control-Allow-Origin", "*");
             }
         };
     }
