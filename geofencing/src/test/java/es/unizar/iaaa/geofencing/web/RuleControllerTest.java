@@ -72,7 +72,7 @@ public class RuleControllerTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
         String PASSWORD = "password";
         USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", Date.valueOf("1992-08-07"),
-                "356938035643809", new HashSet<>(), true, "user", new HashSet<>(), new HashSet<>());
+                "356938035643809", new HashSet<>(), true, "ROLE_USER", Date.valueOf("2016-05-19"), new HashSet<>(), new HashSet<>());
 
         String hashedPassword = passwordEncoder.encode(PASSWORD);
         USER1.setPassword(hashedPassword);

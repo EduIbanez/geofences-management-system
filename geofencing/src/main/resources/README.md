@@ -19,3 +19,31 @@ spring.jpa.database-platform=org.hibernate.spatial.dialect.postgis.PostgisDialec
 spring.jpa.hibernate.ddl-auto=create-drop
 spring.jpa.show-sql=true
 ```
+
+Después se añade el fichero `application.yml` con el siguiente texto sustituyendo `${secret}` por el clave secreta que se quiera utilizar en el JWT:
+
+```
+# config context path to "/" by setting an empty string
+server:
+  contextPath:
+
+# JACKSON
+spring:
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+jwt:
+  header: Authorization
+  secret: mySecret
+  expiration: 604800
+  route:
+    authentication:
+      path: api/users/auth
+      refresh: api/users/refresh
+
+logging:
+  level:
+    org.springframework:
+      security: DEBUG
+```

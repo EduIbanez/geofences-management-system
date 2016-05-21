@@ -3,17 +3,11 @@ package es.unizar.iaaa.geofencing.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import java.sql.Date;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import es.unizar.iaaa.geofencing.view.View;
 
@@ -26,11 +20,12 @@ public class User {
     private String password;
     private String first_name;
     private String last_name;
-    private Date birthday;
+    private java.sql.Date birthday;
     private String imei;
     private Set<Geofence> geofences;
     private Boolean enabled;
     private String role;
+    private java.util.Date last_password_reset_date;
     private Set<Notification> notifications;
     private Set<Position> positions;
 
@@ -38,9 +33,10 @@ public class User {
 
     public User(@JsonProperty("id") Long id, @JsonProperty("email") String email,
                 @JsonProperty("password") String password, @JsonProperty("first_name") String first_name,
-                @JsonProperty("last_name") String last_name, @JsonProperty("birthday") Date birthday,
+                @JsonProperty("last_name") String last_name, @JsonProperty("birthday") java.sql.Date birthday,
                 @JsonProperty("imei") String imei, @JsonProperty("geofences") Set<Geofence> geofences,
                 @JsonProperty("enabled") Boolean enabled, @JsonProperty("role") String role,
+                @JsonProperty("last_password_reset_date") java.util.Date last_password_reset_date,
                 @JsonProperty("notifications") Set<Notification> notifications,
                 @JsonProperty("locations") Set<Position> positions) {
         this.id = id;
@@ -53,6 +49,7 @@ public class User {
         this.geofences = geofences;
         this.enabled = enabled;
         this.role = role;
+        this.last_password_reset_date = last_password_reset_date;
         this.notifications = notifications;
         this.positions = positions;
     }
@@ -111,11 +108,11 @@ public class User {
 
     @Column(name = "BIRTHDAY", nullable = false, length = 10)
     @JsonView(View.UserCompleteView.class)
-    public Date getBirthday() {
+    public java.sql.Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(java.sql.Date birthday) {
         this.birthday = birthday;
     }
 
@@ -159,6 +156,18 @@ public class User {
         this.role = role;
     }
 
+    @Column(name = "LAST_PASSWORD_RESET_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    @JsonView(View.UserCompleteView.class)
+    public java.util.Date getLastPasswordResetDate() {
+        return last_password_reset_date;
+    }
+
+    public void setLastPasswordResetDate(java.util.Date last_password_reset_date) {
+        this.last_password_reset_date = last_password_reset_date;
+    }
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @JsonView(View.UserCompleteView.class)
     public Set<Notification> getNotifications() {
@@ -182,7 +191,8 @@ public class User {
     public String toString() {
         return "User(id: "+id+" email: "+email+" password: "+password+" first_name: "+first_name+
                 " last_name: "+last_name+" birthday: "+birthday+" imei: "+imei+" geofence: "+geofences+
-                " enabled: "+enabled+" role: "+role+" notifications: "+notifications+" positions:"+positions+")";
+                " enabled: "+enabled+" role: "+role+" last_password_reset_date: "+last_password_reset_date+
+                " notifications: "+notifications+" positions:"+positions+")";
     }
 
     @Override
@@ -200,6 +210,7 @@ public class User {
                 Objects.equals(geofences, user.geofences) &&
                 Objects.equals(enabled, user.enabled) &&
                 Objects.equals(role, user.role) &&
+                Objects.equals(last_password_reset_date, user.last_password_reset_date) &&
                 Objects.equals(notifications, user.notifications) &&
                 Objects.equals(positions, user.positions);
     }
