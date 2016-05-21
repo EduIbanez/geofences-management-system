@@ -1,46 +1,85 @@
-angular.module('core', ['ngCookies'])
-  .controller('login', function($scope, $http, $window, $cookies) {
-    $scope.formData = {};
+// VARIABLES =============================================================
+var TOKEN_KEY = "jwtToken"
 
-    $scope.loginUser = function () {
-        $http({
-              method: 'POST',
-              url: 'http://localhost:8080/login',
-              headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-              transformRequest: function (obj) {
-                  var str = [];
-                  for (var p in obj) {
-                      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                  }
-                  return str.join("&");
-              },
-              data: {username: $scope.formData.email, password: $scope.formData.password}
+// FUNCTIONS =============================================================
+function getJwtToken() {
+    return localStorage.getItem(TOKEN_KEY);
+}
 
-            })
-            .success(function (data) {
-                $scope.formData = {};
-                $window.location.href = '/home';
-            })
-            .error(function (data) {
-                console.log('Error: ' + data);
-            });
+function setJwtToken(token) {
+    localStorage.setItem(TOKEN_KEY, token);
+}
+
+function removeJwtToken() {
+    localStorage.removeItem(TOKEN_KEY);
+}
+
+function doLogin(loginData) {
+    $.ajax({
+        url: "http://localhost:8080/api/users/auth",
+        type: "POST",
+        data: JSON.stringify(loginData),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data, textStatus, jqXHR) {
+            setJwtToken(data.token);
+            window.location.replace("/home");
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 401) {
+                console.log("Unauthorized request");
+            } else {
+                throw new Error("an unexpected error occured: " + errorThrown);
+            }
+        }
+    });
+}
+
+function doLogout() {
+    removeJwtToken();
+}
+
+function getNotifications() {
+    $.ajax({
+        url: "http://localhost:8080/api/notifications",
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        headers: createAuthorizationTokenHeader(),
+        success: function (data, textStatus, jqXHR) {
+            var len = data.length;
+            for (var i = 0; i < len; i++) {
+               var message = data[i].rule.message;
+               $('#table').append('<tr><td>'+message+'</td></tr>');
+               console.log(message);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
+function createAuthorizationTokenHeader() {
+    var token = getJwtToken();
+    if (token) {
+        return {"Authorization": token};
+    } else {
+        return {};
+    }
+}
+
+// REGISTER EVENT LISTENERS =============================================================
+$("#loginForm").submit(function (event) {
+    event.preventDefault();
+
+    var $form = $(this);
+    var formData = {
+        username: $form.find('input[name="username"]').val(),
+        password: $form.find('input[name="password"]').val()
     };
-  })
-  .controller('home', function($scope, $http, $window, $cookies) {
-        $scope.notifications = {};
 
-        $.ajax({
-          type: 'GET',
-          url: 'http://localhost:8080/api/notifications',
-          xhrFields: {
-            withCredentials: true
-          },
-          success: function (data) {
-            $scope.notifications = data.message;
-            console.log(data);
-          },
-          error: function (data) {
-            console.log('Error: ' + data);
-          }
-        });
-  });
+    doLogin(formData);
+});
+
+$("#logoutButton").click(doLogout);

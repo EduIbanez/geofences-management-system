@@ -1,7 +1,28 @@
+// VARIABLES =============================================================
+var TOKEN_KEY = "jwtToken"
+
+// FUNCTIONS =============================================================
+function getJwtToken() {
+    return localStorage.getItem(TOKEN_KEY);
+}
+
+function setJwtToken(token) {
+    localStorage.setItem(TOKEN_KEY, token);
+}
+
+function removeJwtToken() {
+    localStorage.removeItem(TOKEN_KEY);
+}
+
 var stompClient = null;
 
 function connect() {
-    var socket = new SockJS('http://localhost:8080/api/locations');
+    var options = {
+        headers: {
+            "Authorization" : getJwtToken()
+        }
+    }
+    var socket = new SockJS('http://localhost:8080/api/locations', options);
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function(frame) {
         console.log('Connected: ' + frame);
