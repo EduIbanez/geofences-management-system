@@ -1,12 +1,13 @@
 package es.unizar.iaaa.geofencing.security;
 
-import es.unizar.iaaa.geofencing.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import es.unizar.iaaa.geofencing.model.User;
 
 public final class JwtUserFactory {
 
@@ -30,7 +31,7 @@ public final class JwtUserFactory {
 
     private static List<GrantedAuthority> mapToGrantedAuthorities(List<String> authorities) {
         return authorities.stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.toString()))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 }

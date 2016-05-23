@@ -1,12 +1,7 @@
 package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import es.unizar.iaaa.geofencing.model.Notification;
-import es.unizar.iaaa.geofencing.repository.NotificationRepository;
-import es.unizar.iaaa.geofencing.view.View;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.ResponseHeader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +10,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+
+import es.unizar.iaaa.geofencing.model.Notification;
+import es.unizar.iaaa.geofencing.repository.NotificationRepository;
+import es.unizar.iaaa.geofencing.view.View;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ResponseHeader;
 
 @RestController
 public class NotificationController {
@@ -66,6 +74,10 @@ public class NotificationController {
     public MappingJacksonValue getNotifications() {
         LOGGER.info("Requested /api/notifications GET method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        LOGGER.info("Requested /api/notifications GET method for "+auth.getPrincipal());
+        if (!(auth.getPrincipal() instanceof UserDetails)) {
+            throw new InsufficientAuthenticationException("Requires authentication");
+        }
         UserDetails customUser = (UserDetails) auth.getPrincipal();
         String email = customUser.getUsername();
         List<Notification> notifications = notificationRepository.find(email);

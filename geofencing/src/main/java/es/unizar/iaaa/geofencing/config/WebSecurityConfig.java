@@ -1,7 +1,5 @@
 package es.unizar.iaaa.geofencing.config;
 
-import es.unizar.iaaa.geofencing.security.JwtAuthenticationEntryPoint;
-import es.unizar.iaaa.geofencing.security.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,11 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.DELETE;
+import es.unizar.iaaa.geofencing.security.JwtAuthenticationEntryPoint;
+import es.unizar.iaaa.geofencing.security.JwtAuthenticationTokenFilter;
+
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.OPTIONS;
 import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @Configuration
@@ -50,6 +49,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(GET, "/api/geofences/**").permitAll()
                 .antMatchers(GET, "/api/rules/**").permitAll()
                 .antMatchers(GET, "/api/notifications/**").permitAll()
+                .antMatchers(GET, "/api/notifications/**").permitAll()
+                .antMatchers(GET, "/api/locations/**").permitAll()
+                .antMatchers(POST, "/api/locations/**").permitAll()
                 .anyRequest().authenticated();
 
         // Custom JWT based security filter

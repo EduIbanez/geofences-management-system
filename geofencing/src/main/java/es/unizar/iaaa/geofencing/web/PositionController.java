@@ -7,12 +7,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 
 import java.sql.Time;
 import java.util.Date;
 
 import es.unizar.iaaa.geofencing.model.Position;
+import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.PositionRepository;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 import io.swagger.annotations.ApiResponse;
@@ -42,10 +46,11 @@ public class PositionController {
     public Position savePosition(Geometry location) throws Exception {
         LOGGER.info("Requested /api/locations using WebSocket: "+location.toText());
         Time time = new Time(new Date().getTime());
-        //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        //UserDetails customUser = (UserDetails) auth.getPrincipal();
-        //String email = customUser.getUsername();
-        //User user = userRepository.findByUsername(email);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        LOGGER.info("with principal "+auth.getPrincipal());
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String email = customUser.getUsername();
+        User user = userRepository.findByUsername(email);
 
         Position positionSaved = positionRepository.save(new Position(null, location, time, null));
         return positionSaved;

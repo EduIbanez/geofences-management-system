@@ -8,34 +8,31 @@ CREATE EXTENSION postgis_topology;
 CREATE ROLE test WITH LOGIN PASSWORD 'test';
 ```
 
-Ahora se crea un fichero `application.properties` con el siguiente texto sustituyendo `${IP}` por la IP donde está la base de datos:
-
-```
-spring.datasource.driverClassName=org.postgresql.Driver
-spring.datasource.url=jdbc:postgresql://${IP}:5432/geofencing
-spring.datasource.username=test
-spring.datasource.password=test
-spring.jpa.database-platform=org.hibernate.spatial.dialect.postgis.PostgisDialect
-spring.jpa.hibernate.ddl-auto=create-drop
-spring.jpa.show-sql=true
-```
-
-Después se añade el fichero `application.yml` con el siguiente texto sustituyendo `${secret}` por el clave secreta que se quiera utilizar en el JWT:
+Ahora se añade el fichero `application.yml` con el siguiente texto sustituyendo `${secret}` por el clave secreta que se quiera utilizar en el JWT e `${IP}` por la IP donde está la base de dato:
 
 ```
 # config context path to "/" by setting an empty string
 server:
   contextPath:
 
-# JACKSON
 spring:
   jackson:
     serialization:
       INDENT_OUTPUT: true
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://${IP}:5432/geofencing
+    username: test
+    password: test
+  jpa:
+    database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
 
 jwt:
   header: Authorization
-  secret: mySecret
+  secret: ${secret}
   expiration: 604800
   route:
     authentication:
