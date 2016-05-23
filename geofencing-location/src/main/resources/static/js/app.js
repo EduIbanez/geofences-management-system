@@ -17,17 +17,14 @@ function removeJwtToken() {
 var stompClient = null;
 
 function connect() {
-    var headers = {}
-    if (getJwtToken()) headers['Authorization'] = getJwtToken();
     var socket = new SockJS('http://localhost:8080/api/locations');
     stompClient = Stomp.over(socket);
-    stompClient.connect(
-        headers,
-        function(frame) {
-            console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/positions',
-                                  function(positions) {renderMessageOnMap(JSON.parse(positions.body));},
-            headers);
+    stompClient.connect({}, function(frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/positions',
+            function(positions) {
+                renderMessageOnMap(JSON.parse(positions.body));
+        });
     });
 }
 
@@ -38,14 +35,10 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendLocation(location) {§
-    var headers = {'content-type': 'application/json'}
-    if (getJwtToken()) headers['Authorization'] = getJwtToken();
-
-    stompClient.send(
-        "/api/locations",
-        headers,
-        JSON.stringify({ type : "Point", coordinates : location}));
+function sendLocation(location) {
+    stompClient.send("/api/locations",
+        {'content-type':'application/json'},
+        JSON.stringify({ "Authorization" : getJwtToken(), "Geometry": { "type" : "Point", "coordinates" : location }}));
 }
 
 function starting() {

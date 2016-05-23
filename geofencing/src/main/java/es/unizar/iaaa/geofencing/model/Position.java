@@ -1,5 +1,6 @@
 package es.unizar.iaaa.geofencing.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vividsolutions.jts.geom.Geometry;
@@ -61,6 +62,7 @@ public class Position {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     public User getUser() {
         return user;
     }

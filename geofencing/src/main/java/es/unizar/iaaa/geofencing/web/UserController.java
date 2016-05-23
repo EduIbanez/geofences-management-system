@@ -138,22 +138,10 @@ public class UserController {
         }
     }
 
-    /**
-     * This method logs user out of the system.
-     */
-    /*@RequestMapping(path = "/api/users/logout", method = RequestMethod.GET)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "User logged out", response = User.class)})
-    public void logoutUser() {
-        authenticationService.logout();
-    }*/
-
     @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "Not modified")
     public class UserNotModifiedException extends RuntimeException { }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such User")
     public class UserNotFoundException extends RuntimeException { }
 
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Not authorized")
-    public class UserNotAuthorizedException extends RuntimeException { }
 }

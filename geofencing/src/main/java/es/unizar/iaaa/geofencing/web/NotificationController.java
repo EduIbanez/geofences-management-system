@@ -70,7 +70,8 @@ public class NotificationController {
      */
     @RequestMapping(path = "/api/notifications", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Array of notifications", response = List.class)})
+            @ApiResponse(code = 200, message = "Array of notifications", response = List.class),
+            @ApiResponse(code = 401, message = "Requires authentication", response = InsufficientAuthenticationException.class)})
     public MappingJacksonValue getNotifications() {
         LOGGER.info("Requested /api/notifications GET method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
