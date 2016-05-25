@@ -126,7 +126,7 @@ public class GeofenceControllerTest {
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
         int LIMIT = 2;
-        this.mockMvc.perform(get("/api/geofences")
+        this.mockMvc.perform(get("/api/geofences/area")
                 .param("limit", String.valueOf(LIMIT))
                 .param("latitude", String.valueOf(COORDINATES[0]))
                 .param("longitude", String.valueOf(COORDINATES[1]))
@@ -147,7 +147,7 @@ public class GeofenceControllerTest {
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
         int LIMIT = 2;
-        this.mockMvc.perform(get("/api/geofences")
+        this.mockMvc.perform(get("/api/geofences/area")
                 .param("limit", String.valueOf(LIMIT))
                 .param("latitude", String.valueOf(COORDINATES[0]))
                 .param("longitude", String.valueOf(COORDINATES[1]))
@@ -166,7 +166,7 @@ public class GeofenceControllerTest {
             auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
-        this.mockMvc.perform(get("/api/geofences")
+        this.mockMvc.perform(get("/api/geofences/area")
                 .param("latitude", String.valueOf(COORDINATES[0]))
                 .param("longitude", String.valueOf(COORDINATES[1]))
                 .param("radius", String.valueOf(RADIUS))
@@ -185,7 +185,7 @@ public class GeofenceControllerTest {
             auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
-        this.mockMvc.perform(get("/api/geofences")
+        this.mockMvc.perform(get("/api/geofences/area")
                 .param("latitude", String.valueOf(COORDINATES[0]))
                 .param("longitude", String.valueOf(COORDINATES[1]))
                 .param("radius", String.valueOf(RADIUS)))

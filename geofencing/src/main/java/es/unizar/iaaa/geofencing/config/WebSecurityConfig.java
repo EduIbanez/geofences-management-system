@@ -45,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(POST, "/api/users").permitAll()
                 .antMatchers(POST, "/api/users/auth/**").permitAll()
                 .antMatchers(GET, "/api/users/**").permitAll()
-                .antMatchers(GET, "/api/geofences").permitAll()
+                .antMatchers(GET, "/api/geofences/area").permitAll()
                 .antMatchers(GET, "/api/geofences/**").permitAll()
                 .antMatchers(GET, "/api/rules/**").permitAll()
                 .antMatchers(GET, "/api/notifications/**").permitAll()

@@ -10,6 +10,9 @@ import java.util.List;
 
 public interface GeofenceRepository extends CrudRepository<Geofence, Long> {
 
+    @Query("SELECT g FROM Geofence g WHERE g.user.email = ?1 ORDER BY g.id DESC")
+    List<Geofence> find(String email);
+
     @Query("SELECT g FROM Geofence g WHERE within(g.geometry, ?1) = true")
     List<Geofence> findWithin(Geometry filter);
 

@@ -2,13 +2,14 @@ package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
@@ -37,6 +38,9 @@ public class NotificationController {
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationController.class);
 
@@ -70,9 +74,10 @@ public class NotificationController {
      */
     @RequestMapping(path = "/api/notifications", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Array of notifications", response = List.class),
-            @ApiResponse(code = 401, message = "Requires authentication", response = InsufficientAuthenticationException.class)})
-    public MappingJacksonValue getNotifications() {
+            @ApiResponse(code = 200, message = "Array of notifications", response = String.class),
+            @ApiResponse(code = 401, message = "Requires authentication", response = InsufficientAuthenticationException.class),
+            @ApiResponse(code = 500, message = "Error parsing into JSON", response = NotificationMappingJsonException.class)})
+    public String getNotifications() {
         LOGGER.info("Requested /api/notifications GET method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         LOGGER.info("Requested /api/notifications GET method for "+auth.getPrincipal());
@@ -82,9 +87,12 @@ public class NotificationController {
         UserDetails customUser = (UserDetails) auth.getPrincipal();
         String email = customUser.getUsername();
         List<Notification> notifications = notificationRepository.find(email);
-        final MappingJacksonValue result = new MappingJacksonValue(notifications);
-        result.setSerializationView(View.NotificationCompleteView.class);
-        return result;
+        try {
+            return objectMapper.writerWithView(View.NotificationCompleteView.class)
+                    .writeValueAsString(notifications);
+        } catch (JsonProcessingException e) {
+            throw new NotificationMappingJsonException();
+        }
     }
 
     /**
@@ -147,19 +155,25 @@ public class NotificationController {
      */
     @RequestMapping(path = "/api/notifications/{id}", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Notification requested", response = Notification.class),
-            @ApiResponse(code = 404, message = "Notification not found", response = NotificationNotFoundException.class)})
-    public MappingJacksonValue getNotification(@PathVariable("id") Long id) {
+            @ApiResponse(code = 200, message = "Notification requested", response = String.class),
+            @ApiResponse(code = 404, message = "Notification not found", response = NotificationNotFoundException.class),
+            @ApiResponse(code = 500, message = "Error parsing into JSON", response = NotificationMappingJsonException.class)})
+    public String getNotification(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/notifications/{id} GET method");
         if (notificationRepository.exists(id)) {
-            final MappingJacksonValue result = new MappingJacksonValue(notificationRepository.findOne(id));
+            Notification notification = notificationRepository.findOne(id);
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if ((auth instanceof AnonymousAuthenticationToken)) {
-                result.setSerializationView(View.NotificationBaseView.class);
-            } else {
-                result.setSerializationView(View.NotificationCompleteView.class);
+            try {
+                if (auth instanceof AnonymousAuthenticationToken) {
+                        return objectMapper.writerWithView(View.NotificationBaseView.class)
+                                .writeValueAsString(notification);
+                } else {
+                    return objectMapper.writerWithView(View.NotificationCompleteView.class)
+                            .writeValueAsString(notification);
+                }
+            } catch (JsonProcessingException e) {
+                throw new NotificationMappingJsonException();
             }
-            return result;
         } else {
             throw new NotificationNotFoundException();
         }
@@ -174,4 +188,7 @@ public class NotificationController {
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Notification")
     public class NotificationNotFoundException extends RuntimeException { }
+
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Error mapping Notifications into JSON")
+    public class NotificationMappingJsonException extends RuntimeException { }
 }

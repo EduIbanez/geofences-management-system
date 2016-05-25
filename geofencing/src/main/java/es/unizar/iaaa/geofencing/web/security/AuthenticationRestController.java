@@ -4,6 +4,8 @@ import es.unizar.iaaa.geofencing.security.JwtAuthenticationRequest;
 import es.unizar.iaaa.geofencing.security.JwtTokenUtil;
 import es.unizar.iaaa.geofencing.security.JwtUser;
 import es.unizar.iaaa.geofencing.service.security.JwtAuthenticationResponse;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,15 @@ public class AuthenticationRestController {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    /**
+     * This method authenticates user into the system.
+     *
+     * @param authenticationRequest email and password of the user
+     * @param device device which has submitted the request
+     * @return the authentication
+     */
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User authenticated", response = ResponseEntity.class)})
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
 
@@ -57,6 +68,16 @@ public class AuthenticationRestController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));
     }
 
+    /**
+     * This method refreshes the authentication from the header of the request and
+     * authenticates user into the system again.
+     *
+     * @param request request made
+     * @return the authentication
+     */
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User authenticated again", response = ResponseEntity.class),
+            @ApiResponse(code = 400, message = "Error refreshing authentication", response = ResponseEntity.class)})
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
