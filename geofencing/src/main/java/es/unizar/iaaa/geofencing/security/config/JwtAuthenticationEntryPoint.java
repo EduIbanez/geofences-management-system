@@ -1,4 +1,4 @@
-package es.unizar.iaaa.geofencing.security;
+package es.unizar.iaaa.geofencing.security.config;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

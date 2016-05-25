@@ -1,9 +1,10 @@
-package es.unizar.iaaa.geofencing.web.security;
+package es.unizar.iaaa.geofencing.security.web;
 
-import es.unizar.iaaa.geofencing.security.JwtAuthenticationRequest;
-import es.unizar.iaaa.geofencing.security.JwtTokenUtil;
-import es.unizar.iaaa.geofencing.security.JwtUser;
-import es.unizar.iaaa.geofencing.service.security.JwtAuthenticationResponse;
+import es.unizar.iaaa.geofencing.security.model.JwtAuthenticationRequest;
+import es.unizar.iaaa.geofencing.security.model.JwtUser;
+import es.unizar.iaaa.geofencing.security.service.JwtAuthenticationResponse;
+import es.unizar.iaaa.geofencing.security.service.JwtTokenUtil;
+
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;

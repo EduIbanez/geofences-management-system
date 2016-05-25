@@ -1,5 +1,5 @@
-/geofencing/src/main/resources/application.properties
 /geofencing/src/main/resources/application.yml
+/geofencing/src/test/resources/application.properties
 
 ### Gradle template
 .gradle

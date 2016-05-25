@@ -1,8 +1,9 @@
-package es.unizar.iaaa.geofencing.service.security;
+package es.unizar.iaaa.geofencing.security.service;
 
 import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
-import es.unizar.iaaa.geofencing.security.JwtUserFactory;
+import es.unizar.iaaa.geofencing.security.factory.JwtUserFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

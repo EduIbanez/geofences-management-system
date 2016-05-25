@@ -1,5 +1,6 @@
-package es.unizar.iaaa.geofencing.security;
+package es.unizar.iaaa.geofencing.security.service;
 
+import es.unizar.iaaa.geofencing.security.model.JwtUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

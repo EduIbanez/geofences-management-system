@@ -1,5 +1,8 @@
 package es.unizar.iaaa.geofencing.config;
 
+import es.unizar.iaaa.geofencing.security.config.JwtAuthenticationEntryPoint;
+import es.unizar.iaaa.geofencing.security.config.JwtAuthenticationTokenFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,9 +17,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import es.unizar.iaaa.geofencing.security.JwtAuthenticationEntryPoint;
-import es.unizar.iaaa.geofencing.security.JwtAuthenticationTokenFilter;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.OPTIONS;

@@ -1,11 +1,11 @@
-package es.unizar.iaaa.geofencing.security;
+package es.unizar.iaaa.geofencing.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 
 public class JwtUser implements UserDetails {
 

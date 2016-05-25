@@ -3,7 +3,8 @@ package es.unizar.iaaa.geofencing.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Geometry;
 
-import es.unizar.iaaa.geofencing.security.JwtTokenUtil;
+import es.unizar.iaaa.geofencing.security.service.JwtTokenUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
