@@ -102,7 +102,7 @@ function renderMessageOnMap(data) {
 	var marker = new google.maps.Marker({
 		position : latLng,
 		animation : google.maps.Animation.DROP,
-		html : "<p>" + data.message + "</p>"
+		html : "<p>You are here</p>"
 	});
 
 	var infoWindow = new google.maps.InfoWindow();
