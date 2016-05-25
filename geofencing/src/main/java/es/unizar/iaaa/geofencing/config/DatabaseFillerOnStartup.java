@@ -45,16 +45,18 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
     private User ADMIN = new User(null, "admin", null, "First", "Last", Date.valueOf("1992-08-07"),
             "", new HashSet<>(), true, "ROLE_ADMIN", Date.valueOf("2016-05-19"), new HashSet<>(), new HashSet<>());
 
+    private Coordinate[] coordinates = {new Coordinate(41.63266, -0.898361), new Coordinate(41.61962, -0.8025762),
+            new Coordinate(41.613191, -0.873092), new Coordinate(41.63266, -0.898361)};
     private Geofence GEOFENCE = new Geofence(null, "Feature", null,
-            new GeometryFactory().createPoint(new Coordinate(1, 2)), ADMIN, new HashSet<>());
-
-    private Coordinate[] coordinates = {new Coordinate(41.65, -0.883333), new Coordinate(41.634742, -0.899631),
-            new Coordinate(41.625359, -0.859376), new Coordinate(41.65, -0.883333)};
-    private Geofence GEOFENCE2 = new Geofence(null, "Feature", null,
             new GeometryFactory().createPolygon(coordinates), ADMIN, new HashSet<>());
 
+    private Coordinate[] coordinates2 = {new Coordinate(41.65, -0.883333), new Coordinate(41.634742, -0.899631),
+            new Coordinate(41.625359, -0.859376), new Coordinate(41.65, -0.883333)};
+    private Geofence GEOFENCE2 = new Geofence(null, "Feature", null,
+            new GeometryFactory().createPolygon(coordinates2), ADMIN, new HashSet<>());
+
     private Rule RULE = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
-            new HashSet<>(), GEOFENCE2);
+            new HashSet<>(), GEOFENCE);
 
     private Notification NOTIFICATION = new Notification(null, RULE, ADMIN, "No leído", Date.valueOf("2016-01-19"));
 

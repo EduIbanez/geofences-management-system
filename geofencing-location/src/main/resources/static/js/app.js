@@ -1,5 +1,6 @@
 // VARIABLES =============================================================
 var TOKEN_KEY = "jwtToken"
+var GEOFENCES_NAME = "arrayGeofences";
 
 // FUNCTIONS =============================================================
 function getJwtToken() {
@@ -12,6 +13,10 @@ function setJwtToken(token) {
 
 function removeJwtToken() {
     localStorage.removeItem(TOKEN_KEY);
+}
+
+function getGeometries() {
+    return localStorage.getItem(GEOFENCES_NAME);
 }
 
 var stompClient = null;
@@ -96,10 +101,15 @@ function findUserCurrentLocation(callback) {
 
 }
 
+var marker;
+
 function renderMessageOnMap(data) {
+    if (typeof marker !== 'undefined') {
+        marker.setMap(null);
+    }
 	var latLng = new google.maps.LatLng(data.coordinates.coordinates[1], data.coordinates.coordinates[0]);
 	map.setCenter(latLng);
-	var marker = new google.maps.Marker({
+	marker = new google.maps.Marker({
 		position : latLng,
 		animation : google.maps.Animation.DROP,
 		html : "<p>You are here</p>"
@@ -114,7 +124,22 @@ function renderMessageOnMap(data) {
 
 	marker.setMap(map);
 	map.setCenter(latLng);
-	map.setZoom(4);
+	map.setZoom(15);
+}
+
+function drawGeofences() {
+    var geofences = JSON.parse(getGeometries());
+    for (var i = 0; i < geofences.length; i++) {
+        // Construct the polygon.
+        var polygon = new google.maps.Polygon({
+            paths: geofences[i],
+            strokeColor: '#20B2AA',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#20B2AA',
+            fillOpacity: 0.35  });
+        polygon.setMap(map);
+    }
 }
 
 var timer = setTimeout(startingTimer, 5000);
@@ -126,4 +151,21 @@ function startingTimer() {
 
 function abortTimer() {
     clearTimeout(timer);
+}
+
+
+setTimeout(checkVariable, 1000);
+
+function checkVariable() {
+    var geofences = JSON.parse(getGeometries());
+    if (typeof geofences !== 'undefined' && geofences != null) {
+        stopCheckingVariable();
+        drawGeofences();
+    } else {
+        setTimeout(checkVariable, 1000);
+    }
+}
+
+function stopCheckingVariable() {
+    clearTimeout(checkVariable);
 }

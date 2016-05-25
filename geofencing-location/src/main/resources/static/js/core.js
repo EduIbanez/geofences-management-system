@@ -1,5 +1,6 @@
 // VARIABLES =============================================================
 var TOKEN_KEY = "jwtToken"
+var GEOFENCES_NAME = "arrayGeofences";
 
 // FUNCTIONS =============================================================
 function getJwtToken() {
@@ -52,12 +53,16 @@ function getGeofences() {
         dataType: "json",
         headers: createAuthorizationTokenHeader(),
         success: function (data, textStatus, jqXHR) {
-            var len = data.length;
-            for (var i = 0; i < len; i++) {
-               var message = data[i].geometry;
-               console.log(data);
-               console.log(data[i].id);
+            var geofences = [];
+            for (var i = 0; i < data.length; i++) {
+               var geo = [];
+               var coordinates = data[i].geometry.coordinates[0];
+               for (var j = 0; j < coordinates.length; j++) {
+                    geo.push({lat: coordinates[j][0], lng: coordinates[j][1]});
+               }
+               geofences.push(geo);
             }
+            localStorage.setItem(GEOFENCES_NAME, JSON.stringify(geofences));
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -73,8 +78,7 @@ function getNotifications() {
         dataType: "json",
         headers: createAuthorizationTokenHeader(),
         success: function (data, textStatus, jqXHR) {
-            var len = data.length;
-            for (var i = 0; i < len; i++) {
+            for (var i = 0; i < data.length; i++) {
                var message = data[i].rule.message;
                $('#table').append('<tr><td>'+message+'</td></tr>');
                console.log(message);

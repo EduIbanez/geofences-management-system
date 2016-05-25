@@ -20,7 +20,7 @@
           rel="stylesheet" type="text/css"/>
 
 </head>
-<body onload="starting();getData();" onunload="disconnect();">
+<body onload="onload();" onunload="disconnect();">
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -69,6 +69,11 @@
     if (!navigator.geolocation) {
         alert('Your browser does not support geolocation. Please download latest browser version.');
         $("button").attr("disabled", "disabled");
+    }
+
+    function onload(){
+        getData();
+        starting();
     }
 </script>
 
