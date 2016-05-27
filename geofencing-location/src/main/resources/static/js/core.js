@@ -79,9 +79,10 @@ function getNotifications() {
         headers: createAuthorizationTokenHeader(),
         success: function (data, textStatus, jqXHR) {
             for (var i = 0; i < data.length; i++) {
+               var date = data[i].date;
                var message = data[i].rule.message;
-               $('#table').append('<tr><td>'+message+'</td></tr>');
-               console.log(message);
+               $('#table').append('<tr><td><div style="text-align:right"><b>'+date
+                    +'</b></div><div class="message">'+message+'</div></td></tr>');
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {

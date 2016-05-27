@@ -19,6 +19,10 @@ function getGeometries() {
     return localStorage.getItem(GEOFENCES_NAME);
 }
 
+function removeGeometries() {
+    localStorage.removeItem(GEOFENCES_NAME);
+}
+
 var stompClient = null;
 
 function connect() {
@@ -43,10 +47,13 @@ function disconnect() {
 function sendLocation(location) {
     stompClient.send("/api/locations",
         {'content-type':'application/json'},
-        JSON.stringify({ "Authorization" : getJwtToken(), "Geometry": { "type" : "Point", "coordinates" : location }}));
+        JSON.stringify({ "Authorization" : getJwtToken(), "Position": { "coordinates": { "type" : "Point", "coordinates" : location },
+            "entering":{}, "leaving_before":{}, "leaving_now":{}, "inside_before":{}, "inside_now":{}, "entering_discarded":[],
+            "inside_discarded":[]}}));
 }
 
 function starting() {
+    removeGeometries();
     disconnect();
     connect();
 }
