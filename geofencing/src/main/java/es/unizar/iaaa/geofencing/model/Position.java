@@ -1,49 +1,43 @@
 package es.unizar.iaaa.geofencing.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.vividsolutions.jts.geom.Geometry;
-import es.unizar.iaaa.geofencing.view.View;
-import org.hibernate.annotations.Type;
+import java.util.*;
 
-import javax.persistence.*;
-import java.sql.Time;
-import java.util.Objects;
-
-@Entity
-@Table(name="POSITIONS")
 public class Position {
 
-    private Long id;
     private Geometry coordinates;
-    private Time time;
-    private User user;
+
+    private Map<Geofence, GeofenceRegistry> entering = new HashMap<>();
+    private Set<Geofence> entering_discarded = new HashSet<>();
+
+    private Map<Geofence, GeofenceRegistry> leaving_before = new HashMap<>();
+    private Map<Geofence, GeofenceRegistry> leaving_now = new HashMap<>();
+
+    private Map<Geofence, GeofenceRegistry> inside_before = new HashMap<>();
+    private Map<Geofence, GeofenceRegistry> inside_now = new HashMap<>();
+    private Set<Geofence> inside_discarded = new HashSet<>();
 
     public Position(){}
 
-    public Position(@JsonProperty("id") Long id, @JsonProperty("coordinates") Geometry coordinates,
-                    @JsonProperty("time") Time time, @JsonProperty("user") User user) {
-        this.id = id;
+    public Position(@JsonProperty("coordinates") Geometry coordinates,
+                    @JsonProperty("entering") Map<Geofence, GeofenceRegistry> entering,
+                    @JsonProperty("entering_discarded") Set<Geofence> entering_discarded,
+                    @JsonProperty("leaving_before") Map<Geofence, GeofenceRegistry> leaving_before,
+                    @JsonProperty("leaving_now") Map<Geofence, GeofenceRegistry> leaving_now,
+                    @JsonProperty("inside_before") Map<Geofence, GeofenceRegistry> inside_before,
+                    @JsonProperty("inside_now") Map<Geofence, GeofenceRegistry> inside_now,
+                    @JsonProperty("inside_discarded") Set<Geofence> inside_discarded) {
         this.coordinates = coordinates;
-        this.time = time;
-        this.user = user;
+        this.entering = entering;
+        this.entering_discarded = entering_discarded;
+        this.leaving_before = leaving_before;
+        this.leaving_now = leaving_now;
+        this.inside_before = inside_before;
+        this.inside_now = inside_now;
+        this.inside_discarded = inside_discarded;
     }
 
-    @Id
-    @GeneratedValue
-    @Column(name = "ID", unique = true, nullable = false)
-    @JsonView(View.NotificationBaseView.class)
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Column(name = "COORDINATES", nullable = false, length = 80)
-    @Type(type = "org.hibernate.spatial.GeometryType")
     public Geometry getCoordinates() {
         return coordinates;
     }
@@ -52,37 +46,59 @@ public class Position {
         this.coordinates = coordinates;
     }
 
-    @Column(name = "TIME", nullable = false, length = 15)
-    public Time getTime() {
-        return time;
+    public Map<Geofence, GeofenceRegistry> getEntering() {
+        return entering;
     }
 
-    public void setTime(Time time) {
-        this.time = time;
+    public void setEntering(Map<Geofence, GeofenceRegistry> entering) {
+        this.entering = entering;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    public User getUser() {
-        return user;
+    public Set<Geofence> getEnteringDiscarded() {
+        return entering_discarded;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setEnteringDiscarded(Set<Geofence> entering_discarded) {
+        this.entering_discarded = entering_discarded;
     }
 
-    public String toString() {
-        return "Day(id: "+id+" coordinates: "+coordinates+" time: "+time+" user: "+user+")";
+    public Map<Geofence, GeofenceRegistry> getLeavingBefore() {
+        return leaving_before;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Position position = (Position) o;
-        return id == position.id &&
-                Objects.equals(coordinates, position.coordinates) &&
-                Objects.equals(time, position.time) &&
-                Objects.equals(user, position.user);
+    public void setLeavingBefore(Map<Geofence, GeofenceRegistry> leaving_before) {
+        this.leaving_before = leaving_before;
+    }
+
+    public Map<Geofence, GeofenceRegistry> getLeavingNow() {
+        return leaving_now;
+    }
+
+    public void setLeavingNow(Map<Geofence, GeofenceRegistry> leaving_now) {
+        this.leaving_now = leaving_now;
+    }
+
+    public Map<Geofence, GeofenceRegistry> getInsideBefore() {
+        return inside_before;
+    }
+
+    public void setInsideBefore(Map<Geofence, GeofenceRegistry> inside_before) {
+        this.inside_before = inside_before;
+    }
+
+    public Map<Geofence, GeofenceRegistry> getInsideNow() {
+        return inside_now;
+    }
+
+    public void setInsideNow(Map<Geofence, GeofenceRegistry> inside_now) {
+        this.inside_now = inside_now;
+    }
+
+    public Set<Geofence> getInsideDiscarded() {
+        return inside_discarded;
+    }
+
+    public void setInsideDiscarded(Set<Geofence> inside_discarded) {
+        this.inside_discarded = inside_discarded;
     }
 }

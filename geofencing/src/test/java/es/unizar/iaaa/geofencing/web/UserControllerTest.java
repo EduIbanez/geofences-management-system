@@ -60,7 +60,7 @@ public class UserControllerTest {
     private static final String PASSWORD = "password";
 
     private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", Date.valueOf("1992-08-07"),
-            "356938035643809", new HashSet<>(), true, "ROLE_USER", Date.valueOf("2016-05-19"), new HashSet<>(), new HashSet<>());
+            "356938035643809", new HashSet<>(), true, "ROLE_USER", Date.valueOf("2016-05-19"), new HashSet<>());
 
 
     @Before
@@ -89,8 +89,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.enabled").value(USER1.getEnabled()))
                 .andExpect(jsonPath("$.role").value(USER1.getRole()))
                 .andExpect(jsonPath("$.last_password_reset_date").value(USER1.getLastPasswordResetDate().toString()))
-                .andExpect(jsonPath("$.notifications").isEmpty())
-                .andExpect(jsonPath("$.positions").isEmpty());
+                .andExpect(jsonPath("$.notifications").isEmpty());
         assertEquals(1, userRepository.count());
     }
 
@@ -120,8 +119,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()))
                 .andExpect(jsonPath("$.last_password_reset_date").value(usuario.getLastPasswordResetDate().toString()))
-                .andExpect(jsonPath("$.notifications").isEmpty())
-                .andExpect(jsonPath("$.positions").isEmpty());
+                .andExpect(jsonPath("$.notifications").isEmpty());
         User usuarioNew = userRepository.findOne(usuario.getId());
         assertEquals(usuario.getBirthday(), usuarioNew.getBirthday());
     }
@@ -162,8 +160,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()))
                 .andExpect(jsonPath("$.last_password_reset_date").value(usuario.getLastPasswordResetDate().toString()))
-                .andExpect(jsonPath("$.notifications").isEmpty())
-                .andExpect(jsonPath("$.positions").isEmpty());
+                .andExpect(jsonPath("$.notifications").isEmpty());
     }
 
     @Test

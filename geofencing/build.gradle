@@ -49,6 +49,7 @@ dependencies {
     compile('org.hibernate:hibernate-spatial:4.3')
     compile('com.bedatadriven:jackson-datatype-jts:2.2')
     compile('commons-codec:commons-codec:1.5')
+    compile('commons-lang:commons-lang:2.6')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')

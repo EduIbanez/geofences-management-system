@@ -27,7 +27,6 @@ public class User {
     private String role;
     private java.util.Date last_password_reset_date;
     private Set<Notification> notifications;
-    private Set<Position> positions;
 
     public User(){}
 
@@ -37,8 +36,7 @@ public class User {
                 @JsonProperty("imei") String imei, @JsonProperty("geofences") Set<Geofence> geofences,
                 @JsonProperty("enabled") Boolean enabled, @JsonProperty("role") String role,
                 @JsonProperty("last_password_reset_date") java.util.Date last_password_reset_date,
-                @JsonProperty("notifications") Set<Notification> notifications,
-                @JsonProperty("locations") Set<Position> positions) {
+                @JsonProperty("notifications") Set<Notification> notifications) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -51,7 +49,6 @@ public class User {
         this.role = role;
         this.last_password_reset_date = last_password_reset_date;
         this.notifications = notifications;
-        this.positions = positions;
     }
 
     @Id
@@ -178,21 +175,11 @@ public class User {
         this.notifications = notifications;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    @JsonView(View.UserCompleteView.class)
-    public Set<Position> getPositions() {
-        return positions;
-    }
-
-    public void setPositions(Set<Position> positions) {
-        this.positions = positions;
-    }
-
     public String toString() {
         return "User(id: "+id+" email: "+email+" password: "+password+" first_name: "+first_name+
                 " last_name: "+last_name+" birthday: "+birthday+" imei: "+imei+" geofence: "+geofences+
                 " enabled: "+enabled+" role: "+role+" last_password_reset_date: "+last_password_reset_date+
-                " notifications: "+notifications+" positions:"+positions+")";
+                " notifications: "+notifications+")";
     }
 
     @Override
@@ -211,7 +198,6 @@ public class User {
                 Objects.equals(enabled, user.enabled) &&
                 Objects.equals(role, user.role) &&
                 Objects.equals(last_password_reset_date, user.last_password_reset_date) &&
-                Objects.equals(notifications, user.notifications) &&
-                Objects.equals(positions, user.positions);
+                Objects.equals(notifications, user.notifications);
     }
 }
