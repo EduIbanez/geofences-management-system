@@ -20,6 +20,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.util.LinkedMultiValueMap;
@@ -48,6 +49,7 @@ import static org.junit.Assert.assertNotNull;
 @WebAppConfiguration
 @SpringApplicationConfiguration(classes = Application.class)
 @IntegrationTest("server.port:0")
+@ActiveProfiles("test")
 public class SecurityTest {
 
     @Value("${local.server.port}")

@@ -2,15 +2,10 @@ package es.unizar.iaaa.geofencing.config;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import es.unizar.iaaa.geofencing.builder.GeometryBuilder;
-import es.unizar.iaaa.geofencing.model.Geofence;
-import es.unizar.iaaa.geofencing.model.Notification;
-import es.unizar.iaaa.geofencing.model.Rule;
-import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
-import es.unizar.iaaa.geofencing.repository.NotificationRepository;
-import es.unizar.iaaa.geofencing.repository.RuleRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,12 +13,20 @@ import org.springframework.stereotype.Component;
 import java.sql.Date;
 import java.util.HashSet;
 
+import es.unizar.iaaa.geofencing.builder.GeometryBuilder;
+import es.unizar.iaaa.geofencing.model.Geofence;
+import es.unizar.iaaa.geofencing.model.Notification;
+import es.unizar.iaaa.geofencing.model.Rule;
 import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
+import es.unizar.iaaa.geofencing.repository.NotificationRepository;
+import es.unizar.iaaa.geofencing.repository.RuleRepository;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 
 import static es.unizar.iaaa.geofencing.model.RuleType.INSIDE;
 
 @Component
+@Profile("!test")
 public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefreshedEvent> {
 
     @Autowired
