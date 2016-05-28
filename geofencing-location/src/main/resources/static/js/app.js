@@ -77,12 +77,12 @@ var map = new google.maps.Map(document.getElementById('map-canvas'),
 function findUserCurrentLocation(callback) {
 
 	navigator.geolocation.getCurrentPosition(function(position){
-        var longitude = position.coords.longitude;
         var latitude = position.coords.latitude;
-        console.log('longitude .. '+longitude);
+        var longitude = position.coords.longitude;
         console.log('latitude .. '+latitude);
+        console.log('longitude .. '+longitude);
 
-        var location = new Array(longitude , latitude);
+        var location = new Array(latitude, longitude);
         callback(location);
     }, function(e){
         switch (e.code) {
@@ -114,7 +114,7 @@ function renderMessageOnMap(data) {
     if (typeof marker !== 'undefined') {
         marker.setMap(null);
     }
-	var latLng = new google.maps.LatLng(data.coordinates.coordinates[1], data.coordinates.coordinates[0]);
+	var latLng = new google.maps.LatLng(data.coordinates.coordinates[0], data.coordinates.coordinates[1]);
 	map.setCenter(latLng);
 	marker = new google.maps.Marker({
 		position : latLng,

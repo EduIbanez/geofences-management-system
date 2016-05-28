@@ -19,7 +19,7 @@ public interface GeofenceRepository extends CrudRepository<Geofence, Long> {
     @Query("SELECT g FROM Geofence g WHERE within(g.geometry, ?1) = true")
     List<Geofence> findWithin(Geometry filter, Pageable pageable);
 
-    @Query("SELECT g FROM Geofence g WHERE within(g.geometry, ?1) = true AND g.user.email = ?2")
+    @Query("SELECT g FROM Geofence g WHERE within(?1, g.geometry) = true AND g.user.email = ?2")
     List<Geofence> findWithin(Geometry filter, String email);
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN 'true' ELSE 'false' END FROM User u, Geofence g" +
