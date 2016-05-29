@@ -23,8 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -39,6 +37,7 @@ import es.unizar.iaaa.geofencing.Application;
 import es.unizar.iaaa.geofencing.model.Geofence;
 import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
+import es.unizar.iaaa.geofencing.security.model.JwtAuthenticationRequest;
 import es.unizar.iaaa.geofencing.view.View;
 
 import static org.junit.Assert.assertEquals;
@@ -81,16 +80,15 @@ public class SecurityTest {
 
     @Test
     public void createGeofenceWithAuthorization() {
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-        map.add("username", "example.gmail.com");
-        map.add("password", PASSWORD);
+        JwtAuthenticationRequest jwtAuthenticationRequest = new JwtAuthenticationRequest("example.gmail.com", PASSWORD);
         RestTemplate client = new RestTemplate();
-        ResponseEntity<String> response = client.postForEntity("http://localhost:{port}/login", map, String.class, port);
+        ResponseEntity<String> response = client.postForEntity("http://localhost:{port}/api/users/auth", jwtAuthenticationRequest, String.class, port);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
+        String body = response.getBody().toString();
         HttpHeaders entityHeaders = new HttpHeaders();
         entityHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        entityHeaders.add("Cookie", response.getHeaders().get("Set-Cookie").get(0));
+        entityHeaders.add("Authorization", body.substring(10, body.length()-2));
         MappingJacksonValue jacksonValue = new MappingJacksonValue(GEOFENCE1);
         jacksonValue.setSerializationView(View.GeofenceBaseView.class);
 
@@ -110,7 +108,6 @@ public class SecurityTest {
         entityHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         MappingJacksonValue jacksonValue = new MappingJacksonValue(GEOFENCE1);
         jacksonValue.setSerializationView(View.GeofenceBaseView.class);
-
 
         RestTemplate client = new RestTemplate();
         client.getMessageConverters().add(0, new MappingJackson2HttpMessageConverter(jacksonBuilder.build()));
