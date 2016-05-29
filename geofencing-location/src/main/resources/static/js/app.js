@@ -47,9 +47,7 @@ function disconnect() {
 function sendLocation(location) {
     stompClient.send("/api/locations",
         {'content-type':'application/json'},
-        JSON.stringify({ "Authorization" : getJwtToken(), "Position": { "coordinates": { "type" : "Point", "coordinates" : location },
-            "entering":{}, "leaving_before":{}, "leaving_now":{}, "inside_before":{}, "inside_now":{}, "entering_discarded":[],
-            "inside_discarded":[]}}));
+        JSON.stringify({ "authorization" : getJwtToken(), "position": { "coordinates": { "type" : "Point", "coordinates" : location }}}));
 }
 
 function starting() {

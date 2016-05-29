@@ -46,7 +46,7 @@ public class PositionController {
     /**
      * This method processes the location sent by a user.
      *
-     * @param map map with data
+     * @param positionAuthenticated token and position
      * @return the position received
      */
     @MessageMapping("locations")
@@ -54,18 +54,17 @@ public class PositionController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Position saved", response = Position.class),
             @ApiResponse(code = 401, message = "Requires authentication", response = InsufficientAuthenticationException.class)})
-    public Position savePosition(Map<String, Object> map) throws Exception {
+    public Position savePosition(PositionAuthenticated positionAuthenticated) throws Exception {
         LOGGER.info("Requested /api/locations using WebSocket");
-        String token = (String) map.get("Authorization");
+        String token = positionAuthenticated.getAuthorization();
         String username = jwtTokenUtil.getUsernameFromToken(token);
         if (username == null || userRepository.findByUsername(username) == null) {
             throw new InsufficientAuthenticationException("Requires authentication");
         }
         LOGGER.info("with principal "+username);
-        Position position = objectMapper.readValue(objectMapper.writeValueAsString(map.get("Position")), Position.class);
         Time time = new Time(new Date().getTime());
+        Position position = positionAuthenticated.getPosition();
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), username);
-        position = checkRules(position, geofences, time);
         return position;
     }
 
