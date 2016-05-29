@@ -21,6 +21,7 @@ import es.unizar.iaaa.geofencing.repository.UserRepository;
 import es.unizar.iaaa.geofencing.security.service.JwtTokenUtil;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.transaction.annotation.Transactional;
 
 @Controller
 public class PositionController {
@@ -82,17 +83,22 @@ public class PositionController {
         for (Geofence geofence: geofences) {
             Set<Rule> rules = geofence.getRules();
             for (Rule rule: rules) {
+                LOGGER.info(rule.getId()+"rule");
                 if (rule.getEnabled()) {
+                    LOGGER.info(rule.getId()+"rule-enabled");
                     if (rule.getType().equals(RuleType.ENTERING) && !entering.containsKey(geofence.getId())
                             && !entering_discarded.contains(geofence.getId())) {
+                        LOGGER.info(rule.getId()+"entering");
                         entering.put(geofence.getId(), new GeofenceRegistry(rule.getNotifications(), time, rule.getTime()));
                     } else if (rule.getType().equals(RuleType.LEAVING)) {
                         GeofenceRegistry geofenceRegistry = new GeofenceRegistry(rule.getNotifications(), time, rule.getTime());
                         if (!leaving_before.containsKey(geofence.getId())) {
                             leaving_before.put(geofence.getId(), geofenceRegistry);
                         }
+                        LOGGER.info(rule.getId()+"leaving");
                         leaving_now.put(geofence.getId(), geofenceRegistry);
                     } else if (rule.getType().equals(RuleType.INSIDE) && !inside_discarded.contains(geofence.getId())) {
+                        LOGGER.info(rule.getId()+"inside");
                         inside_now.put(geofence.getId(), new GeofenceRegistry(rule.getNotifications(), time, rule.getTime()));
                     }
                 }

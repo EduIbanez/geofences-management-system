@@ -1,8 +1,6 @@
 package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
@@ -13,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
@@ -42,9 +41,6 @@ public class GeofenceController {
 
     @Autowired
     private GeofenceRepository geofenceRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GeofenceController.class);
 
@@ -82,9 +78,8 @@ public class GeofenceController {
      */
     @RequestMapping(path = "/api/geofences/area", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Array of geofences", response = String.class),
-            @ApiResponse(code = 500, message = "Error parsing into JSON", response = GeofenceMappingJsonException.class)})
-    public String getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
+            @ApiResponse(code = 200, message = "Array of geofences", response = MappingJacksonValue.class)})
+    public MappingJacksonValue getGeofences(@RequestParam(value = "limit", required = false) Integer limit,
                                             @RequestParam(value = "latitude") Double latitude,
                                             @RequestParam(value = "longitude") Double longitude,
                                             @RequestParam(value = "radius") Integer radius) {
@@ -100,18 +95,14 @@ public class GeofenceController {
         else {
             geofences = geofenceRepository.findWithin(shapeFactory.createCircle());
         }
+        final MappingJacksonValue result = new MappingJacksonValue(geofences);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        try {
-            if (auth instanceof AnonymousAuthenticationToken) {
-                return objectMapper.writerWithView(View.GeofenceBaseView.class)
-                        .writeValueAsString(geofences);
-            } else {
-                return objectMapper.writerWithView(View.GeofenceCompleteView.class)
-                        .writeValueAsString(geofences);
-            }
-        } catch (JsonProcessingException e) {
-            throw new GeofenceMappingJsonException();
+        if ((auth instanceof AnonymousAuthenticationToken)) {
+            result.setSerializationView(View.GeofenceBaseView.class);
+        } else {
+            result.setSerializationView(View.GeofenceCompleteView.class);
         }
+        return result;
     }
 
     /**
@@ -122,10 +113,9 @@ public class GeofenceController {
      */
     @RequestMapping(path = "/api/geofences", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Array of geofences", response = String.class),
-            @ApiResponse(code = 401, message = "Requires authentication", response = InsufficientAuthenticationException.class),
-            @ApiResponse(code = 500, message = "Error parsing into JSON", response = GeofenceMappingJsonException.class)})
-    public String getGeofences() {
+            @ApiResponse(code = 200, message = "Array of geofences", response = MappingJacksonValue.class),
+            @ApiResponse(code = 401, message = "Requires authentication", response = InsufficientAuthenticationException.class)})
+    public MappingJacksonValue getGeofences() {
         LOGGER.info("Requested /api/geofences GET method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         LOGGER.info("Requested /api/geofences GET method for "+auth.getPrincipal());
@@ -135,12 +125,9 @@ public class GeofenceController {
         UserDetails customUser = (UserDetails) auth.getPrincipal();
         String email = customUser.getUsername();
         List<Geofence> geofences = geofenceRepository.find(email);
-        try {
-            return objectMapper.writerWithView(View.GeofenceCompleteView.class)
-                    .writeValueAsString(geofences);
-        } catch (JsonProcessingException e) {
-            throw new GeofenceMappingJsonException();
-        }
+        final MappingJacksonValue result = new MappingJacksonValue(geofences);
+        result.setSerializationView(View.GeofenceCompleteView.class);
+        return result;
     }
 
     /**
@@ -202,25 +189,19 @@ public class GeofenceController {
      */
     @RequestMapping(path = "/api/geofences/{id}", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Geofence requested", response = String.class),
-            @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class),
-            @ApiResponse(code = 500, message = "Error parsing into JSON", response = GeofenceMappingJsonException.class)})
-    public String getGeofence(@PathVariable("id") Long id) {
+            @ApiResponse(code = 200, message = "Geofence requested", response = MappingJacksonValue.class),
+            @ApiResponse(code = 404, message = "Geofence not found", response = GeofenceNotFoundException.class)})
+    public MappingJacksonValue getGeofence(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/geofences/{id} GET method");
         if (geofenceRepository.exists(id)) {
-            Geofence geofence = geofenceRepository.findOne(id);
+            final MappingJacksonValue result = new MappingJacksonValue(geofenceRepository.findOne(id));
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            try {
-                if (auth instanceof AnonymousAuthenticationToken) {
-                    return objectMapper.writerWithView(View.GeofenceBaseView.class)
-                            .writeValueAsString(geofence);
-                } else {
-                    return objectMapper.writerWithView(View.GeofenceCompleteView.class)
-                            .writeValueAsString(geofence);
-                }
-            } catch (JsonProcessingException e) {
-                throw new GeofenceMappingJsonException();
+            if ((auth instanceof AnonymousAuthenticationToken)) {
+                result.setSerializationView(View.GeofenceBaseView.class);
+            } else {
+                result.setSerializationView(View.GeofenceCompleteView.class);
             }
+            return result;
         } else {
             throw new GeofenceNotFoundException();
         }
@@ -235,8 +216,4 @@ public class GeofenceController {
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Geofence")
     public class GeofenceNotFoundException extends RuntimeException { }
-
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Error mapping Geofences into JSON")
-    public class GeofenceMappingJsonException extends RuntimeException { }
-
 }

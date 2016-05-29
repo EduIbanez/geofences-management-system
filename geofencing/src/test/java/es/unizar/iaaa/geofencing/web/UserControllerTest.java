@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringApplicationConfiguration(classes={Application.class, WebConfigForTest.class})
 @ActiveProfiles("test")
 public class UserControllerTest {
 
@@ -90,7 +90,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(USER1.getEnabled()))
                 .andExpect(jsonPath("$.role").value(USER1.getRole()))
-                .andExpect(jsonPath("$.last_password_reset_date").value(USER1.getLastPasswordResetDate().toString()))
+                .andExpect(jsonPath("$.lastPasswordResetDate").isNumber())
                 .andExpect(jsonPath("$.notifications").isEmpty());
         assertEquals(1, userRepository.count());
     }
@@ -120,7 +120,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()))
-                .andExpect(jsonPath("$.last_password_reset_date").value(usuario.getLastPasswordResetDate().toString()))
+                .andExpect(jsonPath("$.lastPasswordResetDate").value(usuario.getLastPasswordResetDate().getTime()))
                 .andExpect(jsonPath("$.notifications").isEmpty());
         User usuarioNew = userRepository.findOne(usuario.getId());
         assertEquals(usuario.getBirthday(), usuarioNew.getBirthday());
@@ -161,7 +161,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()))
-                .andExpect(jsonPath("$.last_password_reset_date").value(usuario.getLastPasswordResetDate().toString()))
+                .andExpect(jsonPath("$.lastPasswordResetDate").value(usuario.getLastPasswordResetDate().getTime()))
                 .andExpect(jsonPath("$.notifications").isEmpty());
     }
 

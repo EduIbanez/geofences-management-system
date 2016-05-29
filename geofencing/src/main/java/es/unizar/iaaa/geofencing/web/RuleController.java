@@ -2,14 +2,13 @@ package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,9 +35,6 @@ public class RuleController {
 
     @Autowired
     private RuleRepository ruleRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RuleController.class);
 
@@ -123,25 +119,19 @@ public class RuleController {
      */
     @RequestMapping(path = "/api/rules/{id}", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Rule requested", response = String.class),
-            @ApiResponse(code = 404, message = "Rule not found", response = RuleNotFoundException.class),
-            @ApiResponse(code = 500, message = "Error parsing into JSON", response = RuleMappingJsonException.class)})
-    public String getRule(@PathVariable("id") Long id) {
+            @ApiResponse(code = 200, message = "Rule requested", response = MappingJacksonValue.class),
+            @ApiResponse(code = 404, message = "Rule not found", response = RuleNotFoundException.class)})
+    public MappingJacksonValue getRule(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/rules/{id} GET method");
         if (ruleRepository.exists(id)) {
-            Rule rule = ruleRepository.findOne(id);
+            final MappingJacksonValue result = new MappingJacksonValue(ruleRepository.findOne(id));
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            try {
-                if (auth instanceof AnonymousAuthenticationToken) {
-                    return objectMapper.writerWithView(View.RuleBaseView.class)
-                            .writeValueAsString(rule);
-                } else {
-                    return objectMapper.writerWithView(View.RuleCompleteView.class)
-                            .writeValueAsString(rule);
-                }
-            } catch (JsonProcessingException e) {
-            throw new RuleMappingJsonException();
+            if ((auth instanceof AnonymousAuthenticationToken)) {
+                result.setSerializationView(View.RuleBaseView.class);
+            } else {
+                result.setSerializationView(View.RuleCompleteView.class);
             }
+            return result;
         } else {
             throw new RuleNotFoundException();
         }
@@ -156,7 +146,4 @@ public class RuleController {
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Rule")
     public class RuleNotFoundException extends RuntimeException { }
-
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Error mapping Rules into JSON")
-    public class RuleMappingJsonException extends RuntimeException { }
 }

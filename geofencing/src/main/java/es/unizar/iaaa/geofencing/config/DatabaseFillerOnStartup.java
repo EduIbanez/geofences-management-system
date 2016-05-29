@@ -60,7 +60,7 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
             new GeometryFactory().createPolygon(coordinates2), ADMIN, new HashSet<>());
 
     private Geofence GEOFENCE3 = new Geofence(null, "Feature", null,
-            new GeometryBuilder().circle(41.625359, -0.859376, 0.002, 40), ADMIN, new HashSet<>());
+            new GeometryBuilder().circle(41.682746, -0.888445, 0.002, 40), ADMIN, new HashSet<>());
 
     private Rule RULE = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
             new HashSet<>(), GEOFENCE);
@@ -68,9 +68,14 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
     private Rule RULE2 = new Rule(null, true, INSIDE, 20, "You are outside", new HashSet<>(),
             new HashSet<>(), GEOFENCE2);
 
+    private Rule RULE3 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
+            new HashSet<>(), GEOFENCE3);
+
     private Notification NOTIFICATION = new Notification(null, RULE, ADMIN, "No leído", Date.valueOf("2016-01-19"));
 
     private Notification NOTIFICATION2 = new Notification(null, RULE2, ADMIN, "No leído", Date.valueOf("2016-01-20"));
+
+    private Notification NOTIFICATION3 = new Notification(null, RULE3, ADMIN, "No leído", Date.valueOf("2016-01-18"));
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -82,8 +87,10 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
             geofenceRepository.save(GEOFENCE3);
             ruleRepository.save(RULE);
             ruleRepository.save(RULE2);
+            ruleRepository.save(RULE3);
             notificationRepository.save(NOTIFICATION);
             notificationRepository.save(NOTIFICATION2);
+            notificationRepository.save(NOTIFICATION3);
         }
     }
 }

@@ -1,13 +1,12 @@
 package es.unizar.iaaa.geofencing.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,9 +31,6 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -124,25 +120,19 @@ public class UserController {
      */
     @RequestMapping(path = "/api/users/{id}", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "User requested", response = String.class),
-            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class),
-            @ApiResponse(code = 500, message = "Error parsing into JSON", response = UserMappingJsonException.class)})
-    public String getUser(@PathVariable("id") Long id) {
+            @ApiResponse(code = 200, message = "User requested", response = MappingJacksonValue.class),
+            @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
+    public MappingJacksonValue getUser(@PathVariable("id") Long id) {
         LOGGER.info("Requested /api/users/{id} GET method");
         if (userRepository.exists(id)) {
-            User user = userRepository.findOne(id);
+            final MappingJacksonValue result = new MappingJacksonValue(userRepository.findOne(id));
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            try {
-                if (auth instanceof AnonymousAuthenticationToken) {
-                    return objectMapper.writerWithView(View.UserBaseView.class)
-                            .writeValueAsString(user);
-                } else {
-                    return objectMapper.writerWithView(View.UserCompleteView.class)
-                            .writeValueAsString(user);
-                }
-            } catch (JsonProcessingException e) {
-                throw new UserMappingJsonException();
+            if ((auth instanceof AnonymousAuthenticationToken)) {
+                result.setSerializationView(View.UserBaseView.class);
+            } else {
+                result.setSerializationView(View.UserCompleteView.class);
             }
+            return result;
         } else {
             throw new UserNotFoundException();
         }
@@ -153,8 +143,4 @@ public class UserController {
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such User")
     public class UserNotFoundException extends RuntimeException { }
-
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Error mapping Users into JSON")
-    public class UserMappingJsonException extends RuntimeException { }
-
 }

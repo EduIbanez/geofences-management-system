@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringApplicationConfiguration(classes={Application.class, WebConfigForTest.class})
 @ActiveProfiles("test")
 public class RuleControllerTest {
 

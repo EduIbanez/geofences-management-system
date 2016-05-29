@@ -21,9 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.sql.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 import es.unizar.iaaa.geofencing.Application;
 import es.unizar.iaaa.geofencing.model.Geofence;
@@ -47,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringApplicationConfiguration(classes={Application.class, WebConfigForTest.class})
 @ActiveProfiles("test")
 public class GeofenceControllerTest {
 
@@ -74,7 +72,7 @@ public class GeofenceControllerTest {
             "356938035643809", new HashSet<>(), true, "ROLE_USER", Date.valueOf("2016-05-19"), new HashSet<>());
 
     private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", null,
-            new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());
+            new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)), USER1, new HashSet<>());
 
     private final int[] COORDINATES = {1, 2};
     private final int COUNT = 10;
@@ -98,7 +96,6 @@ public class GeofenceControllerTest {
     @After
     public void cleanup() {
         geofenceRepository.deleteAll();
-        geofenceRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -118,6 +115,21 @@ public class GeofenceControllerTest {
                 .andExpect(jsonPath("$.user.id").value(GEOFENCE1.getUser().getId().intValue()))
                 .andExpect(jsonPath("$.rules").isEmpty());
         assertEquals(1, geofenceRepository.count());
+    }
+
+    @Test
+    public void getGeofences() throws Exception {
+        Geofence auxGeofence = GEOFENCE1;
+        for (int i = 0; i < COUNT; i++) {
+            auxGeofence.setId(null);
+            auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
+            auxGeofence = geofenceRepository.save(auxGeofence);
+        }
+        this.mockMvc.perform(get("/api/notifications")
+                .with(user(USER1.getEmail())))
+                .andDo(print())
+                .andExpect(status().isOk());
+        assertEquals(COUNT, geofenceRepository.count());
     }
 
     @Test
@@ -258,3 +270,4 @@ public class GeofenceControllerTest {
                 .andExpect(jsonPath("$.geometry.type").value(geofence.getGeometry().getGeometryType()));
     }
 }
+
