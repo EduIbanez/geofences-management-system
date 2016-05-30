@@ -130,8 +130,8 @@ public class Rule {
     }
 
     public String toString() {
-        return "Rule(id: "+id+" enabled: "+enabled+" type: "+type.toString()+" time: "+time+
-                " days: "+days+" notifications: "+notifications+" geofence: "+geofence+")";
+        return "Rule(id: "+id+" enabled: "+enabled+" type: "+type.toString()+" time: "+time+" days: "+days.toString()
+                +" notifications: "+notifications.toString()+" geofence id: "+geofence.getId()+")";
     }
 
     @Override
