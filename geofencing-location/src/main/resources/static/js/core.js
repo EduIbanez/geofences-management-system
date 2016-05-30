@@ -78,7 +78,7 @@ function getNotifications() {
         dataType: "json",
         headers: createAuthorizationTokenHeader(),
         success: function (data, textStatus, jqXHR) {
-            for (var i = 0; i < data.length; i++) {
+            for (var i = 0; i < 10; i++) {
                var date = data[i].date;
                var message = data[i].rule.message;
                $('#table').append('<tr><td><div style="text-align:right"><b>'+date
@@ -113,4 +113,4 @@ $("#loginForm").submit(function (event) {
     doLogin(formData);
 });
 
-$("#logoutButton").click(doLogout);
+$("#logout").click(doLogout);
