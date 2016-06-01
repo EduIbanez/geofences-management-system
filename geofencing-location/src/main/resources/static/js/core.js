@@ -78,7 +78,12 @@ function getNotifications() {
         dataType: "json",
         headers: createAuthorizationTokenHeader(),
         success: function (data, textStatus, jqXHR) {
-            for (var i = 0; i < 10; i++) {
+            var len = data.length;
+            if (len > 10) {
+                len = 10;
+            }
+            $('#table tr td').remove();
+            for (var i = 0; i < len; i++) {
                var date = data[i].date;
                var message = data[i].rule.message;
                $('#table').append('<tr><td><div style="text-align:right"><b>'+date
@@ -114,3 +119,14 @@ $("#loginForm").submit(function (event) {
 });
 
 $("#logout").click(doLogout);
+
+var timerData = setTimeout(gettingData, 5000);
+
+function gettingData() {
+    getData();
+    timerData = setTimeout(gettingData, 30000);
+}
+
+function abortTimerData() {
+    clearTimeout(timerData);
+}

@@ -63,7 +63,7 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
     private Geofence geofence3 = new Geofence(null, "Feature", null,
             new GeometryBuilder().circle(41.682746, -0.888445, 0.002, 40), null, new HashSet<>());
 
-    private Rule rule = new Rule(null, true, ENTERING, 70, "You are inside", new HashSet<>(),
+    private Rule rule = new Rule(null, true, ENTERING, 70, "You are entering", new HashSet<>(),
             new HashSet<>(), geofence);
 
     private Rule rule2 = new Rule(null, true, ENTERING, 20, "You are outside", new HashSet<>(),

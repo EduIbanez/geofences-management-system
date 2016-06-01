@@ -123,7 +123,7 @@ public class GeofenceController {
     @RequestMapping(path = "/api/geofences", method = RequestMethod.GET)
     @JsonView(View.GeofenceCompleteView.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Array of geofences", response = MappingJacksonValue.class),
+            @ApiResponse(code = 200, message = "Array of geofences", response = ResponseEntity.class),
             @ApiResponse(code = 401, message = "Requires authentication", response = InsufficientAuthenticationException.class)})
     public ResponseEntity<String> getGeofences() throws JsonProcessingException {
         LOGGER.info("Requested /api/geofences GET method");
