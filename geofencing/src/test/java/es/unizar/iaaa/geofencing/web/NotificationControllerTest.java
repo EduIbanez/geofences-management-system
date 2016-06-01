@@ -90,8 +90,7 @@ public class NotificationControllerTest {
 
         GEOFENCE1 = geofenceRepository.save(GEOFENCE1);
 
-        Rule RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
-                new HashSet<>(), GEOFENCE1);
+        Rule RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(), new HashSet<>(), GEOFENCE1);
 
         RULE1 = ruleRepository.save(RULE1);
 

@@ -86,8 +86,7 @@ public class RuleControllerTest {
 
         GEOFENCE1 = geofenceRepository.save(GEOFENCE1);
 
-        RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
-                new HashSet<>(), GEOFENCE1);
+        RULE1 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(), new HashSet<>(), GEOFENCE1);
     }
 
     @After

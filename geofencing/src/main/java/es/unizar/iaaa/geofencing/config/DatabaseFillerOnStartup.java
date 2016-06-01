@@ -23,6 +23,7 @@ import es.unizar.iaaa.geofencing.repository.NotificationRepository;
 import es.unizar.iaaa.geofencing.repository.RuleRepository;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 
+import static es.unizar.iaaa.geofencing.model.RuleType.ENTERING;
 import static es.unizar.iaaa.geofencing.model.RuleType.INSIDE;
 
 @Component
@@ -62,14 +63,14 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
     private Geofence GEOFENCE3 = new Geofence(null, "Feature", null,
             new GeometryBuilder().circle(41.682746, -0.888445, 0.002, 40), ADMIN, new HashSet<>());
 
-    private Rule RULE = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
+    private Rule RULE = new Rule(null, true, ENTERING, 70, "You are inside", new HashSet<>(),
             new HashSet<>(), GEOFENCE);
 
-    private Rule RULE2 = new Rule(null, true, INSIDE, 20, "You are outside", new HashSet<>(),
+    private Rule RULE2 = new Rule(null, true, ENTERING, 20, "You are outside", new HashSet<>(),
             new HashSet<>(), GEOFENCE2);
 
     private Rule RULE3 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
-            new HashSet<>(), GEOFENCE3);
+            new HashSet<>(), GEOFENCE);
 
     private Notification NOTIFICATION = new Notification(null, RULE, ADMIN, "No leído", Date.valueOf("2016-01-19"));
 

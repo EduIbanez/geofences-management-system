@@ -67,7 +67,7 @@ public class Geofence {
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="PROPERTIES_KEY")
     @Column(name="PROPERTIES_VALUE")
-    @CollectionTable(name="PROPERTIES_MAPPING", joinColumns=@JoinColumn(name="GEOFENCE_ID"))
+    @CollectionTable(name="PROPERTIES_MAPPING", joinColumns=@JoinColumn(name="GEOFENCE_ID", referencedColumnName = "ID"))
     @JsonView(View.GeofenceBaseView.class)
     public Map<String, String> getProperties() {
         return properties;
@@ -98,7 +98,7 @@ public class Geofence {
         this.user = user;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "geofence")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "geofence")
     @JsonView(View.GeofenceCompleteView.class)
     public Set<Rule> getRules() {
         return rules;
@@ -110,7 +110,7 @@ public class Geofence {
 
     public String toString() {
         return "Geofence(id: "+id+" type: "+type+" properties: "+properties+" geom: "+geometry+" user id: "+user.getId()+
-                "rules"+rules.toString()+")";
+                " rules: "+rules.toString()+")";
     }
 
     @Override
