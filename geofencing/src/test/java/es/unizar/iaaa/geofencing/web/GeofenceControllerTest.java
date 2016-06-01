@@ -125,7 +125,7 @@ public class GeofenceControllerTest {
             auxGeofence.setGeometry(new GeometryFactory().createPoint(new Coordinate(COORDINATES[0]+i, COORDINATES[1]+i)));
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
-        this.mockMvc.perform(get("/api/notifications")
+        this.mockMvc.perform(get("/api/geofences")
                 .with(user(USER1.getEmail())))
                 .andDo(print())
                 .andExpect(status().isOk());
