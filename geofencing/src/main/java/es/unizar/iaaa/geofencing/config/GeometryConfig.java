@@ -3,10 +3,10 @@ package es.unizar.iaaa.geofencing.config;
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.stereotype.Component;
 
-@Component
+@Configuration
 public class GeometryConfig {
 
     @Bean

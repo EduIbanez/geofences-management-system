@@ -85,7 +85,7 @@ public class SecurityTest {
         ResponseEntity<String> response = client.postForEntity("http://localhost:{port}/api/users/auth", jwtAuthenticationRequest, String.class, port);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        String body = response.getBody().toString();
+        String body = response.getBody();
         HttpHeaders entityHeaders = new HttpHeaders();
         entityHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         entityHeaders.add("Authorization", body.substring(10, body.length()-2));

@@ -1,6 +1,8 @@
 package es.unizar.iaaa.geofencing.web;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -41,6 +44,9 @@ public class GeofenceController {
 
     @Autowired
     private GeofenceRepository geofenceRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GeofenceController.class);
 
@@ -110,12 +116,16 @@ public class GeofenceController {
      * returns an empty array.
      *
      * @return an array of geofences
+     *
+     * Note: This code returns a serialization innstead of a list of objects
+     * due to an unidentified bug in the serialization architecture
      */
     @RequestMapping(path = "/api/geofences", method = RequestMethod.GET)
+    @JsonView(View.GeofenceCompleteView.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of geofences", response = MappingJacksonValue.class),
             @ApiResponse(code = 401, message = "Requires authentication", response = InsufficientAuthenticationException.class)})
-    public MappingJacksonValue getGeofences() {
+    public ResponseEntity<String> getGeofences() throws JsonProcessingException {
         LOGGER.info("Requested /api/geofences GET method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         LOGGER.info("Requested /api/geofences GET method for "+auth.getPrincipal());
@@ -124,10 +134,10 @@ public class GeofenceController {
         }
         UserDetails customUser = (UserDetails) auth.getPrincipal();
         String email = customUser.getUsername();
-        List<Geofence> geofences = geofenceRepository.find(email);
-        final MappingJacksonValue result = new MappingJacksonValue(geofences);
-        result.setSerializationView(View.GeofenceCompleteView.class);
-        return result;
+        String response = objectMapper.writerWithView(View.GeofenceCompleteView.class).writeValueAsString(geofenceRepository.find(email));
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        return new ResponseEntity<>(response, responseHeaders, HttpStatus.OK);
     }
 
     /**
