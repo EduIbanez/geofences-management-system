@@ -21,4 +21,9 @@ public class HomeController {
         return "user";
     }
 
+    @RequestMapping("/geofences")
+    public String geofences() {
+        return "geofences";
+    }
+
 }

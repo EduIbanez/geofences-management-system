@@ -1,4 +1,4 @@
-package es.unizar.iaaa.geofencing.security.service;
+package es.unizar.iaaa.geofencing.security.model;
 
 import java.io.Serializable;
 

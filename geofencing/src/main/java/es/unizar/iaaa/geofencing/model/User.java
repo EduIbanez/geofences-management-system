@@ -113,7 +113,7 @@ public class User {
         this.birthday = birthday;
     }
 
-    @Column(name = "IMEI", unique = true, nullable = false, length = 15)
+    @Column(name = "IMEI", nullable = false, length = 15)
     @JsonView(View.UserCompleteView.class)
     public String getImei() {
         return imei;

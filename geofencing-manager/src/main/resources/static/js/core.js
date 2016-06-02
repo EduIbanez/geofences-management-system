@@ -56,6 +56,27 @@ function postUser(userData) {
     });
 }
 
+function getUser() {
+    $.ajax({
+        url: "http://localhost:8080/api/users",
+        type: "GET",
+        data: JSON.stringify(userData),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data, textStatus, jqXHR) {
+            setJwtToken(data.token);
+            window.location.replace("/user");
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 401) {
+                console.log("Unauthorized request");
+            } else {
+                throw new Error("an unexpected error occured: " + errorThrown);
+            }
+        }
+    });
+}
+
 function doLogout() {
     removeJwtToken();
 }

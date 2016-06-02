@@ -1,8 +1,8 @@
 package es.unizar.iaaa.geofencing.security.web;
 
 import es.unizar.iaaa.geofencing.security.model.JwtAuthenticationRequest;
+import es.unizar.iaaa.geofencing.security.model.JwtAuthenticationResponse;
 import es.unizar.iaaa.geofencing.security.model.JwtUser;
-import es.unizar.iaaa.geofencing.security.service.JwtAuthenticationResponse;
 import es.unizar.iaaa.geofencing.security.service.JwtTokenUtil;
 
 import io.swagger.annotations.ApiResponse;
