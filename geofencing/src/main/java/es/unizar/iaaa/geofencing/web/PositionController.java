@@ -176,6 +176,7 @@ public class PositionController {
         } else {
             if (rule.getTime() == 0) {
                 notificationRepository.save(new Notification(null, rule, user, "No leído", new java.sql.Date(calendar.getTime().getTime())));
+                aux = Calendar.getInstance();
                 aux.setTime(new Date(0));
             }
         }
