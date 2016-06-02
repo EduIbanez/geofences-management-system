@@ -7,7 +7,7 @@ html {
 
 body {
     background: url(../img/background.jpg);
-    background-size: cover 100%;
+    background-size: cover;
     background-repeat: no-repeat;
 }
 
@@ -48,6 +48,13 @@ h3 {
     font-weight: 300;
     color: #555;
     line-height: 30px;
+}
+
+h4 {
+    font-size: 16px;
+    font-weight: 200;
+    color: #fff;
+    line-height: 20px;
 }
 
 img {
