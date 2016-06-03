@@ -74,8 +74,8 @@ public class UserController {
         LOGGER.info("Requested /api/users/{id} PUT method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        if (userRepository.existsByUsername(id, email)) {
+        String nick = customUser.getUsername();
+        if (userRepository.existsByUsername(id, nick)) {
             String hashedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(hashedPassword);
             User userModified = userRepository.save(user);
@@ -103,8 +103,8 @@ public class UserController {
         LOGGER.info("Requested /api/users/{id} DELETE method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        if (userRepository.existsByUsername(id, email)) {
+        String nick = customUser.getUsername();
+        if (userRepository.existsByUsername(id, nick)) {
             userRepository.delete(id);
             return null;
         } else {

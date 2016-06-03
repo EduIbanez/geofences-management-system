@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface GeofenceRegistryRepository extends CrudRepository<GeofenceRegistry, Long> {
 
-    GeofenceRegistry findFirstByEmailOrderByDateDesc(String email);
+    GeofenceRegistry findFirstByNickOrderByDateDesc(String nick);
 }

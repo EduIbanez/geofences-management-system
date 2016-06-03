@@ -16,7 +16,7 @@ import es.unizar.iaaa.geofencing.view.View;
 public class User {
 
     private Long id;
-    private String email;
+    private String nick;
     private String password;
     private String first_name;
     private String last_name;
@@ -30,7 +30,7 @@ public class User {
 
     public User(){}
 
-    public User(@JsonProperty("id") Long id, @JsonProperty("email") String email,
+    public User(@JsonProperty("id") Long id, @JsonProperty("nick") String nick,
                 @JsonProperty("password") String password, @JsonProperty("first_name") String first_name,
                 @JsonProperty("last_name") String last_name, @JsonProperty("birthday") java.sql.Date birthday,
                 @JsonProperty("imei") String imei, @JsonProperty("geofences") Set<Geofence> geofences,
@@ -38,7 +38,7 @@ public class User {
                 @JsonProperty("last_password_reset_date") java.util.Date last_password_reset_date,
                 @JsonProperty("notifications") Set<Notification> notifications) {
         this.id = id;
-        this.email = email;
+        this.nick = nick;
         this.password = password;
         this.first_name = first_name;
         this.last_name = last_name;
@@ -63,14 +63,14 @@ public class User {
         this.id = id;
     }
 
-    @Column(name = "EMAIL", unique = true, nullable = false, length = 30)
+    @Column(name = "NICK", unique = true, nullable = false, length = 30)
     @JsonView(View.UserBaseView.class)
-    public String getEmail() {
-        return email;
+    public String getNick() {
+        return nick;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
     @Column(name = "PASSWORD", nullable = false, length = 60)
@@ -176,7 +176,7 @@ public class User {
     }
 
     public String toString() {
-        return "User(id: "+id+" email: "+email+" password: "+password+" first_name: "+first_name+
+        return "User(id: "+id+" nick: "+nick+" password: "+password+" first_name: "+first_name+
                 " last_name: "+last_name+" birthday: "+birthday+" imei: "+imei+" geofence: "+geofences+
                 " enabled: "+enabled+" role: "+role+" last_password_reset_date: "+last_password_reset_date+
                 " notifications: "+notifications+")";
@@ -188,7 +188,7 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id == user.id &&
-                Objects.equals(email, user.email) &&
+                Objects.equals(nick, user.nick) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(first_name, user.first_name) &&
                 Objects.equals(last_name, user.last_name) &&

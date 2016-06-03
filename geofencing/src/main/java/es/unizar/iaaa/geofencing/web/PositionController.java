@@ -68,7 +68,7 @@ public class PositionController {
     }
 
     public void checkRules(List<Geofence> geofences, User user, Calendar calendar) {
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByEmailOrderByDateDesc(user.getEmail());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByNickOrderByDateDesc(user.getNick());
         Map<Long, Date> entering = new HashMap<>();
         if (previousGeofenceRegistry != null) {
             entering.putAll(previousGeofenceRegistry.getEntering());
@@ -122,7 +122,7 @@ public class PositionController {
             }
         }
         geofenceRegistryRepository.save(
-                new GeofenceRegistry(null, entering, leaving, inside, user.getEmail(), calendar.getTime()));
+                new GeofenceRegistry(null, entering, leaving, inside, user.getNick(), calendar.getTime()));
     }
 
     private Map<Long, Date> checkEntering(User user, Rule rule, Calendar calendar, Map<Long, Date> previous,

@@ -14,19 +14,19 @@ public class GeofenceRegistry {
     private Map<Long, Date> entering;
     private Map<Long, Date> leaving;
     private Map<Long, Date> inside;
-    private String email;
+    private String nick;
     private Date date;
 
     public GeofenceRegistry() {}
 
     public GeofenceRegistry(@JsonProperty("id") Long id, @JsonProperty("entering") Map<Long, Date> entering,
                             @JsonProperty("leaving") Map<Long, Date> leaving, @JsonProperty("inside") Map<Long, Date> inside,
-                            @JsonProperty("email") String email, @JsonProperty("date") Date date) {
+                            @JsonProperty("nick") String nick, @JsonProperty("date") Date date) {
         this.id = id;
         this.entering = entering;
         this.leaving = leaving;
         this.inside = inside;
-        this.email = email;
+        this.nick = nick;
         this.date = date;
     }
 
@@ -77,13 +77,13 @@ public class GeofenceRegistry {
         this.inside = inside;
     }
 
-    @Column(name = "EMAIL", nullable = false, length = 30)
-    public String getEmail() {
-        return email;
+    @Column(name = "NICK", nullable = false, length = 30)
+    public String getNick() {
+        return nick;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
     @Column(name = "DATE", nullable = false, length = 30)

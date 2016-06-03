@@ -81,7 +81,7 @@ public class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.email").value(USER1.getEmail()))
+                .andExpect(jsonPath("$.nick").value(USER1.getNick()))
                 .andExpect(jsonPath("$.password").value(password(PASSWORD)))
                 .andExpect(jsonPath("$.firstName").value(USER1.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(USER1.getLastName()))
@@ -106,12 +106,12 @@ public class UserControllerTest {
         this.mockMvc.perform(put("/api/users/"+usuario.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(usuario))
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
-                .andExpect(jsonPath("$.email").value(usuario.getEmail()))
+                .andExpect(jsonPath("$.nick").value(usuario.getNick()))
                 .andExpect(jsonPath("$.password").value(password(PASSWORD)))
                 .andExpect(jsonPath("$.firstName").value(usuario.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(usuario.getLastName()))
@@ -134,7 +134,7 @@ public class UserControllerTest {
         USER1.setPassword(PASSWORD);
         usuario.setPassword(PASSWORD);
         this.mockMvc.perform(delete("/api/users/"+usuario.getId())
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andExpect(status().isOk());
         assertNull(userRepository.findOne(usuario.getId()));
     }
@@ -147,12 +147,12 @@ public class UserControllerTest {
         USER1.setPassword(PASSWORD);
         usuario.setPassword(PASSWORD);
         this.mockMvc.perform(get("/api/users/"+usuario.getId())
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
-                .andExpect(jsonPath("$.email").value(usuario.getEmail()))
+                .andExpect(jsonPath("$.nick").value(usuario.getNick()))
                 .andExpect(jsonPath("$.password").value(hashedPassword))
                 .andExpect(jsonPath("$.firstName").value(usuario.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(usuario.getLastName()))
@@ -177,7 +177,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
                 .andExpect(jsonPath("$.id").value(usuario.getId().intValue()))
-                .andExpect(jsonPath("$.email").value(usuario.getEmail()))
+                .andExpect(jsonPath("$.nick").value(usuario.getNick()))
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()));
     }

@@ -104,7 +104,7 @@ public class GeofenceControllerTest {
         this.mockMvc.perform(post("/api/geofences")
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(GEOFENCE1))
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -126,7 +126,7 @@ public class GeofenceControllerTest {
             auxGeofence = geofenceRepository.save(auxGeofence);
         }
         this.mockMvc.perform(get("/api/geofences")
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isOk());
         assertEquals(COUNT, geofenceRepository.count());
@@ -146,7 +146,7 @@ public class GeofenceControllerTest {
                 .param("latitude", String.valueOf(COORDINATES[0]))
                 .param("longitude", String.valueOf(COORDINATES[1]))
                 .param("radius", String.valueOf(RADIUS))
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(httpBasic(USER1.getNick(), USER1.getPassword())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(LIMIT)));
@@ -185,7 +185,7 @@ public class GeofenceControllerTest {
                 .param("latitude", String.valueOf(COORDINATES[0]))
                 .param("longitude", String.valueOf(COORDINATES[1]))
                 .param("radius", String.valueOf(RADIUS))
-                .with(httpBasic(USER1.getEmail(), USER1.getPassword())))
+                .with(httpBasic(USER1.getNick(), USER1.getPassword())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", hasSize(RADIUS)));
@@ -218,7 +218,7 @@ public class GeofenceControllerTest {
         this.mockMvc.perform(put("/api/geofences/"+geofence.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(geofence))
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -236,7 +236,7 @@ public class GeofenceControllerTest {
     public void deleteGeofence() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
         this.mockMvc.perform(delete("/api/geofences/"+geofence.getId())
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andExpect(status().isOk());
         assertNull(userRepository.findOne(geofence.getId()));
     }
@@ -245,7 +245,7 @@ public class GeofenceControllerTest {
     public void getGeofenceAuthenticated() throws Exception {
         Geofence geofence = geofenceRepository.save(GEOFENCE1);
         this.mockMvc.perform(get("/api/geofences/"+geofence.getId())
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))

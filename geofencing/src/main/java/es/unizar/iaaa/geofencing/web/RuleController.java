@@ -77,8 +77,8 @@ public class RuleController {
         LOGGER.info("Requested /api/rules/{id} PUT method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        if (!ruleRepository.existsByUsername(id, email)) {
+        String nick = customUser.getUsername();
+        if (!ruleRepository.existsByUsername(id, nick)) {
             throw new RuleNotFoundException();
         }
         rule.setId(id);
@@ -103,8 +103,8 @@ public class RuleController {
         LOGGER.info("Requested /api/rules/{id} DELETE method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        if (ruleRepository.existsByUsername(id, email)) {
+        String nick = customUser.getUsername();
+        if (ruleRepository.existsByUsername(id, nick)) {
             ruleRepository.delete(id);
             return null;
         } else {

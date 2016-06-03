@@ -20,7 +20,7 @@ public final class JwtUserFactory {
         authorities.add(user.getRole());
         return new JwtUser(
                 user.getId(),
-                user.getEmail(),
+                user.getNick(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPassword(),

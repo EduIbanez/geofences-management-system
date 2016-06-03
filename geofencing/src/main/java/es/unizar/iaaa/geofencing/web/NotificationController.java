@@ -80,8 +80,8 @@ public class NotificationController {
             throw new InsufficientAuthenticationException("Requires authentication");
         }
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        List<Notification> notifications = notificationRepository.find(email);
+        String nick = customUser.getUsername();
+        List<Notification> notifications = notificationRepository.find(nick);
         final MappingJacksonValue result = new MappingJacksonValue(notifications);
         result.setSerializationView(View.NotificationCompleteView.class);
         return result;
@@ -104,8 +104,8 @@ public class NotificationController {
         LOGGER.info("Requested /api/notifications/{id} PUT method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        if (!notificationRepository.existsByUsername(id, email)) {
+        String nick = customUser.getUsername();
+        if (!notificationRepository.existsByUsername(id, nick)) {
             throw new NotificationNotFoundException();
         }
         notification.setId(id);
@@ -130,8 +130,8 @@ public class NotificationController {
         LOGGER.info("Requested /api/notifications/{id} DELETE method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        if (notificationRepository.existsByUsername(id, email)) {
+        String nick = customUser.getUsername();
+        if (notificationRepository.existsByUsername(id, nick)) {
             notificationRepository.delete(id);
             return null;
         } else {

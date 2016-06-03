@@ -133,8 +133,8 @@ public class GeofenceController {
             throw new InsufficientAuthenticationException("Requires authentication");
         }
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        String response = objectMapper.writerWithView(View.GeofenceCompleteView.class).writeValueAsString(geofenceRepository.find(email));
+        String nick = customUser.getUsername();
+        String response = objectMapper.writerWithView(View.GeofenceCompleteView.class).writeValueAsString(geofenceRepository.find(nick));
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         return new ResponseEntity<>(response, responseHeaders, HttpStatus.OK);
@@ -157,8 +157,8 @@ public class GeofenceController {
         LOGGER.info("Requested /api/geofences/{id} PUT method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        if (!geofenceRepository.existsByUsername(id, email)) {
+        String nick = customUser.getUsername();
+        if (!geofenceRepository.existsByUsername(id, nick)) {
             throw new GeofenceNotFoundException();
         }
         geofence.setId(id);
@@ -183,8 +183,8 @@ public class GeofenceController {
         LOGGER.info("Requested /api/geofences/{id} DELETE method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String email = customUser.getUsername();
-        if (geofenceRepository.existsByUsername(id, email)) {
+        String nick = customUser.getUsername();
+        if (geofenceRepository.existsByUsername(id, nick)) {
             geofenceRepository.delete(id);
             return null;
         } else {

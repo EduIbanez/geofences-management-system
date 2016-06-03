@@ -110,7 +110,7 @@ public class NotificationControllerTest {
         this.mockMvc.perform(post("/api/notifications")
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(NOTIFICATION1))
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -133,7 +133,7 @@ public class NotificationControllerTest {
             auxNotification = notificationRepository.save(auxNotification);
         }
         this.mockMvc.perform(get("/api/notifications")
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isOk());
         assertEquals(COUNT, notificationRepository.count());
@@ -147,7 +147,7 @@ public class NotificationControllerTest {
         this.mockMvc.perform(put("/api/notifications/"+notification.getId())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(notification))
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))
@@ -165,7 +165,7 @@ public class NotificationControllerTest {
     public void deleteNotification() throws Exception {
         Notification notification = notificationRepository.save(NOTIFICATION1);
         this.mockMvc.perform(delete("/api/notifications/"+notification.getId())
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andExpect(status().isOk());
         assertNull(notificationRepository.findOne(notification.getId()));
     }
@@ -174,7 +174,7 @@ public class NotificationControllerTest {
     public void getNotificationAuthenticated() throws Exception {
         Notification notification = notificationRepository.save(NOTIFICATION1);
         this.mockMvc.perform(get("/api/notifications/"+notification.getId())
-                .with(user(USER1.getEmail())))
+                .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))

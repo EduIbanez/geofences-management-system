@@ -102,7 +102,7 @@ $("#signUpForm").submit(function (event) {
     
     var $form = $(this);
     var userData = {
-        email: $form.find('input[name="username"]').val(),
+        nick: $form.find('input[name="username"]').val(),
         password: $form.find('input[name="password"]').val(),
         first_name: $form.find('input[name="first_name"]').val(),
         last_name: $form.find('input[name="last_name"]').val(),
