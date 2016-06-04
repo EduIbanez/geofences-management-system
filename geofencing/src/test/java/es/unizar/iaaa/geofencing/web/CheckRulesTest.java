@@ -2,9 +2,7 @@ package es.unizar.iaaa.geofencing.web;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import es.unizar.iaaa.geofencing.Application;
-import es.unizar.iaaa.geofencing.model.*;
-import es.unizar.iaaa.geofencing.repository.*;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +14,25 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.*;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import es.unizar.iaaa.geofencing.Application;
+import es.unizar.iaaa.geofencing.model.Geofence;
+import es.unizar.iaaa.geofencing.model.GeofenceRegistry;
+import es.unizar.iaaa.geofencing.model.Notification;
+import es.unizar.iaaa.geofencing.model.Position;
+import es.unizar.iaaa.geofencing.model.Rule;
+import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.repository.GeofenceRegistryRepository;
+import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
+import es.unizar.iaaa.geofencing.repository.NotificationRepository;
+import es.unizar.iaaa.geofencing.repository.RuleRepository;
+import es.unizar.iaaa.geofencing.repository.UserRepository;
 
 import static es.unizar.iaaa.geofencing.model.RuleType.ENTERING;
 import static org.junit.Assert.assertEquals;
@@ -46,7 +61,8 @@ public class CheckRulesTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private PositionController positionController = new PositionController();
+    @Autowired
+    private PositionController positionController;
 
     private User USER1;
 
