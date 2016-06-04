@@ -1,5 +1,5 @@
 // VARIABLES =============================================================
-var TOKEN_KEY = "jwtToken"
+var TOKEN_KEY = "jwtToken";
 var GEOFENCES_NAME = "arrayGeofences";
 
 // FUNCTIONS =============================================================
@@ -118,13 +118,6 @@ function renderMessageOnMap(data) {
 		position : latLng,
 		animation : google.maps.Animation.DROP,
 		html : "<p>You are here</p>"
-	});
-
-	var infoWindow = new google.maps.InfoWindow();
-	google.maps.event.addListener(marker, 'click', function() {
-		map.setCenter(marker.getPosition());
-		infoWindow.setContent(this.html);
-		infoWindow.open(map, this);
 	});
 
 	marker.setMap(map);

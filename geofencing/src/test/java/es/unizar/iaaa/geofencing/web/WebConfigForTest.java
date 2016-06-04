@@ -28,7 +28,6 @@ class WebConfigForTest extends WebMvcConfigurerAdapter {
         return converter;
     }
 
-
     @Bean
     public Jackson2ObjectMapperBuilder jacksonBuilder() {
         Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();

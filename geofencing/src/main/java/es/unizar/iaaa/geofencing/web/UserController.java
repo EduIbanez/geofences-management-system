@@ -53,29 +53,29 @@ public class UserController {
         User userCreated = userRepository.save(user);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(user.getId()).toUri());
+                .fromCurrentRequest().path("/{id_user}")
+                .buildAndExpand(user.getNick()).toUri());
         return new ResponseEntity<>(userCreated, httpHeaders, HttpStatus.CREATED);
     }
 
     /**
      * This method modifies the data of a previously created user.
      *
-     * @param id   unique identifier representing a specific user
-     * @param user data of the user
+     * @param id_user   unique identifier name representing a specific user
+     * @param user      data of the user
      * @return the user modified
      */
-    @RequestMapping(path = "/api/users/{id}", method = RequestMethod.PUT)
+    @RequestMapping(path = "/api/users/{id_user:.+}", method = RequestMethod.PUT)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User modified", response = User.class),
             @ApiResponse(code = 304, message = "User not modified", response = UserNotModifiedException.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User modifyUser(@PathVariable("id") Long id, @RequestBody User user) {
-        LOGGER.info("Requested /api/users/{id} PUT method");
+    public User modifyUser(@PathVariable("id_user") String id_user, @RequestBody User user) {
+        LOGGER.info("Requested /api/users/{id_user} PUT method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
         String nick = customUser.getUsername();
-        if (userRepository.existsByUsername(id, nick)) {
+        if (nick.equals(id_user) && userRepository.existsByUsername(id_user)) {
             String hashedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(hashedPassword);
             User userModified = userRepository.save(user);
@@ -92,20 +92,20 @@ public class UserController {
     /**
      * This method deletes the data of a previously created user.
      *
-     * @param id unique identifier representing a specific user
+     * @param id_user   unique identifier name representing a specific user
      * @return the user deleted
      */
-    @RequestMapping(path = "/api/users/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(path = "/api/users/{id_user:.+}", method = RequestMethod.DELETE)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User deleted", response = User.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public User deleteUser(@PathVariable("id") Long id) {
-        LOGGER.info("Requested /api/users/{id} DELETE method");
+    public User deleteUser(@PathVariable("id_user") String id_user) {
+        LOGGER.info("Requested /api/users/{id_user} DELETE method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
         String nick = customUser.getUsername();
-        if (userRepository.existsByUsername(id, nick)) {
-            userRepository.delete(id);
+        if (nick.equals(id_user) && userRepository.existsByUsername(id_user)) {
+            userRepository.delete(id_user);
             return null;
         } else {
             throw new UserNotFoundException();
@@ -115,17 +115,17 @@ public class UserController {
     /**
      * This method returns a user by id.
      *
-     * @param id unique identifier representing a specific user
+     * @param id_user   unique identifier name representing a specific user
      * @return the user requested
      */
-    @RequestMapping(path = "/api/users/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/users/{id_user:.+}", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User requested", response = MappingJacksonValue.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
-    public MappingJacksonValue getUser(@PathVariable("id") Long id) {
-        LOGGER.info("Requested /api/users/{id} GET method");
-        if (userRepository.exists(id)) {
-            final MappingJacksonValue result = new MappingJacksonValue(userRepository.findOne(id));
+    public MappingJacksonValue getUser(@PathVariable("id_user") String id_user) {
+        LOGGER.info("Requested /api/users/{id_user} GET method");
+        if (userRepository.existsByUsername(id_user)) {
+            final MappingJacksonValue result = new MappingJacksonValue(userRepository.findByUsername(id_user));
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if ((auth instanceof AnonymousAuthenticationToken)) {
                 result.setSerializationView(View.UserBaseView.class);

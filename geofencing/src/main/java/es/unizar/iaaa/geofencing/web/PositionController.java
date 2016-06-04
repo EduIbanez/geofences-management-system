@@ -58,40 +58,51 @@ public class PositionController {
         if (username == null || userRepository.findByUsername(username) == null) {
             throw new InsufficientAuthenticationException("Requires authentication");
         }
-        LOGGER.info("with principal "+username);
+        LOGGER.info("with principal " + username);
         Calendar time = Calendar.getInstance();
         Position position = positionAuthenticated.getPosition();
-        List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), username);
         User user = userRepository.findByUsername(username);
-        checkRules(geofences, user, time);
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByNickOrderByDateDesc(username);
+        Map<Long, Date> entering = new HashMap<>();
+        Map<Long, Date> leaving = new HashMap<>();
+        Map<Long, Date> inside = new HashMap<>();
+        List<Notification> notifications = check(user, time, position, entering, leaving, inside, previousGeofenceRegistry);
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, username, time.getTime()));
+        for (Notification notification : notifications) {
+            notificationRepository.save(notification);
+        }
         return position;
     }
 
-    public void checkRules(List<Geofence> geofences, User user, Calendar calendar) {
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByNickOrderByDateDesc(user.getNick());
-        Map<Long, Date> entering = new HashMap<>();
+    private List<Notification> check(User user, Calendar time, Position position, Map<Long, Date> entering,
+                                     Map<Long, Date> leaving, Map<Long, Date> inside, GeofenceRegistry previousGeofenceRegistry) {
+        List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), user.getNick());
+        return checkRules(geofences, user, time, entering, leaving, inside, previousGeofenceRegistry);
+    }
+
+    public List<Notification> checkRules(List<Geofence> geofences, User user, Calendar calendar, Map<Long, Date> entering,
+                                         Map<Long, Date> leaving, Map<Long, Date> inside, GeofenceRegistry previousGeofenceRegistry) {
+        List<Notification> notifications = new ArrayList<>();
         if (previousGeofenceRegistry != null) {
             entering.putAll(previousGeofenceRegistry.getEntering());
             for (Long geofence_id : entering.keySet()) {
                 Geofence geofence = geofenceRepository.findOne(geofence_id);
                 for (Rule rule : geofence.getRules()) {
                     if (rule.getType().equals(RuleType.ENTERING)) {
-                        entering = checkEntering(user, rule, calendar, previousGeofenceRegistry.getEntering(), entering, geofence_id);
+                        checkEntering(notifications, user, rule, calendar, previousGeofenceRegistry.getEntering(), entering, geofence_id);
                     }
                 }
             }
         }
-        Map<Long, Date> leaving = new HashMap<>();
         if (previousGeofenceRegistry != null) {
             leaving.putAll(previousGeofenceRegistry.getLeaving());
         }
-        Map<Long, Date> inside = new HashMap<>();
         for (Geofence geofence : geofences) {
-            for (Rule rule: geofence.getRules()) {
+            for (Rule rule : geofence.getRules()) {
                 if (rule.getEnabled()) {
                     if (rule.getType().equals(RuleType.ENTERING)) {
                         if (previousGeofenceRegistry == null || !previousGeofenceRegistry.getEntering().containsKey(geofence.getId())) {
-                            entering = checkEntering(user, rule, calendar, null, entering, geofence.getId());
+                            checkEntering(notifications, user, rule, calendar, null, entering, geofence.getId());
                         }
                     } else if (rule.getType().equals(RuleType.LEAVING)) {
                         if (previousGeofenceRegistry == null || !previousGeofenceRegistry.getLeaving().containsKey(geofence.getId())) {
@@ -99,9 +110,9 @@ public class PositionController {
                         }
                     } else if (rule.getType().equals(RuleType.INSIDE)) {
                         if (previousGeofenceRegistry != null && previousGeofenceRegistry.getInside().containsKey(geofence.getId())) {
-                            inside = checkInside(user, rule, calendar, previousGeofenceRegistry.getInside(), inside, geofence.getId());
+                            checkInside(notifications, user, rule, calendar, previousGeofenceRegistry.getInside(), inside, geofence.getId());
                         } else {
-                            inside = checkInside(user, rule, calendar, null, inside, geofence.getId());
+                            checkInside(notifications, user, rule, calendar, null, inside, geofence.getId());
                         }
                     }
                 }
@@ -117,65 +128,58 @@ public class PositionController {
             if (!geofences_id.contains(entry.getKey())) {
                 Geofence geofence = geofenceRepository.findOne(entry.getKey());
                 for (Rule rule : geofence.getRules()) {
-                    leaving = checkLeaving(user, rule, calendar, leaving, geofence.getId());
+                    checkLeaving(notifications, user, rule, calendar, leaving, geofence.getId());
                 }
             }
         }
-        geofenceRegistryRepository.save(
-                new GeofenceRegistry(null, entering, leaving, inside, user.getNick(), calendar.getTime()));
+        return notifications;
     }
 
-    private Map<Long, Date> checkEntering(User user, Rule rule, Calendar calendar, Map<Long, Date> previous,
-                                          Map<Long, Date> entering, Long geofence_id) {
-        Calendar aux = checkTime(user, rule, calendar, previous, geofence_id);
+    private void checkEntering(List<Notification> notifications, User user, Rule rule, Calendar calendar, Map<Long, Date> previous,
+                               Map<Long, Date> entering, Long geofence_id) {
+        Calendar aux = checkTime(notifications, user, rule, calendar, previous, geofence_id);
         if (aux != null) {
             entering.replace(geofence_id, aux.getTime());
         } else {
             entering.put(geofence_id, calendar.getTime());
         }
-        return entering;
     }
 
-    private Map<Long, Date> checkLeaving(User user, Rule rule, Calendar calendar, Map<Long, Date> leaving, Long geofence_id) {
+    private void checkLeaving(List<Notification> notifications, User user, Rule rule, Calendar calendar, Map<Long, Date> leaving, Long geofence_id) {
         Calendar aux = Calendar.getInstance();
         aux.setTime(leaving.get(geofence_id));
         aux.add(Calendar.SECOND, rule.getTime());
         if (calendar.getTime().compareTo(aux.getTime()) >= 0) {
-            notificationRepository.save(new Notification(null, rule, user, "No leído", new java.sql.Date(calendar.getTime().getTime())));
+            notifications.add(new Notification(null, rule, user, "No leído", new java.sql.Date(calendar.getTime().getTime())));
             leaving.remove(geofence_id);
-        } else {
-            aux.add(Calendar.SECOND, -(rule.getTime()));
         }
-        return leaving;
-
     }
 
-    private Map<Long, Date> checkInside(User user, Rule rule, Calendar calendar, Map<Long, Date> previous,
-                                          Map<Long, Date> inside, Long geofence_id) {
-        Calendar aux = checkTime(user, rule, calendar, previous, geofence_id);
+    private void checkInside(List<Notification> notifications, User user, Rule rule, Calendar calendar, Map<Long, Date> previous,
+                             Map<Long, Date> inside, Long geofence_id) {
+        Calendar aux = checkTime(notifications, user, rule, calendar, previous, geofence_id);
         if (aux != null) {
             inside.put(geofence_id, aux.getTime());
         } else {
             inside.put(geofence_id, calendar.getTime());
         }
-        return inside;
     }
 
-    public Calendar checkTime(User user, Rule rule, Calendar calendar, Map<Long, Date> previous, Long geofence_id) {
+    public Calendar checkTime(List<Notification> notifications, User user, Rule rule, Calendar calendar, Map<Long, Date> previous, Long geofence_id) {
         Calendar aux = null;
         if (previous != null) {
             aux = Calendar.getInstance();
             aux.setTime(previous.get(geofence_id));
             aux.add(Calendar.SECOND, rule.getTime());
-            if (calendar.getTime().compareTo(aux.getTime()) >= 0 && (aux.getTime().getTime()/1000) != rule.getTime()) {
-                notificationRepository.save(new Notification(null, rule, user, "No leído", new java.sql.Date(calendar.getTime().getTime())));
+            if (calendar.getTime().compareTo(aux.getTime()) >= 0 && (aux.getTime().getTime() / 1000) != rule.getTime()) {
+                notifications.add(new Notification(null, rule, user, "No leído", new java.sql.Date(calendar.getTime().getTime())));
                 aux.setTime(new Date(0));
             } else {
                 aux.add(Calendar.SECOND, -(rule.getTime()));
             }
         } else {
             if (rule.getTime() == 0) {
-                notificationRepository.save(new Notification(null, rule, user, "No leído", new java.sql.Date(calendar.getTime().getTime())));
+                notifications.add(new Notification(null, rule, user, "No leído", new java.sql.Date(calendar.getTime().getTime())));
                 aux = Calendar.getInstance();
                 aux.setTime(new Date(0));
             }

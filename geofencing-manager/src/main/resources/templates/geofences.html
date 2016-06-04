@@ -12,7 +12,7 @@
     <link th:href="@{/css/core.css}" href="../static/css/core.css" rel="stylesheet"/>
 
 </head>
-<body onload="getUser();">
+<body onload="starting();">
 
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -38,12 +38,28 @@
 
 <div id="main" class="container-fluid">
     <div class="row">
-
+        <div class="col-sm-8">
+            <div id="map-canvas"></div>
+        </div>
+        <div class="col-sm-4">
+            <form id="mapForm">
+                <input id="vertices" type="text" name="vertices" value=""/>
+                <button type="submit" class="btn">Save!</button>
+            </form>
+        </div>
     </div>
 </div>
 
+<script type="text/javascript">
+    if (!navigator.geolocation) {
+        alert('Your browser does not support geolocation. Please download latest browser version.');
+        $("button").attr("disabled", "disabled");
+    }
+</script>
+
 <script th:src="@{/js/jquery.js}" src="../static/js/jquery.js"></script>
 <script th:src="@{/js/bootstrap.js}" src="../static/js/bootstrap.js"></script>
-<script th:src="@{/js/core.js}" src="../static/js/core.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.21&amp;libraries=drawing"></script>
+<script th:src="@{/js/geofences.js}" src="../static/js/geofences.js"></script>
 </body>
 </html>

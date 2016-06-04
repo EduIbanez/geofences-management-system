@@ -1,5 +1,5 @@
 // VARIABLES =============================================================
-var TOKEN_KEY = "jwtToken"
+var TOKEN_KEY = "jwtToken";
 var GEOFENCES_NAME = "arrayGeofences";
 
 // FUNCTIONS =============================================================

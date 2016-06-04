@@ -103,7 +103,7 @@ public class UserControllerTest {
         USER1.setPassword(PASSWORD);
         usuario.setPassword(PASSWORD);
         usuario.setBirthday(Date.valueOf("1994-08-07"));
-        this.mockMvc.perform(put("/api/users/"+usuario.getId())
+        this.mockMvc.perform(put("/api/users/"+usuario.getNick())
                 .contentType(MediaType.parseMediaType("application/json; charset=UTF-8"))
                 .content(objectMapper.writeValueAsString(usuario))
                 .with(user(USER1.getNick())))
@@ -120,7 +120,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()))
-                .andExpect(jsonPath("$.lastPasswordResetDate").value(usuario.getLastPasswordResetDate().getTime()))
+                .andExpect(jsonPath("$.lastPasswordResetDate").isNumber())
                 .andExpect(jsonPath("$.notifications").isEmpty());
         User usuarioNew = userRepository.findOne(usuario.getId());
         assertEquals(usuario.getBirthday(), usuarioNew.getBirthday());
@@ -133,7 +133,7 @@ public class UserControllerTest {
         User usuario = userRepository.save(USER1);
         USER1.setPassword(PASSWORD);
         usuario.setPassword(PASSWORD);
-        this.mockMvc.perform(delete("/api/users/"+usuario.getId())
+        this.mockMvc.perform(delete("/api/users/"+usuario.getNick())
                 .with(user(USER1.getNick())))
                 .andExpect(status().isOk());
         assertNull(userRepository.findOne(usuario.getId()));
@@ -146,7 +146,7 @@ public class UserControllerTest {
         User usuario = userRepository.save(USER1);
         USER1.setPassword(PASSWORD);
         usuario.setPassword(PASSWORD);
-        this.mockMvc.perform(get("/api/users/"+usuario.getId())
+        this.mockMvc.perform(get("/api/users/"+usuario.getNick())
                 .with(user(USER1.getNick())))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -161,7 +161,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.geofences").isEmpty())
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()))
-                .andExpect(jsonPath("$.lastPasswordResetDate").value(usuario.getLastPasswordResetDate().getTime()))
+                .andExpect(jsonPath("$.lastPasswordResetDate").isNumber())
                 .andExpect(jsonPath("$.notifications").isEmpty());
     }
 
@@ -172,7 +172,7 @@ public class UserControllerTest {
         User usuario = userRepository.save(USER1);
         USER1.setPassword(PASSWORD);
         usuario.setPassword(PASSWORD);
-        this.mockMvc.perform(get("/api/users/"+usuario.getId()))
+        this.mockMvc.perform(get("/api/users/"+usuario.getNick()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json; charset=UTF-8"))

@@ -30,10 +30,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 
 import es.unizar.iaaa.geofencing.model.Geofence;
+import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
+import es.unizar.iaaa.geofencing.repository.UserRepository;
 import es.unizar.iaaa.geofencing.view.View;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -44,6 +47,9 @@ public class GeofenceController {
 
     @Autowired
     private GeofenceRepository geofenceRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -64,6 +70,12 @@ public class GeofenceController {
     public ResponseEntity<Geofence> createGeofence(@RequestBody final Geofence geofence) {
         LOGGER.info("Requested /api/geofences POST method");
         geofence.setId(null);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails customUser = (UserDetails) auth.getPrincipal();
+        String nick = customUser.getUsername();
+        User user = userRepository.findByUsername(nick);
+        user.setGeofences(new HashSet<>());
+        geofence.setUser(user);
         Geofence geofenceCreated = geofenceRepository.save(geofence);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder
@@ -117,7 +129,7 @@ public class GeofenceController {
      *
      * @return an array of geofences
      *
-     * Note: This code returns a serialization innstead of a list of objects
+     * Note: This code returns a serialization instead of a list of objects
      * due to an unidentified bug in the serialization architecture
      */
     @RequestMapping(path = "/api/geofences", method = RequestMethod.GET)

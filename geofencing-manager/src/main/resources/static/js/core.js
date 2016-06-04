@@ -1,5 +1,6 @@
 // VARIABLES =============================================================
-var TOKEN_KEY = "jwtToken"
+var TOKEN_KEY = "jwtToken";
+var NICK = "nick";
 
 // FUNCTIONS =============================================================
 function getJwtToken() {
@@ -12,6 +13,23 @@ function setJwtToken(token) {
 
 function removeJwtToken() {
     localStorage.removeItem(TOKEN_KEY);
+}
+
+function getNick() {
+    return localStorage.getItem(NICK);
+}
+
+function setNick(nick) {
+    localStorage.setItem(NICK, nick);
+}
+
+function createAuthorizationTokenHeader() {
+    var token = getJwtToken();
+    if (token) {
+        return {"Authorization": token};
+    } else {
+        return {};
+    }
 }
 
 function doLogin(loginData) {
@@ -43,8 +61,7 @@ function postUser(userData) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (data, textStatus, jqXHR) {
-            setJwtToken(data.token);
-            window.location.replace("/user");
+            window.location.replace("/");
         },
         error: function (jqXHR, textStatus, errorThrown) {
             if (jqXHR.status === 401) {
@@ -58,15 +75,12 @@ function postUser(userData) {
 
 function getUser() {
     $.ajax({
-        url: "http://localhost:8080/api/users",
+        url: "http://localhost:8080/api/users/"+getNick(),
         type: "GET",
-        data: JSON.stringify(userData),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: function (data, textStatus, jqXHR) {
-            setJwtToken(data.token);
-            window.location.replace("/user");
-        },
+        headers: createAuthorizationTokenHeader(),
+        success: function (data, textStatus, jqXHR) { },
         error: function (jqXHR, textStatus, errorThrown) {
             if (jqXHR.status === 401) {
                 console.log("Unauthorized request");
@@ -90,7 +104,8 @@ $("#loginForm").submit(function (event) {
         username: $form.find('input[name="username"]').val(),
         password: $form.find('input[name="password"]').val()
     };
-
+    
+    setNick($form.find('input[name="username"]').val());
     doLogin(formData);
 });
 
@@ -114,7 +129,7 @@ $("#signUpForm").submit(function (event) {
         last_password_reset_date: strDate,
         notifications: []
     };
-
+    
     postUser(userData);
 });
 
