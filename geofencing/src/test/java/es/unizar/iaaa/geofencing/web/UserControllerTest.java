@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,6 +70,11 @@ public class UserControllerTest {
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
                 .apply(SecurityMockMvcConfigurers.springSecurity()).build();
+    }
+
+
+    @After
+    public void cleanup() {
         userRepository.deleteAll();
     }
 

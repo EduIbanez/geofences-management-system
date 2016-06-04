@@ -3,6 +3,7 @@ package es.unizar.iaaa.geofencing.web;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +37,7 @@ import java.util.HashSet;
 import es.unizar.iaaa.geofencing.Application;
 import es.unizar.iaaa.geofencing.model.Geofence;
 import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 import es.unizar.iaaa.geofencing.security.model.JwtAuthenticationRequest;
 import es.unizar.iaaa.geofencing.view.View;
@@ -53,6 +55,9 @@ public class SecurityTest {
 
     @Value("${local.server.port}")
     int port;
+
+    @Autowired
+    private GeofenceRepository geofenceRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -76,6 +81,12 @@ public class SecurityTest {
         userRepository.deleteAll();
         USER1.setPassword(passwordEncoder.encode(PASSWORD));
         User currentUser = userRepository.save(USER1);
+    }
+
+    @After
+    public void cleanup() {
+        geofenceRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
