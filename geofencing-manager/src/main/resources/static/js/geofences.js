@@ -219,6 +219,7 @@ $("#mapForm").submit(function (event) {
     var $form = $(this);
     var geofence = $form.find('input[name="vertices"]').val();
     var geofenceData = {
+        id: null,
         type: "Feature",
         properties: {},
         geometry: { "type" : "Polygon", "coordinates" : JSON.parse(geofence) },

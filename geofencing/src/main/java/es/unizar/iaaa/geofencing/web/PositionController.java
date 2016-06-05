@@ -120,7 +120,7 @@ public class PositionController {
         }
         List<Long> geofences_id = geofences.stream().map(Geofence::getId).collect(Collectors.toList());
         for (Map.Entry<Long, Date> entry : entering.entrySet()) {
-            if (!geofences_id.contains(entry.getKey()) && entry.getValue().compareTo(new Date(0)) == 0) {
+            if (!geofences_id.contains(entry.getKey()) && (entry.getValue().getTime() == (new Date(0).getTime()))) {
                 entering.remove(entry.getKey());
             }
         }
@@ -130,6 +130,11 @@ public class PositionController {
                 for (Rule rule : geofence.getRules()) {
                     checkLeaving(notifications, user, rule, calendar, leaving, geofence.getId());
                 }
+            }
+        }
+        for (Map.Entry<Long, Date> entry : inside.entrySet()) {
+            if (!geofences_id.contains(entry.getKey())) {
+                inside.remove(entry.getKey());
             }
         }
         return notifications;
@@ -165,13 +170,13 @@ public class PositionController {
         }
     }
 
-    public Calendar checkTime(List<Notification> notifications, User user, Rule rule, Calendar calendar, Map<Long, Date> previous, Long geofence_id) {
+    private Calendar checkTime(List<Notification> notifications, User user, Rule rule, Calendar calendar, Map<Long, Date> previous, Long geofence_id) {
         Calendar aux = null;
         if (previous != null) {
             aux = Calendar.getInstance();
             aux.setTime(previous.get(geofence_id));
             aux.add(Calendar.SECOND, rule.getTime());
-            if (calendar.getTime().compareTo(aux.getTime()) >= 0 && (aux.getTime().getTime() / 1000) != rule.getTime()) {
+            if (calendar.getTime().compareTo(aux.getTime()) >= 0 && (previous.get(geofence_id).getTime() != (new Date(0).getTime()))) {
                 notifications.add(new Notification(null, rule, user, "No leído", new java.sql.Date(calendar.getTime().getTime())));
                 aux.setTime(new Date(0));
             } else {

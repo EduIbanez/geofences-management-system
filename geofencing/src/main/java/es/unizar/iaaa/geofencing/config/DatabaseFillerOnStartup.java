@@ -25,6 +25,7 @@ import es.unizar.iaaa.geofencing.repository.UserRepository;
 
 import static es.unizar.iaaa.geofencing.model.RuleType.ENTERING;
 import static es.unizar.iaaa.geofencing.model.RuleType.INSIDE;
+import static es.unizar.iaaa.geofencing.model.RuleType.LEAVING;
 
 @Component
 @Profile("!test")
@@ -77,7 +78,7 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
         Rule rule = new Rule(null, true, ENTERING, 70, "You are entering", new HashSet<>(),
                 new HashSet<>(), geofence);
 
-        Rule rule2 = new Rule(null, true, ENTERING, 20, "You are outside", new HashSet<>(),
+        Rule rule2 = new Rule(null, true, LEAVING, 20, "You are leaving", new HashSet<>(),
                 new HashSet<>(), geofence2);
 
         Rule rule3 = new Rule(null, true, INSIDE, 10, "You are inside", new HashSet<>(),
