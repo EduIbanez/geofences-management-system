@@ -8,10 +8,22 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Controller;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import es.unizar.iaaa.geofencing.model.*;
+import es.unizar.iaaa.geofencing.model.Geofence;
+import es.unizar.iaaa.geofencing.model.GeofenceRegistry;
+import es.unizar.iaaa.geofencing.model.Notification;
+import es.unizar.iaaa.geofencing.model.Position;
+import es.unizar.iaaa.geofencing.model.PositionAuthenticated;
+import es.unizar.iaaa.geofencing.model.Rule;
+import es.unizar.iaaa.geofencing.model.RuleType;
+import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.GeofenceRegistryRepository;
 import es.unizar.iaaa.geofencing.repository.GeofenceRepository;
 import es.unizar.iaaa.geofencing.repository.NotificationRepository;
@@ -23,22 +35,17 @@ import io.swagger.annotations.ApiResponses;
 @Controller
 public class PositionController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PositionController.class);
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private GeofenceRepository geofenceRepository;
-
     @Autowired
     private NotificationRepository notificationRepository;
-
     @Autowired
     private GeofenceRegistryRepository geofenceRegistryRepository;
-
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PositionController.class);
 
     /**
      * This method processes the location sent by a user.

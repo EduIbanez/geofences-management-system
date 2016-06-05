@@ -6,13 +6,21 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import es.unizar.iaaa.geofencing.view.View;
 
 @Entity
-@Table(name="USERS")
+@Table(name = "USERS")
 public class User {
 
     private Long id;
@@ -28,7 +36,8 @@ public class User {
     private java.util.Date last_password_reset_date;
     private Set<Notification> notifications;
 
-    public User(){}
+    public User() {
+    }
 
     public User(@JsonProperty("id") Long id, @JsonProperty("nick") String nick,
                 @JsonProperty("password") String password, @JsonProperty("first_name") String first_name,
@@ -176,10 +185,10 @@ public class User {
     }
 
     public String toString() {
-        return "User(id: "+id+" nick: "+nick+" password: "+password+" first_name: "+first_name+
-                " last_name: "+last_name+" birthday: "+birthday+" imei: "+imei+" geofence: "+geofences+
-                " enabled: "+enabled+" role: "+role+" last_password_reset_date: "+last_password_reset_date+
-                " notifications: "+notifications+")";
+        return "User(id: " + id + " nick: " + nick + " password: " + password + " first_name: " + first_name +
+                " last_name: " + last_name + " birthday: " + birthday + " imei: " + imei + " geofence: " + geofences +
+                " enabled: " + enabled + " role: " + role + " last_password_reset_date: " + last_password_reset_date +
+                " notifications: " + notifications + ")";
     }
 
     @Override

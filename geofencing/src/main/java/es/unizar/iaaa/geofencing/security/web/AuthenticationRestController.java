@@ -1,12 +1,5 @@
 package es.unizar.iaaa.geofencing.security.web;
 
-import es.unizar.iaaa.geofencing.security.model.JwtAuthenticationRequest;
-import es.unizar.iaaa.geofencing.security.model.JwtAuthenticationResponse;
-import es.unizar.iaaa.geofencing.security.model.JwtUser;
-import es.unizar.iaaa.geofencing.security.service.JwtTokenUtil;
-
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
+import es.unizar.iaaa.geofencing.security.model.JwtAuthenticationRequest;
+import es.unizar.iaaa.geofencing.security.model.JwtAuthenticationResponse;
+import es.unizar.iaaa.geofencing.security.model.JwtUser;
+import es.unizar.iaaa.geofencing.security.service.JwtTokenUtil;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 public class AuthenticationRestController {
@@ -44,7 +44,7 @@ public class AuthenticationRestController {
      * This method authenticates user into the system.
      *
      * @param authenticationRequest email and password of the user
-     * @param device device which has submitted the request
+     * @param device                device which has submitted the request
      * @return the authentication
      */
     @ApiResponses(value = {
@@ -70,8 +70,8 @@ public class AuthenticationRestController {
     }
 
     /**
-     * This method refreshes the authentication from the header of the request and
-     * authenticates user into the system again.
+     * This method refreshes the authentication from the header of the request and authenticates
+     * user into the system again.
      *
      * @param request request made
      * @return the authentication

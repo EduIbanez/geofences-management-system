@@ -1,14 +1,14 @@
 package es.unizar.iaaa.geofencing.security.service;
 
-import es.unizar.iaaa.geofencing.model.User;
-import es.unizar.iaaa.geofencing.repository.UserRepository;
-import es.unizar.iaaa.geofencing.security.factory.JwtUserFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.repository.UserRepository;
+import es.unizar.iaaa.geofencing.security.factory.JwtUserFactory;
 
 @Service
 public class JwtUserDetailsServiceImpl implements UserDetailsService {

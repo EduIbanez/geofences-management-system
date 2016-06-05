@@ -8,7 +8,7 @@ public class PositionAuthenticated {
     private Position position;
 
     public PositionAuthenticated(@JsonProperty("authorization") String authorization,
-                                 @JsonProperty("position")Position position) {
+                                 @JsonProperty("position") Position position) {
         this.authorization = authorization;
         this.position = position;
     }
