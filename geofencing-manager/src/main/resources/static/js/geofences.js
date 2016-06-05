@@ -73,6 +73,8 @@ function findUserCurrentLocation(callback) {
 
 }
 
+var geofencesArray = [];
+var drawingShape;
 var marker;
 
 function renderMessageOnMap(data) {
@@ -137,8 +139,20 @@ function drawing() {
     drawingManager.setMap(map);
 
     google.maps.event.addListener(drawingManager, "overlaycomplete", function(event){
-        if (event.type == google.maps.drawing.OverlayType.POLYGON) {
-            overlayClickListener(event.overlay);
+        if (typeof drawingShape !== 'undefined') {
+            drawingShape.setMap(null);
+        }
+        drawingShape = event.overlay;
+        if (event.type == google.maps.drawing.OverlayType.CIRCLE) {
+            overlayClickListenerCircle(event.overlay);
+            var lat = event.overlay.getCenter().lat();
+            var lng = event.overlay.getCenter().lng();
+            var radius = event.overlay.getRadius()/100000;
+            var coordinates = circle(lat - radius, lng - radius, lat + radius, lng + radius, 40);
+            console.log(coordinates);
+            $('#vertices').val(JSON.stringify([coordinates]));
+        } else if (event.type == google.maps.drawing.OverlayType.POLYGON) {
+            overlayClickListenerPolygon(event.overlay);
             var len = event.overlay.getPath().getLength();
             var coordinates = [];
             var init = null;
@@ -152,17 +166,41 @@ function drawing() {
             }
             coordinates.push(init);
             $('#vertices').val(JSON.stringify([coordinates]));
+        } else if (event.type == google.maps.drawing.OverlayType.RECTANGLE) {
+            overlayClickListenerRectangle(event.overlay);
+            var coordinates = [];
+            var latNorth = event.overlay.getBounds().getNorthEast().lat();
+            var latSouth = event.overlay.getBounds().getSouthWest().lat();
+            var lngNorth = event.overlay.getBounds().getNorthEast().lng();
+            var lngSouth = event.overlay.getBounds().getSouthWest().lng();
+            coordinates.push(new Array(latNorth, lngNorth));
+            coordinates.push(new Array(latNorth, lngSouth));
+            coordinates.push(new Array(latSouth, lngSouth));
+            coordinates.push(new Array(latSouth, lngNorth));
+            coordinates.push(new Array(latNorth, lngNorth));
+            $('#vertices').val(JSON.stringify([coordinates]));
         }
     });
 }
-function overlayClickListener(overlay) {
+
+function overlayClickListenerCircle(overlay) {
+    google.maps.event.addListener(overlay, "click", function(event){
+        var lat = overlay.getCenter().lat();
+        var lng = overlay.getCenter().lng();
+        var radius = overlay.getRadius()/100000;
+        var coordinates = circle(lat - radius, lng - radius, lat + radius, lng + radius, 40);
+        $('#vertices').val(JSON.stringify([coordinates]));
+    });
+}
+
+function overlayClickListenerPolygon(overlay) {
     google.maps.event.addListener(overlay, "click", function(event){
         var len = overlay.getPath().getLength();
         var coordinates = [];
         var init = null;
         for (var i = 0; i < len; i++) {
-            var lat = event.overlay.getPath().getAt(i).lat();
-            var lng = event.overlay.getPath().getAt(i).lng();
+            var lat = overlay.getPath().getAt(i).lat();
+            var lng = overlay.getPath().getAt(i).lng();
             if(i == 0) {
                 init = new Array(lat, lng);
             }
@@ -173,6 +211,52 @@ function overlayClickListener(overlay) {
     });
 }
 
+function overlayClickListenerRectangle(overlay) {
+    google.maps.event.addListener(overlay, "click", function(event){
+        var coordinates = [];
+        var latNorth = overlay.getBounds().getNorthEast().lat();
+        var latSouth = overlay.getBounds().getSouthWest().lat();
+        var lngNorth = overlay.getBounds().getNorthEast().lng();
+        var lngSouth = overlay.getBounds().getSouthWest().lng();
+        coordinates.push(new Array(latNorth, lngNorth));
+        coordinates.push(new Array(latNorth, lngSouth));
+        coordinates.push(new Array(latSouth, lngSouth));
+        coordinates.push(new Array(latSouth, lngNorth));
+        coordinates.push(new Array(latNorth, lngNorth));
+        $('#vertices').val(JSON.stringify([coordinates]));
+    });
+}
+
+function circle(x1, y1, x2, y2, nsides) {
+    var coordinates = [];
+    var init = null;
+    var rx = Math.abs(x2 - x1) / 2;
+    var ry = Math.abs(y2 - y1) / 2;
+    var cx = Math.min(x1, x2) + rx;
+    var cy = Math.min(y1, y2) + ry;
+
+    var angInc = 2 * Math.PI / nsides;
+    // create ring in CW order
+    for (var i = 0; i < nsides; i++) {
+        var ang = -(i * angInc);
+        lat = cx + rx * Math.cos(ang);
+        lng = cy + ry * Math.sin(ang);
+        if(i == 0) {
+            init = new Array(lat, lng);
+        }
+        coordinates.push(new Array(lat, lng));
+    }
+    coordinates.push(init);
+    return coordinates;
+}
+
+function clearGeofences() {
+    for (var i = 0; i < geofencesArray.length; i++ ) {
+        geofencesArray[i].setMap(null);
+    }
+    geofencesArray.length = 0;
+}
+
 function getGeofences() {
     $.ajax({
         url: "http://localhost:8080/api/geofences",
@@ -181,11 +265,11 @@ function getGeofences() {
         dataType: "json",
         headers: createAuthorizationTokenHeader(),
         success: function (data, textStatus, jqXHR) {
+            geofencesArray = [];
             var geofences = [];
             for (var i = 0; i < data.length; i++) {
                 var geo = [];
                 var coordinates = data[i].geometry.coordinates[0];
-                console.log(data[i].geometry.coordinates);
                 for (var j = 0; j < coordinates.length; j++) {
                     geo.push({lat: coordinates[j][0], lng: coordinates[j][1]});
                 }
@@ -200,6 +284,7 @@ function getGeofences() {
                     strokeWeight: 2,
                     fillColor: '#20B2AA',
                     fillOpacity: 0.35  });
+                geofencesArray.push(polygon);
                 polygon.setMap(map);
             }
         },
@@ -241,7 +326,9 @@ function postGeofence(geofenceData) {
         dataType: "json",
         headers: createAuthorizationTokenHeader(),
         success: function (data, textStatus, jqXHR) {
-            window.location.replace("/geofences");
+            drawingShape.setMap(null);
+            clearGeofences();
+            getGeofences();
         },
         error: function (jqXHR, textStatus, errorThrown) {
             if (jqXHR.status === 401) {
