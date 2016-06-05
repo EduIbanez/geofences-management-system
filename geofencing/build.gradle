@@ -53,8 +53,7 @@ dependencies {
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
-    testCompile('com.jayway.restassured:rest-assured:2.4.1')
-    
+    testCompile('commons-io:commons-io:2.5')
 }
 
 task wrapper(type: Wrapper) {
