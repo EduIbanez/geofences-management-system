@@ -2,12 +2,22 @@ package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.Map;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
+
 @Entity
-@Table(name="GEOFENCES_REGISTRY")
+@Table(name = "GEOFENCES_REGISTRY")
 public class GeofenceRegistry {
 
     private Long id;
@@ -17,7 +27,8 @@ public class GeofenceRegistry {
     private String nick;
     private Date date;
 
-    public GeofenceRegistry() {}
+    public GeofenceRegistry() {
+    }
 
     public GeofenceRegistry(@JsonProperty("id") Long id, @JsonProperty("entering") Map<Long, Date> entering,
                             @JsonProperty("leaving") Map<Long, Date> leaving, @JsonProperty("inside") Map<Long, Date> inside,
@@ -42,9 +53,9 @@ public class GeofenceRegistry {
     }
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="ENTERING_KEY")
-    @Column(name="ENTERING_VALUE")
-    @CollectionTable(name="ENTERING_MAPPING", joinColumns=@JoinColumn(name="ENTERING_ID", referencedColumnName = "ID"))
+    @MapKeyColumn(name = "ENTERING_KEY")
+    @Column(name = "ENTERING_VALUE")
+    @CollectionTable(name = "ENTERING_MAPPING", joinColumns = @JoinColumn(name = "ENTERING_ID", referencedColumnName = "ID"))
     public Map<Long, Date> getEntering() {
         return entering;
     }
@@ -54,9 +65,9 @@ public class GeofenceRegistry {
     }
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="LEAVING_KEY")
-    @Column(name="LEAVING_VALUE")
-    @CollectionTable(name="LEAVING_MAPPING", joinColumns=@JoinColumn(name="LEAVING_ID", referencedColumnName = "ID"))
+    @MapKeyColumn(name = "LEAVING_KEY")
+    @Column(name = "LEAVING_VALUE")
+    @CollectionTable(name = "LEAVING_MAPPING", joinColumns = @JoinColumn(name = "LEAVING_ID", referencedColumnName = "ID"))
     public Map<Long, Date> getLeaving() {
         return leaving;
     }
@@ -66,9 +77,9 @@ public class GeofenceRegistry {
     }
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="INSIDE_KEY")
-    @Column(name="INSIDE_VALUE")
-    @CollectionTable(name="INSIDE_MAPPING", joinColumns=@JoinColumn(name="INSIDE_ID", referencedColumnName = "ID"))
+    @MapKeyColumn(name = "INSIDE_KEY")
+    @Column(name = "INSIDE_VALUE")
+    @CollectionTable(name = "INSIDE_MAPPING", joinColumns = @JoinColumn(name = "INSIDE_ID", referencedColumnName = "ID"))
     public Map<Long, Date> getInside() {
         return inside;
     }

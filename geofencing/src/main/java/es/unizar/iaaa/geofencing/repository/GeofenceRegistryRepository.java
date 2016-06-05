@@ -1,7 +1,8 @@
 package es.unizar.iaaa.geofencing.repository;
 
-import es.unizar.iaaa.geofencing.model.GeofenceRegistry;
 import org.springframework.data.repository.CrudRepository;
+
+import es.unizar.iaaa.geofencing.model.GeofenceRegistry;
 
 public interface GeofenceRegistryRepository extends CrudRepository<GeofenceRegistry, Long> {
 

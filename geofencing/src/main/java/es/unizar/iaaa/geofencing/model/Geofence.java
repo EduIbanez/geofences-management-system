@@ -11,12 +11,23 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import es.unizar.iaaa.geofencing.view.View;
 
 @Entity
-@Table(name="GEOFENCES")
+@Table(name = "GEOFENCES")
 public class Geofence {
 
     private Long id;
@@ -24,12 +35,13 @@ public class Geofence {
 
     private Map<String, String> properties = new HashMap<>();
 
-    @Type(type="org.hibernate.spatial.GeometryType")
+    @Type(type = "org.hibernate.spatial.GeometryType")
     private Geometry geometry;
     private User user;
     private Set<Rule> rules;
 
-    public Geofence() {}
+    public Geofence() {
+    }
 
     public Geofence(@JsonProperty("id") Long id, @JsonProperty("type") String type,
                     @JsonProperty("properties") Map<String, String> properties, @JsonProperty("geometry") Geometry geometry,
@@ -65,9 +77,9 @@ public class Geofence {
     }
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="PROPERTIES_KEY")
-    @Column(name="PROPERTIES_VALUE")
-    @CollectionTable(name="PROPERTIES_MAPPING", joinColumns=@JoinColumn(name="GEOFENCE_ID", referencedColumnName = "ID"))
+    @MapKeyColumn(name = "PROPERTIES_KEY")
+    @Column(name = "PROPERTIES_VALUE")
+    @CollectionTable(name = "PROPERTIES_MAPPING", joinColumns = @JoinColumn(name = "GEOFENCE_ID", referencedColumnName = "ID"))
     @JsonView(View.GeofenceBaseView.class)
     public Map<String, String> getProperties() {
         return properties;
@@ -109,8 +121,8 @@ public class Geofence {
     }
 
     public String toString() {
-        return "Geofence(id: "+id+" type: "+type+" properties: "+properties+" geom: "+geometry+" user id: "+user.getId()+
-                " rules: "+rules+")";
+        return "Geofence(id: " + id + " type: " + type + " properties: " + properties + " geom: " + geometry + " user id: " + user.getId() +
+                " rules: " + rules + ")";
     }
 
     @Override

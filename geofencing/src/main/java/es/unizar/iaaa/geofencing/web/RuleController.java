@@ -33,10 +33,9 @@ import io.swagger.annotations.ResponseHeader;
 @RestController
 public class RuleController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RuleController.class);
     @Autowired
     private RuleRepository ruleRepository;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RuleController.class);
 
     /**
      * This method creates a new rule.
@@ -63,8 +62,8 @@ public class RuleController {
     /**
      * This method modifies the data of a previously created rule.
      *
-     * @param id    unique identifier representing a specific rule
-     * @param rule  data of the rule
+     * @param id   unique identifier representing a specific rule
+     * @param rule data of the rule
      * @return the rule modified
      */
     @RequestMapping(path = "/api/rules/{id}", method = RequestMethod.PUT)
@@ -111,6 +110,7 @@ public class RuleController {
             throw new RuleNotFoundException();
         }
     }
+
     /**
      * This method returns a rule by id.
      *
@@ -140,10 +140,11 @@ public class RuleController {
     @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Rule status forbids request")
     public class RuleResourceConflictException extends RuntimeException {
         public RuleResourceConflictException(Long id, Exception e) {
-            super("Failed update of Rule "+id, e);
+            super("Failed update of Rule " + id, e);
         }
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Rule")
-    public class RuleNotFoundException extends RuntimeException { }
+    public class RuleNotFoundException extends RuntimeException {
+    }
 }

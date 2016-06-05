@@ -7,7 +7,8 @@ public class Position {
 
     private Geometry coordinates;
 
-    public Position(){}
+    public Position() {
+    }
 
     public Position(@JsonProperty("coordinates") Geometry coordinates) {
         this.coordinates = coordinates;

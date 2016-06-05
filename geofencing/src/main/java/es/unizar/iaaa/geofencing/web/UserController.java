@@ -12,10 +12,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+
 import es.unizar.iaaa.geofencing.model.User;
 import es.unizar.iaaa.geofencing.repository.UserRepository;
 import es.unizar.iaaa.geofencing.view.View;
@@ -26,13 +32,11 @@ import io.swagger.annotations.ResponseHeader;
 @RestController
 public class UserController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     /**
      * This method creates a new user.
@@ -61,8 +65,8 @@ public class UserController {
     /**
      * This method modifies the data of a previously created user.
      *
-     * @param id_user   unique identifier name representing a specific user
-     * @param user      data of the user
+     * @param id_user unique identifier name representing a specific user
+     * @param user    data of the user
      * @return the user modified
      */
     @RequestMapping(path = "/api/users/{id_user:.+}", method = RequestMethod.PUT)
@@ -92,7 +96,7 @@ public class UserController {
     /**
      * This method deletes the data of a previously created user.
      *
-     * @param id_user   unique identifier name representing a specific user
+     * @param id_user unique identifier name representing a specific user
      * @return the user deleted
      */
     @RequestMapping(path = "/api/users/{id_user:.+}", method = RequestMethod.DELETE)
@@ -115,7 +119,7 @@ public class UserController {
     /**
      * This method returns a user by id.
      *
-     * @param id_user   unique identifier name representing a specific user
+     * @param id_user unique identifier name representing a specific user
      * @return the user requested
      */
     @RequestMapping(path = "/api/users/{id_user:.+}", method = RequestMethod.GET)
@@ -139,8 +143,10 @@ public class UserController {
     }
 
     @ResponseStatus(value = HttpStatus.NOT_MODIFIED, reason = "Not modified")
-    public class UserNotModifiedException extends RuntimeException { }
+    public class UserNotModifiedException extends RuntimeException {
+    }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such User")
-    public class UserNotFoundException extends RuntimeException { }
+    public class UserNotFoundException extends RuntimeException {
+    }
 }

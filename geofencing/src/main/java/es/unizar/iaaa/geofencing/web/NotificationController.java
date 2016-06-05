@@ -35,10 +35,9 @@ import io.swagger.annotations.ResponseHeader;
 @RestController
 public class NotificationController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationController.class);
     @Autowired
     private NotificationRepository notificationRepository;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationController.class);
 
     /**
      * This method creates a new notification.
@@ -63,8 +62,8 @@ public class NotificationController {
     }
 
     /**
-     * This method returns an array of notifications of an authenticated user. If there is nobody authenticated, it
-     * returns an empty array.
+     * This method returns an array of notifications of an authenticated user. If there is nobody
+     * authenticated, it returns an empty array.
      *
      * @return an array of notifications
      */
@@ -75,7 +74,7 @@ public class NotificationController {
     public MappingJacksonValue getNotifications() {
         LOGGER.info("Requested /api/notifications GET method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        LOGGER.info("Requested /api/notifications GET method for "+auth.getPrincipal());
+        LOGGER.info("Requested /api/notifications GET method for " + auth.getPrincipal());
         if (!(auth.getPrincipal() instanceof UserDetails)) {
             throw new InsufficientAuthenticationException("Requires authentication");
         }
@@ -90,8 +89,8 @@ public class NotificationController {
     /**
      * This method modifies the data of a previously created notification.
      *
-     * @param id            unique identifier representing a specific rule
-     * @param notification  data of the notification
+     * @param id           unique identifier representing a specific rule
+     * @param notification data of the notification
      * @return the notification modified
      */
     @RequestMapping(path = "/api/notifications/{id}", method = RequestMethod.PUT)
@@ -168,10 +167,11 @@ public class NotificationController {
     @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Notification status forbids request")
     public class NotificationResourceConflictException extends RuntimeException {
         public NotificationResourceConflictException(Long id, Exception e) {
-            super("Failed update of Notification "+id, e);
+            super("Failed update of Notification " + id, e);
         }
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Notification")
-    public class NotificationNotFoundException extends RuntimeException { }
+    public class NotificationNotFoundException extends RuntimeException {
+    }
 }

@@ -1,8 +1,9 @@
 package es.unizar.iaaa.geofencing.repository;
 
-import es.unizar.iaaa.geofencing.model.Rule;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+
+import es.unizar.iaaa.geofencing.model.Rule;
 
 public interface RuleRepository extends CrudRepository<Rule, Long> {
 

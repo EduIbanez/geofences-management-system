@@ -2,14 +2,22 @@ package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import es.unizar.iaaa.geofencing.view.View;
 
-import javax.persistence.*;
 import java.sql.Time;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import es.unizar.iaaa.geofencing.view.View;
+
 @Entity
-@Table(name="DAYS")
+@Table(name = "DAYS")
 public class Day {
 
     private Long id;
@@ -19,7 +27,8 @@ public class Day {
     private Boolean whole_day;
     private Rule rule;
 
-    public Day(){}
+    public Day() {
+    }
 
     public Day(@JsonProperty("id") Long id, @JsonProperty("day") String day, @JsonProperty("opening_time") Time opening_time,
                @JsonProperty("closing_time") Time closing_time, @JsonProperty("whole_day") Boolean whole_day,
@@ -90,8 +99,8 @@ public class Day {
     }
 
     public String toString() {
-        return "Day(id: "+id+" day: "+day+" opening_time: "+opening_time+" closing_time: "+closing_time+" whole_day: "+whole_day+
-                " rule: "+rule+")";
+        return "Day(id: " + id + " day: " + day + " opening_time: " + opening_time + " closing_time: " + closing_time + " whole_day: " + whole_day +
+                " rule: " + rule + ")";
     }
 
     @Override

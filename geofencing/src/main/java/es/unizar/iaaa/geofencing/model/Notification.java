@@ -2,14 +2,22 @@ package es.unizar.iaaa.geofencing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import es.unizar.iaaa.geofencing.view.View;
 
-import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import es.unizar.iaaa.geofencing.view.View;
+
 @Entity
-@Table(name="NOTIFICATIONS")
+@Table(name = "NOTIFICATIONS")
 public class Notification {
 
     private Long id;
@@ -18,7 +26,8 @@ public class Notification {
     private String status;
     private Date date;
 
-    public Notification(){}
+    public Notification() {
+    }
 
     public Notification(@JsonProperty("id") Long id, @JsonProperty("rule") Rule rule,
                         @JsonProperty("user") User user, @JsonProperty("status") String status,
@@ -51,7 +60,7 @@ public class Notification {
     public void setRule(Rule rule) {
         this.rule = rule;
     }
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonView(View.NotificationCompleteView.class)
     public User getUser() {
@@ -83,8 +92,8 @@ public class Notification {
     }
 
     public String toString() {
-        return "Notification(id: "+id+" rule id: "+rule.getId()+" user id: "+user.getId()+" status: "+status+
-                " date: "+date+")";
+        return "Notification(id: " + id + " rule id: " + rule.getId() + " user id: " + user.getId() + " status: " + status +
+                " date: " + date + ")";
     }
 
     @Override

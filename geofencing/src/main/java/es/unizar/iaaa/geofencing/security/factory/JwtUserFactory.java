@@ -1,14 +1,14 @@
 package es.unizar.iaaa.geofencing.security.factory;
 
-import es.unizar.iaaa.geofencing.model.User;
-import es.unizar.iaaa.geofencing.security.model.JwtUser;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import es.unizar.iaaa.geofencing.model.User;
+import es.unizar.iaaa.geofencing.security.model.JwtUser;
 
 public final class JwtUserFactory {
 

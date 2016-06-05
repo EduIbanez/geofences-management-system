@@ -18,7 +18,7 @@ import javax.persistence.Table;
 import es.unizar.iaaa.geofencing.view.View;
 
 @Entity
-@Table(name="RULES")
+@Table(name = "RULES")
 public class Rule {
 
     private Long id;
@@ -30,7 +30,8 @@ public class Rule {
     private Set<Notification> notifications;
     private Geofence geofence;
 
-    public Rule(){}
+    public Rule() {
+    }
 
     public Rule(@JsonProperty("id") Long id, @JsonProperty("enabled") Boolean enabled,
                 @JsonProperty("type") RuleType type, @JsonProperty("time") Integer time,
@@ -130,8 +131,8 @@ public class Rule {
     }
 
     public String toString() {
-        return "Rule(id: "+id+" enabled: "+enabled+" type: "+type.toString()+" time: "+time+" days: "+days.toString()
-                +" notifications: "+notifications.toString()+" geofence id: "+geofence.getId()+")";
+        return "Rule(id: " + id + " enabled: " + enabled + " type: " + type.toString() + " time: " + time + " days: " + days.toString()
+                + " notifications: " + notifications.toString() + " geofence id: " + geofence.getId() + ")";
     }
 
     @Override
