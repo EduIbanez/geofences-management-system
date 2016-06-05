@@ -137,20 +137,22 @@ function drawing() {
     drawingManager.setMap(map);
 
     google.maps.event.addListener(drawingManager, "overlaycomplete", function(event){
-        overlayClickListener(event.overlay);
-        var len = event.overlay.getPath().getLength();
-        var coordinates = [];
-        var init = null;
-        for (var i = 0; i < len; i++) {
-            var lat = event.overlay.getPath().getAt(i).lat();
-            var lng = event.overlay.getPath().getAt(i).lng();
-            if(i == 0) {
-                init = new Array(lat, lng);
+        if (event.type == google.maps.drawing.OverlayType.POLYGON) {
+            overlayClickListener(event.overlay);
+            var len = event.overlay.getPath().getLength();
+            var coordinates = [];
+            var init = null;
+            for (var i = 0; i < len; i++) {
+                var lat = event.overlay.getPath().getAt(i).lat();
+                var lng = event.overlay.getPath().getAt(i).lng();
+                if(i == 0) {
+                    init = new Array(lat, lng);
+                }
+                coordinates.push(new Array(lat, lng));
             }
-            coordinates.push(new Array(lat, lng));
+            coordinates.push(init);
+            $('#vertices').val(JSON.stringify([coordinates]));
         }
-        coordinates.push(init);
-        $('#vertices').val(JSON.stringify([coordinates]));
     });
 }
 function overlayClickListener(overlay) {

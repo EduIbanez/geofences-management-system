@@ -51,9 +51,6 @@ public class GeofenceController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(GeofenceController.class);
 
     /**
@@ -128,16 +125,12 @@ public class GeofenceController {
      * returns an empty array.
      *
      * @return an array of geofences
-     *
-     * Note: This code returns a serialization instead of a list of objects
-     * due to an unidentified bug in the serialization architecture
      */
     @RequestMapping(path = "/api/geofences", method = RequestMethod.GET)
-    @JsonView(View.GeofenceCompleteView.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Array of geofences", response = ResponseEntity.class),
+            @ApiResponse(code = 200, message = "Array of geofences", response = MappingJacksonValue.class),
             @ApiResponse(code = 401, message = "Requires authentication", response = InsufficientAuthenticationException.class)})
-    public ResponseEntity<String> getGeofences() throws JsonProcessingException {
+    public MappingJacksonValue getGeofences() {
         LOGGER.info("Requested /api/geofences GET method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         LOGGER.info("Requested /api/geofences GET method for "+auth.getPrincipal());
@@ -145,11 +138,11 @@ public class GeofenceController {
             throw new InsufficientAuthenticationException("Requires authentication");
         }
         UserDetails customUser = (UserDetails) auth.getPrincipal();
-        String nick = customUser.getUsername();
-        String response = objectMapper.writerWithView(View.GeofenceCompleteView.class).writeValueAsString(geofenceRepository.find(nick));
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        return new ResponseEntity<>(response, responseHeaders, HttpStatus.OK);
+        String email = customUser.getUsername();
+        List<Geofence> geofences = geofenceRepository.find(email);
+        final MappingJacksonValue result = new MappingJacksonValue(geofences);
+        result.setSerializationView(View.GeofenceCompleteView.class);
+        return result;
     }
 
     /**
