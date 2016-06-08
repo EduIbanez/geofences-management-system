@@ -134,7 +134,13 @@ public class UserController {
             if ((auth instanceof AnonymousAuthenticationToken)) {
                 result.setSerializationView(View.UserBaseView.class);
             } else {
-                result.setSerializationView(View.UserCompleteView.class);
+                UserDetails customUser = (UserDetails) auth.getPrincipal();
+                String nick = customUser.getUsername();
+                if (nick.equals(id_user)) {
+                    result.setSerializationView(View.UserCompleteView.class);
+                } else {
+                    result.setSerializationView(View.UserBaseView.class);
+                }
             }
             return result;
         } else {

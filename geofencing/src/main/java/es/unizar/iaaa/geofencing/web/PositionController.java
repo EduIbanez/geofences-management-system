@@ -135,7 +135,9 @@ public class PositionController {
             if (!geofences_id.contains(entry.getKey())) {
                 Geofence geofence = geofenceRepository.findOne(entry.getKey());
                 for (Rule rule : geofence.getRules()) {
-                    checkLeaving(notifications, user, rule, calendar, leaving, geofence.getId());
+                    if (rule.getType().equals(RuleType.LEAVING)) {
+                        checkLeaving(notifications, user, rule, calendar, leaving, geofence.getId());
+                    }
                 }
             }
         }
