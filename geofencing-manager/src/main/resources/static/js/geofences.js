@@ -15,12 +15,12 @@ function removeJwtToken() {
 }
 
 function createAuthorizationTokenHeader() {
+    "use strict";
     var token = getJwtToken();
     if (token) {
         return {"Authorization": token};
-    } else {
-        return {};
     }
+    return {};
 }
 
 var mapOptions = {
@@ -40,37 +40,32 @@ var map = new google.maps.Map(document.getElementById('map-canvas'),
     mapOptions);
 
 function findUserCurrentLocation(callback) {
-
-    navigator.geolocation.getCurrentPosition(function(position){
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;
-            console.log('latitude .. '+latitude);
-            console.log('longitude .. '+longitude);
-
-            var location = new Array(latitude, longitude);
-            callback(location);
-        }, function(e){
-            switch (e.code) {
-                case e.PERMISSION_DENIED:
-                    alert('You have denied access to your position. You will ' +
-                        'not get the most out of the application now.');
-                    break;
-                case e.POSITION_UNAVAILABLE:
-                    alert('There was a problem getting your position.');
-                    break;
-                case e.TIMEOUT:
-                    alert('The application has timed out attempting to get ' +
-                        'your location.');
-                    break;
-                default:
-                    alert('There was a horrible Geolocation error that has ' +
-                        'not been defined.');
-            }
-        },
-        { timeout: 45000 }
-
-    );
-
+    "use strict";
+    navigator.geolocation.getCurrentPosition(function (position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        console.log('latitude .. ' + latitude);
+        console.log('longitude .. ' + longitude);
+        var location = [latitude, longitude];
+        callback(location);
+    }, function (e) {
+        switch (e.code) {
+        case e.PERMISSION_DENIED:
+            alert('You have denied access to your position. You will ' +
+                  'not get the most out of the application now.');
+            break;
+        case e.POSITION_UNAVAILABLE:
+            alert('There was a problem getting your position.');
+            break;
+        case e.TIMEOUT:
+            alert('The application has timed out attempting to get ' +
+                  'your location.');
+            break;
+        default:
+            alert('There was a horrible Geolocation error that has ' +
+                  'not been defined.');
+        }
+    }, { timeout: 45000 });
 }
 
 var geofencesArray = [];
@@ -78,6 +73,7 @@ var drawingShape;
 var marker;
 
 function renderMessageOnMap(data) {
+    "use strict";
     if (typeof marker !== 'undefined') {
         marker.setMap(null);
     }
@@ -95,6 +91,7 @@ function renderMessageOnMap(data) {
 }
 
 function drawing() {
+    "use strict";
     var drawingManager = new google.maps.drawing.DrawingManager({
         drawingControl: true,
         drawingControlOptions: {
@@ -138,73 +135,78 @@ function drawing() {
     });
     drawingManager.setMap(map);
 
-    google.maps.event.addListener(drawingManager, "overlaycomplete", function(event){
+    google.maps.event.addListener(drawingManager, "overlaycomplete", function(event) {
+        var lat, lng, coordinates, radius, len, init, i, latNorth, latSouth, lngNorth, lngSouth;
         if (typeof drawingShape !== 'undefined') {
             drawingShape.setMap(null);
         }
         drawingShape = event.overlay;
-        if (event.type == google.maps.drawing.OverlayType.CIRCLE) {
+        if (event.type === google.maps.drawing.OverlayType.CIRCLE) {
             overlayClickListenerCircle(event.overlay);
-            var lat = event.overlay.getCenter().lat();
-            var lng = event.overlay.getCenter().lng();
-            var radius = event.overlay.getRadius()/100000;
-            var coordinates = circle(lat - radius, lng - radius, lat + radius, lng + radius, 40);
+            lat = event.overlay.getCenter().lat();
+            lng = event.overlay.getCenter().lng();
+            radius = event.overlay.getRadius()/100000;
+            coordinates = circle(lat - radius, lng - radius, lat + radius, lng + radius, 40);
             console.log(coordinates);
             $('#vertices').val(JSON.stringify([coordinates]));
-        } else if (event.type == google.maps.drawing.OverlayType.POLYGON) {
+        } else if (event.type === google.maps.drawing.OverlayType.POLYGON) {
             overlayClickListenerPolygon(event.overlay);
-            var len = event.overlay.getPath().getLength();
-            var coordinates = [];
-            var init = null;
-            for (var i = 0; i < len; i++) {
-                var lat = event.overlay.getPath().getAt(i).lat();
-                var lng = event.overlay.getPath().getAt(i).lng();
-                if(i == 0) {
-                    init = new Array(lat, lng);
+            len = event.overlay.getPath().getLength();
+            coordinates = [];
+            init = null;
+            for (i = 0; i < len; i++) {
+                lat = event.overlay.getPath().getAt(i).lat();
+                lng = event.overlay.getPath().getAt(i).lng();
+                if (i === 0) {
+                    init = [lat, lng];
                 }
-                coordinates.push(new Array(lat, lng));
+                coordinates.push([lat, lng]);
             }
             coordinates.push(init);
             $('#vertices').val(JSON.stringify([coordinates]));
         } else if (event.type == google.maps.drawing.OverlayType.RECTANGLE) {
             overlayClickListenerRectangle(event.overlay);
-            var coordinates = [];
-            var latNorth = event.overlay.getBounds().getNorthEast().lat();
-            var latSouth = event.overlay.getBounds().getSouthWest().lat();
-            var lngNorth = event.overlay.getBounds().getNorthEast().lng();
-            var lngSouth = event.overlay.getBounds().getSouthWest().lng();
-            coordinates.push(new Array(latNorth, lngNorth));
-            coordinates.push(new Array(latNorth, lngSouth));
-            coordinates.push(new Array(latSouth, lngSouth));
-            coordinates.push(new Array(latSouth, lngNorth));
-            coordinates.push(new Array(latNorth, lngNorth));
+            coordinates = [];
+            latNorth = event.overlay.getBounds().getNorthEast().lat();
+            latSouth = event.overlay.getBounds().getSouthWest().lat();
+            lngNorth = event.overlay.getBounds().getNorthEast().lng();
+            lngSouth = event.overlay.getBounds().getSouthWest().lng();
+            coordinates.push([latNorth, lngNorth]);
+            coordinates.push([latNorth, lngSouth]);
+            coordinates.push([latSouth, lngSouth]);
+            coordinates.push([latSouth, lngNorth]);
+            coordinates.push([latNorth, lngNorth]);
             $('#vertices').val(JSON.stringify([coordinates]));
         }
     });
 }
 
 function overlayClickListenerCircle(overlay) {
+    "use strict";
+    var lat, lng, coordinates, radius;
     google.maps.event.addListener(overlay, "click", function(event){
-        var lat = overlay.getCenter().lat();
-        var lng = overlay.getCenter().lng();
-        var radius = overlay.getRadius()/100000;
-        var coordinates = circle(lat - radius, lng - radius, lat + radius, lng + radius, 40);
+        lat = overlay.getCenter().lat();
+        lng = overlay.getCenter().lng();
+        radius = overlay.getRadius()/100000;
+        coordinates = circle(lat - radius, lng - radius, lat + radius, lng + radius, 40);
         $('#vertices').val(JSON.stringify([coordinates]));
     });
 }
 
 function overlayClickListenerPolygon(overlay) {
-    google.maps.event.addListener(overlay, "click", function(event){
-        var len = overlay.getPath().getLength();
-        var coordinates = [];
-        var init = null;
-        for (var i = 0; i < len; i++) {
-            var lat = overlay.getPath().getAt(i).lat();
-            var lng = overlay.getPath().getAt(i).lng();
-            if(i == 0) {
-                init = new Array(lat, lng);
+    "use strict";
+    var lat, lng, coordinates, len, init, i;
+    google.maps.event.addListener(overlay, "click", function (event) {
+        len = overlay.getPath().getLength();
+        coordinates = [];
+        init = null;
+        for (i = 0; i < len; i++) {
+            lat = overlay.getPath().getAt(i).lat();
+            lng = overlay.getPath().getAt(i).lng();
+            if(i === 0) {
+                init = [lat, lng];
             }
-            coordinates.push(new Array(lat, lng));
+            coordinates.push([lat, lng]);
         }
         coordinates.push(init);
         $('#vertices').val(JSON.stringify([coordinates]));
@@ -212,22 +214,26 @@ function overlayClickListenerPolygon(overlay) {
 }
 
 function overlayClickListenerRectangle(overlay) {
-    google.maps.event.addListener(overlay, "click", function(event){
-        var coordinates = [];
-        var latNorth = overlay.getBounds().getNorthEast().lat();
-        var latSouth = overlay.getBounds().getSouthWest().lat();
-        var lngNorth = overlay.getBounds().getNorthEast().lng();
-        var lngSouth = overlay.getBounds().getSouthWest().lng();
-        coordinates.push(new Array(latNorth, lngNorth));
-        coordinates.push(new Array(latNorth, lngSouth));
-        coordinates.push(new Array(latSouth, lngSouth));
-        coordinates.push(new Array(latSouth, lngNorth));
-        coordinates.push(new Array(latNorth, lngNorth));
+    "use strict";
+    var latNorth, latSouth, lngNorth, lngSouth, coordinates;
+    google.maps.event.addListener(overlay, "click", function (event) {
+        coordinates = [];
+        latNorth = overlay.getBounds().getNorthEast().lat();
+        latSouth = overlay.getBounds().getSouthWest().lat();
+        lngNorth = overlay.getBounds().getNorthEast().lng();
+        lngSouth = overlay.getBounds().getSouthWest().lng();
+        coordinates.push([latNorth, lngNorth]);
+        coordinates.push([latNorth, lngSouth]);
+        coordinates.push([latSouth, lngSouth]);
+        coordinates.push([latSouth, lngNorth]);
+        coordinates.push([latNorth, lngNorth]);
         $('#vertices').val(JSON.stringify([coordinates]));
     });
 }
 
 function circle(x1, y1, x2, y2, nsides) {
+    "use strict";
+    var lat, lng;
     var coordinates = [];
     var init = null;
     var rx = Math.abs(x2 - x1) / 2;
@@ -241,16 +247,17 @@ function circle(x1, y1, x2, y2, nsides) {
         var ang = -(i * angInc);
         lat = cx + rx * Math.cos(ang);
         lng = cy + ry * Math.sin(ang);
-        if(i == 0) {
-            init = new Array(lat, lng);
+        if(i === 0) {
+            init = [lat, lng];
         }
-        coordinates.push(new Array(lat, lng));
+        coordinates.push([lat, lng]);
     }
     coordinates.push(init);
     return coordinates;
 }
 
 function clearGeofences() {
+    "use strict";
     for (var i = 0; i < geofencesArray.length; i++ ) {
         geofencesArray[i].setMap(null);
     }
@@ -258,6 +265,7 @@ function clearGeofences() {
 }
 
 function getGeofences() {
+    "use strict";
     $.ajax({
         url: "http://localhost:8080/api/geofences",
         type: "GET",
@@ -267,15 +275,16 @@ function getGeofences() {
         success: function (data, textStatus, jqXHR) {
             geofencesArray = [];
             var geofences = [];
-            for (var i = 0; i < data.length; i++) {
+            var i, j;
+            for (i = 0; i < data.length; i++) {
                 var geo = [];
                 var coordinates = data[i].geometry.coordinates[0];
-                for (var j = 0; j < coordinates.length; j++) {
+                for (j = 0; j < coordinates.length; j++) {
                     geo.push({lat: coordinates[j][0], lng: coordinates[j][1]});
                 }
                 geofences.push(geo);
             }
-            for (var j = 0; j < geofences.length; j++) {
+            for (j = 0; j < geofences.length; j++) {
                 // Construct the polygon.
                 var polygon = new google.maps.Polygon({
                     paths: geofences[j],
@@ -295,12 +304,14 @@ function getGeofences() {
 }
 
 function starting() {
+    "use strict";
     drawing();
     findUserCurrentLocation(renderMessageOnMap);
     getGeofences();
 }
 
 $("#mapForm").submit(function (event) {
+    "use strict";
     event.preventDefault();
 
     var $form = $(this);
@@ -318,6 +329,7 @@ $("#mapForm").submit(function (event) {
 });
 
 function postGeofence(geofenceData) {
+    "use strict";
     $.ajax({
         url: "http://localhost:8080/api/geofences",
         type: "POST",
@@ -342,6 +354,7 @@ function postGeofence(geofenceData) {
 
 
 function doLogout() {
+    "use strict";
     removeJwtToken();
 }
 
