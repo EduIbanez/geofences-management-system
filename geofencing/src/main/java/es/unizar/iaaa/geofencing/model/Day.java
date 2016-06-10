@@ -100,7 +100,7 @@ public class Day {
 
     public String toString() {
         return "Day(id: " + id + " day: " + day + " opening_time: " + opening_time + " closing_time: " + closing_time + " whole_day: " + whole_day +
-                " rule id: " + rule.getId() + ")";
+                " rule: " + rule + ")";
     }
 
     @Override

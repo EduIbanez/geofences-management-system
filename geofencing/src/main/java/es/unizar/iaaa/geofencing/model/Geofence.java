@@ -121,8 +121,8 @@ public class Geofence {
     }
 
     public String toString() {
-        return "Geofence(id: " + id + " type: " + type + " properties: " + properties.toString() + " geom: " + geometry +
-                " user id: " + user.getId() + " rules: " + rules.toString() + ")";
+        return "Geofence(id: " + id + " type: " + type + " properties: " + properties + " geom: " + geometry + " user id: " + user.getId() +
+                " rules: " + rules + ")";
     }
 
     @Override
