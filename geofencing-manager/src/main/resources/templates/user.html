@@ -24,11 +24,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Geofencing Manager</a>
+            <a class="navbar-brand" href="/user">Geofencing Manager</a>
         </div>
         <div class="collapse navbar-collapse" id="bs-navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#"><span class="glyphicon glyphicon-user"></span> User<span class="sr-only"></span></a></li>
+                <li class="active"><a href="/user"><span class="glyphicon glyphicon-user"></span> User<span class="sr-only"></span></a></li>
                 <li><a href="/geofences"><span class="glyphicon glyphicon-globe"></span> Geofences</a></li>
                 <li id="logout"><a href="/"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
             </ul>
@@ -38,7 +38,47 @@
 
 <div id="main" class="container-fluid">
     <div class="row">
-
+        <div class="col-sm-offset-2 col-sm-3 text-center">
+            <h3>Your info</h3>
+            <form id="userForm">
+                <div class="form-group">
+                    <label class="sr-only" for="username">Nick</label>
+                    <input type="text" name="username" placeholder="Nick..."
+                           class="form-username form-control" id="username" readonly="readonly"/>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="password">Password</label>
+                    <input type="password" name="password"
+                           placeholder="Password..." class="form-password form-control"
+                           id="password"/>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="first_name">First name</label>
+                    <input type="text" name="first_name"
+                           placeholder="First name..." class="form-control"
+                           id="first_name"/>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="last_name">Last name</label>
+                    <input type="text" name="last_name"
+                           placeholder="Last name..." class="form-control"
+                           id="last_name"/>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="birthday">Password</label>
+                    <input type="text" name="birthday"
+                           placeholder="Birthday..." class="form-control"
+                           id="birthday"/>
+                </div>
+                <button type="submit" class="btn">Update!
+                </button>
+            </form>
+        </div>
+        <div class="col-sm-offset-2 col-sm-3">
+            <h3>Do you want to delete your account?</h3>
+            <button id="deleteUser" type="submit" class="btn btn-warning">Delete!
+            </button>
+        </div>
     </div>
 </div>
 

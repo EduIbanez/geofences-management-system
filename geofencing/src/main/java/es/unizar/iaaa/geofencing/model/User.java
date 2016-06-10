@@ -186,9 +186,9 @@ public class User {
 
     public String toString() {
         return "User(id: " + id + " nick: " + nick + " password: " + password + " first_name: " + first_name +
-                " last_name: " + last_name + " birthday: " + birthday + " imei: " + imei + " geofence: " + geofences +
+                " last_name: " + last_name + " birthday: " + birthday + " imei: " + imei + " geofences: " + geofences.toString() +
                 " enabled: " + enabled + " role: " + role + " last_password_reset_date: " + last_password_reset_date +
-                " notifications: " + notifications + ")";
+                " notifications: " + notifications.toString() + ")";
     }
 
     @Override

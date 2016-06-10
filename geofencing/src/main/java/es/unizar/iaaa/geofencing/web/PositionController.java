@@ -69,12 +69,12 @@ public class PositionController {
         Calendar time = Calendar.getInstance();
         Position position = positionAuthenticated.getPosition();
         User user = userRepository.findByUsername(username);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByNickOrderByDateDesc(username);
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(user.getId());
         Map<Long, Date> entering = new HashMap<>();
         Map<Long, Date> leaving = new HashMap<>();
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = check(user, time, position, entering, leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, username, time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, user.getId(), time.getTime()));
         for (Notification notification : notifications) {
             notificationRepository.save(notification);
         }

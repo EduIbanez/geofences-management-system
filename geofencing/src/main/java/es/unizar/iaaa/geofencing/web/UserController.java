@@ -80,10 +80,16 @@ public class UserController {
         UserDetails customUser = (UserDetails) auth.getPrincipal();
         String nick = customUser.getUsername();
         if (nick.equals(id_user) && userRepository.existsByUsername(id_user)) {
-            String hashedPassword = passwordEncoder.encode(user.getPassword());
-            user.setPassword(hashedPassword);
-            User userModified = userRepository.save(user);
-            if (user.equals(userModified)) {
+            User userRequested = userRepository.findByUsername(id_user);
+            if (!user.getPassword().equals("")) {
+                String hashedPassword = passwordEncoder.encode(user.getPassword());
+                userRequested.setPassword(hashedPassword);
+            }
+            userRequested.setFirstName(user.getFirstName());
+            userRequested.setLastName(user.getLastName());
+            userRequested.setBirthday(user.getBirthday());
+            User userModified = userRepository.save(userRequested);
+            if (userRequested.equals(userModified)) {
                 return userModified;
             } else {
                 throw new UserNotModifiedException();
