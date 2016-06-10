@@ -63,7 +63,7 @@ public class UserControllerTest {
     private static final String PASSWORD = "password";
 
     private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", Date.valueOf("1992-08-07"),
-            "356938035643809", new HashSet<>(), true, "ROLE_USER", Date.valueOf("2016-05-19"), new HashSet<>());
+            "356938035643809", new HashSet<>(), true, "ROLE_USER", Date.valueOf("2016-05-19"), new HashSet<>(), new HashSet<>());
 
 
     @Before
@@ -97,7 +97,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.enabled").value(USER1.getEnabled()))
                 .andExpect(jsonPath("$.role").value(USER1.getRole()))
                 .andExpect(jsonPath("$.lastPasswordResetDate").isNumber())
-                .andExpect(jsonPath("$.notifications").isEmpty());
+                .andExpect(jsonPath("$.notifications").isEmpty())
+                .andExpect(jsonPath("$.geofencesRegistry").isEmpty());
         assertEquals(1, userRepository.count());
     }
 
@@ -127,7 +128,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()))
                 .andExpect(jsonPath("$.lastPasswordResetDate").isNumber())
-                .andExpect(jsonPath("$.notifications").isEmpty());
+                .andExpect(jsonPath("$.notifications").isEmpty())
+                .andExpect(jsonPath("$.geofencesRegistry").isEmpty());
         User usuarioNew = userRepository.findOne(usuario.getId());
         assertEquals(usuario.getBirthday(), usuarioNew.getBirthday());
     }
@@ -168,7 +170,8 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.enabled").value(usuario.getEnabled()))
                 .andExpect(jsonPath("$.role").value(usuario.getRole()))
                 .andExpect(jsonPath("$.lastPasswordResetDate").isNumber())
-                .andExpect(jsonPath("$.notifications").isEmpty());
+                .andExpect(jsonPath("$.notifications").isEmpty())
+                .andExpect(jsonPath("$.geofencesRegistry").isEmpty());
     }
 
     @Test

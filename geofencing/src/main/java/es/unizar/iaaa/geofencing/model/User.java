@@ -35,6 +35,7 @@ public class User {
     private String role;
     private java.util.Date last_password_reset_date;
     private Set<Notification> notifications;
+    private Set<GeofenceRegistry> geofences_registry;
 
     public User() {
     }
@@ -45,7 +46,8 @@ public class User {
                 @JsonProperty("imei") String imei, @JsonProperty("geofences") Set<Geofence> geofences,
                 @JsonProperty("enabled") Boolean enabled, @JsonProperty("role") String role,
                 @JsonProperty("last_password_reset_date") java.util.Date last_password_reset_date,
-                @JsonProperty("notifications") Set<Notification> notifications) {
+                @JsonProperty("notifications") Set<Notification> notifications,
+                @JsonProperty("geofences_registry") Set<GeofenceRegistry> geofences_registry) {
         this.id = id;
         this.nick = nick;
         this.password = password;
@@ -58,6 +60,7 @@ public class User {
         this.role = role;
         this.last_password_reset_date = last_password_reset_date;
         this.notifications = notifications;
+        this.geofences_registry = geofences_registry;
     }
 
     @Id
@@ -184,11 +187,21 @@ public class User {
         this.notifications = notifications;
     }
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonView(View.UserCompleteView.class)
+    public Set<GeofenceRegistry> getGeofencesRegistry() {
+        return geofences_registry;
+    }
+
+    public void setGeofencesRegistry(Set<GeofenceRegistry> geofences_registry) {
+        this.geofences_registry = geofences_registry;
+    }
+
     public String toString() {
         return "User(id: " + id + " nick: " + nick + " password: " + password + " first_name: " + first_name +
                 " last_name: " + last_name + " birthday: " + birthday + " imei: " + imei + " geofences: " + geofences +
                 " enabled: " + enabled + " role: " + role + " last_password_reset_date: " + last_password_reset_date +
-                " notifications: " + notifications + ")";
+                " notifications: " + notifications + "geofences registry: " + geofences_registry + ")";
     }
 
     @Override
@@ -207,6 +220,7 @@ public class User {
                 Objects.equals(enabled, user.enabled) &&
                 Objects.equals(role, user.role) &&
                 Objects.equals(last_password_reset_date, user.last_password_reset_date) &&
-                Objects.equals(notifications, user.notifications);
+                Objects.equals(notifications, user.notifications) &&
+                Objects.equals(geofences_registry, user.geofences_registry);
     }
 }

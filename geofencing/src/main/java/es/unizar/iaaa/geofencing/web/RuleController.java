@@ -80,9 +80,14 @@ public class RuleController {
         if (!ruleRepository.existsByUsername(id, nick)) {
             throw new RuleNotFoundException();
         }
-        rule.setId(id);
+        Rule ruleRequested = ruleRepository.findOne(id);
+        ruleRequested.setEnabled(rule.getEnabled());
+        ruleRequested.setType(rule.getType());
+        ruleRequested.setTime(rule.getTime());
+        ruleRequested.setMessage(rule.getMessage());
+        ruleRequested.setDays(rule.getDays());
         try {
-            return ruleRepository.save(rule);
+            return ruleRepository.save(ruleRequested);
         } catch (Exception e) {
             throw new RuleResourceConflictException(id, e);
         }

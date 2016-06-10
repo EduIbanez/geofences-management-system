@@ -57,8 +57,8 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
     public void populate() {
         String PASSWORD = "admin";
 
-        User adminUser = new User(null, "admin", null, "First", "Last", Date.valueOf("1992-08-07"),
-                "", new HashSet<>(), true, "ROLE_ADMIN", Date.valueOf("2016-05-19"), new HashSet<>());
+        User adminUser = new User(null, "admin", null, "First", "Last", Date.valueOf("1992-08-07"), "",
+                new HashSet<>(), true, "ROLE_ADMIN", Date.valueOf("2016-05-19"), new HashSet<>(), new HashSet<>());
 
         Coordinate[] coordinates = {new Coordinate(41.63266, -0.898361), new Coordinate(41.61962, -0.8025762),
                 new Coordinate(41.613191, -0.873092), new Coordinate(41.63266, -0.898361)};

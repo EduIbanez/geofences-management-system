@@ -73,8 +73,8 @@ public class CheckRulesTest {
     @Before
     public void setup() {
         String PASSWORD = "password";
-        USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", java.sql.Date.valueOf("1992-08-07"),
-                "356938035643809", new HashSet<>(), true, "ROLE_USER", java.sql.Date.valueOf("2016-05-19"), new HashSet<>());
+        USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", java.sql.Date.valueOf("1992-08-07"), "356938035643809",
+                new HashSet<>(), true, "ROLE_USER", java.sql.Date.valueOf("2016-05-19"), new HashSet<>(), new HashSet<>());
 
         String hashedPassword = passwordEncoder.encode(PASSWORD);
         USER1.setPassword(hashedPassword);
@@ -105,7 +105,7 @@ public class CheckRulesTest {
     public void checkRulesOneEntering() throws Exception {
         Rule rule1 = new Rule(null, true, ENTERING, 10, "You are entering", new HashSet<>(), new HashSet<>(), GEOFENCE1);
         ruleRepository.save(rule1);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -114,21 +114,21 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(1, entering.size());
         assertEquals(0, leaving.size());
         assertEquals(0, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 0; i < 10; i++) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
             entering = previousGeofenceRegistry.getEntering();
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             assertEquals(1, entering.size());
             assertEquals(0, leaving.size());
             assertEquals(0, inside.size());
@@ -144,7 +144,7 @@ public class CheckRulesTest {
     public void checkRulesOneEnteringSent() throws Exception {
         Rule rule1 = new Rule(null, true, ENTERING, 40, "You are entering", new HashSet<>(), new HashSet<>(), GEOFENCE1);
         ruleRepository.save(rule1);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -153,14 +153,14 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(1, entering.size());
         assertEquals(0, leaving.size());
         assertEquals(0, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 0; i < 12; i++) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             if (i % 3 == 0 || i % 3 == 1) {
                 position = new Position(new GeometryFactory().createPoint(new Coordinate(41.6075, -0.9052)));
@@ -172,7 +172,7 @@ public class CheckRulesTest {
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             assertEquals(0, leaving.size());
             assertEquals(0, inside.size());
             if (i % 3 == 0) {
@@ -192,7 +192,7 @@ public class CheckRulesTest {
     public void checkRulesOneLeaving() throws Exception {
         Rule rule2 = new Rule(null, true, LEAVING, 20, "You are leaving", new HashSet<>(), new HashSet<>(), GEOFENCE2);
         ruleRepository.save(rule2);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -201,14 +201,14 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(0, entering.size());
         assertEquals(1, leaving.size());
         assertEquals(0, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 10; i > 0; i--) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             if (i == 1) {
                 position = new Position(new GeometryFactory().createPoint(new Coordinate(41.6075, -0.9052)));
@@ -218,7 +218,7 @@ public class CheckRulesTest {
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             assertEquals(0, entering.size());
             assertEquals(0, inside.size());
             if (i == 1) {
@@ -235,7 +235,7 @@ public class CheckRulesTest {
     public void checkRulesOneLeavingSent() throws Exception {
         Rule rule2 = new Rule(null, true, LEAVING, 45, "You are leaving", new HashSet<>(), new HashSet<>(), GEOFENCE2);
         ruleRepository.save(rule2);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -244,14 +244,14 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(0, entering.size());
         assertEquals(1, leaving.size());
         assertEquals(0, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 12; i > 0; i--) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             if (i % 3 == 0 || i % 3 == 2) {
                 position = new Position(new GeometryFactory().createPoint(new Coordinate(41.6075, -0.9052)));
@@ -263,7 +263,7 @@ public class CheckRulesTest {
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             assertEquals(0, entering.size());
             assertEquals(0, inside.size());
             if (i % 3 == 0) {
@@ -283,7 +283,7 @@ public class CheckRulesTest {
     public void checkRulesOneInside() throws Exception {
         Rule rule3 = new Rule(null, true, INSIDE, 15, "You are inside", new HashSet<>(), new HashSet<>(), GEOFENCE1);
         ruleRepository.save(rule3);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -292,21 +292,21 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(0, entering.size());
         assertEquals(0, leaving.size());
         assertEquals(1, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 0; i < 10; i++) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
             entering = previousGeofenceRegistry.getEntering();
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             assertEquals(0, entering.size());
             assertEquals(0, leaving.size());
             assertEquals(1, inside.size());
@@ -322,7 +322,7 @@ public class CheckRulesTest {
     public void checkRulesOneInsideNotSent() throws Exception {
         Rule rule3 = new Rule(null, true, INSIDE, 45, "You are inside", new HashSet<>(), new HashSet<>(), GEOFENCE1);
         ruleRepository.save(rule3);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -331,14 +331,14 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(0, entering.size());
         assertEquals(0, leaving.size());
         assertEquals(1, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 0; i < 10; i++) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             if (i % 2 != 0) {
                 position = new Position(new GeometryFactory().createPoint(new Coordinate(41.6075, -0.9052)));
@@ -350,7 +350,7 @@ public class CheckRulesTest {
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             assertEquals(0, entering.size());
             assertEquals(0, leaving.size());
             if (i % 2 == 0) {
@@ -368,7 +368,7 @@ public class CheckRulesTest {
         ruleRepository.save(rule1);
         Rule rule2 = new Rule(null, true, LEAVING, 20, "You are leaving", new HashSet<>(), new HashSet<>(), GEOFENCE2);
         ruleRepository.save(rule2);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -377,14 +377,14 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(1, entering.size());
         assertEquals(1, leaving.size());
         assertEquals(0, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 10; i > 0; i--) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             if (i == 1) {
                 position = new Position(new GeometryFactory().createPoint(new Coordinate(41.6075, -0.9052)));
@@ -394,7 +394,7 @@ public class CheckRulesTest {
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             assertEquals(0, inside.size());
             if (i == 1) {
                 assertEquals(0, entering.size());
@@ -418,7 +418,7 @@ public class CheckRulesTest {
         ruleRepository.save(rule1);
         Rule rule3 = new Rule(null, true, INSIDE, 15, "You are inside", new HashSet<>(), new HashSet<>(), GEOFENCE1);
         ruleRepository.save(rule3);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -427,21 +427,21 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(1, entering.size());
         assertEquals(0, leaving.size());
         assertEquals(1, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 0; i > 0; i++) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
             entering = previousGeofenceRegistry.getEntering();
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             assertEquals(0, leaving.size());
             if (i == 0) {
                 assertEquals(1, entering.size());
@@ -465,7 +465,7 @@ public class CheckRulesTest {
         ruleRepository.save(rule2);
         Rule rule3 = new Rule(null, true, INSIDE, 15, "You are inside", new HashSet<>(), new HashSet<>(), GEOFENCE1);
         ruleRepository.save(rule3);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -474,14 +474,14 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(0, entering.size());
         assertEquals(1, leaving.size());
         assertEquals(1, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 10; i > 0; i--) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             if (i == 1) {
                 position = new Position(new GeometryFactory().createPoint(new Coordinate(41.6075, -0.9052)));
@@ -491,7 +491,7 @@ public class CheckRulesTest {
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             assertEquals(0, entering.size());
             if (i == 1) {
                 assertEquals(0, leaving.size());
@@ -517,7 +517,7 @@ public class CheckRulesTest {
         ruleRepository.save(rule2);
         Rule rule3 = new Rule(null, true, INSIDE, 15, "You are inside", new HashSet<>(), new HashSet<>(), GEOFENCE1);
         ruleRepository.save(rule3);
-        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+        GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
         Calendar time = Calendar.getInstance();
         Position position = new Position(new GeometryFactory().createPoint(new Coordinate(41.618618, -0.847992)));
         List<Geofence> geofences = geofenceRepository.findWithin(position.getCoordinates(), USER1.getNick());
@@ -526,14 +526,14 @@ public class CheckRulesTest {
         Map<Long, Date> inside = new HashMap<>();
         List<Notification> notifications = positionController.checkRules(geofences, USER1, time, entering,
                 leaving, inside, previousGeofenceRegistry);
-        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+        geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
         assertEquals(1, entering.size());
         assertEquals(1, leaving.size());
         assertEquals(1, inside.size());
         assertEquals(0, notifications.size());
 
         for (int i = 10; i > 0; i--) {
-            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserOrderByDateDesc(USER1.getId());
+            previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(USER1.getId());
             time.add(Calendar.SECOND, 30);
             if (i == 1) {
                 position = new Position(new GeometryFactory().createPoint(new Coordinate(41.6075, -0.9052)));
@@ -543,7 +543,7 @@ public class CheckRulesTest {
             leaving = previousGeofenceRegistry.getLeaving();
             inside = previousGeofenceRegistry.getInside();
             notifications = positionController.checkRules(geofences, USER1, time, entering, leaving, inside, previousGeofenceRegistry);
-            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1.getId(),time.getTime()));
+            geofenceRegistryRepository.save(new GeofenceRegistry(null, entering, leaving, inside, USER1, time.getTime()));
             if (i == 1) {
                 assertEquals(0, entering.size());
                 assertEquals(0, leaving.size());

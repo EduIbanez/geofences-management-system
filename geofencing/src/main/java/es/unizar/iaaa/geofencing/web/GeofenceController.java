@@ -161,9 +161,12 @@ public class GeofenceController {
         if (!geofenceRepository.existsByUsername(id, nick)) {
             throw new GeofenceNotFoundException();
         }
-        geofence.setId(id);
+        Geofence geofenceRequested = geofenceRepository.findOne(id);
+        geofenceRequested.setType(geofence.getType());
+        geofenceRequested.setProperties(geofence.getProperties());
+        geofenceRequested.setGeometry(geofence.getGeometry());
         try {
-            return geofenceRepository.save(geofence);
+            return geofenceRepository.save(geofenceRequested);
         } catch (Exception e) {
             throw new GeofenceResourceConflictException(id, e);
         }

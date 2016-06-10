@@ -107,9 +107,11 @@ public class NotificationController {
         if (!notificationRepository.existsByUsername(id, nick)) {
             throw new NotificationNotFoundException();
         }
-        notification.setId(id);
+        Notification notificationRequested = notificationRepository.findOne(id);
+        notificationRequested.setStatus(notification.getStatus());
+        notificationRequested.setDate(notification.getDate());
         try {
-            return notificationRepository.save(notification);
+            return notificationRepository.save(notificationRequested);
         } catch (Exception e) {
             throw new NotificationResourceConflictException(id, e);
         }

@@ -5,16 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 import java.util.Map;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "GEOFENCES_REGISTRY")
@@ -24,7 +15,7 @@ public class GeofenceRegistry {
     private Map<Long, Date> entering;
     private Map<Long, Date> leaving;
     private Map<Long, Date> inside;
-    private Long user;
+    private User user;
     private Date date;
 
     public GeofenceRegistry() {
@@ -32,7 +23,7 @@ public class GeofenceRegistry {
 
     public GeofenceRegistry(@JsonProperty("id") Long id, @JsonProperty("entering") Map<Long, Date> entering,
                             @JsonProperty("leaving") Map<Long, Date> leaving, @JsonProperty("inside") Map<Long, Date> inside,
-                            @JsonProperty("user") Long user, @JsonProperty("date") Date date) {
+                            @JsonProperty("user") User user, @JsonProperty("date") Date date) {
         this.id = id;
         this.entering = entering;
         this.leaving = leaving;
@@ -88,12 +79,12 @@ public class GeofenceRegistry {
         this.inside = inside;
     }
 
-    @Column(name = "USER_ID", nullable = false)
-    public Long getUser() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Long user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

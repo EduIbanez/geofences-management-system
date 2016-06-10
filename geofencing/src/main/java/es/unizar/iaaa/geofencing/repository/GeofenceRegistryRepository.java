@@ -6,5 +6,5 @@ import es.unizar.iaaa.geofencing.model.GeofenceRegistry;
 
 public interface GeofenceRegistryRepository extends CrudRepository<GeofenceRegistry, Long> {
 
-    GeofenceRegistry findFirstByUserOrderByDateDesc(Long user);
+    GeofenceRegistry findFirstByUserIdOrderByDateDesc(Long user_id);
 }

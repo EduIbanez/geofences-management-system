@@ -1,5 +1,6 @@
 package es.unizar.iaaa.geofencing.web;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,7 @@ public class UserController {
             @ApiResponse(code = 200, message = "User modified", response = User.class),
             @ApiResponse(code = 304, message = "User not modified", response = UserNotModifiedException.class),
             @ApiResponse(code = 404, message = "User not found", response = UserNotFoundException.class)})
+    @JsonView(View.UserCompleteView.class)
     public User modifyUser(@PathVariable("id_user") String id_user, @RequestBody User user) {
         LOGGER.info("Requested /api/users/{id_user} PUT method");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

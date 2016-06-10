@@ -68,7 +68,7 @@ public class SecurityTest {
     private static final String PASSWORD = "password";
 
     private static final User USER1 = new User(null, "example.gmail.com", PASSWORD, "First", "Last", Date.valueOf("1992-08-07"),
-            "356938035643809", new HashSet<>(), true, "ROLE_USER", Date.valueOf("2016-05-19"), new HashSet<>());
+            "356938035643809", new HashSet<>(), true, "ROLE_USER", Date.valueOf("2016-05-19"), new HashSet<>(), new HashSet<>());
 
     private static final Geofence GEOFENCE1 = new Geofence(null, "Feature", new HashMap<>(),
             new GeometryFactory().createPoint(new Coordinate(1, 2)), USER1, new HashSet<>());
