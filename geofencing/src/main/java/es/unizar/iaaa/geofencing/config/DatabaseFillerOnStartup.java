@@ -49,7 +49,7 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (userRepository.findByUsername("admin") == null) {
+        if (userRepository.findByNick("admin") == null) {
             populate();
         }
     }
@@ -100,11 +100,11 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
 
         geofence2.setUser(adminUser);
         adminUser.getGeofences().add(geofence2);
-        geofence2 = geofenceRepository.save(geofence2);
+        geofenceRepository.save(geofence2);
 
         geofence3.setUser(adminUser);
         adminUser.getGeofences().add(geofence3);
-        geofence3 = geofenceRepository.save(geofence3);
+        geofenceRepository.save(geofence3);
 
         rule.setGeofence(geofence);
         geofence.getRules().add(rule);

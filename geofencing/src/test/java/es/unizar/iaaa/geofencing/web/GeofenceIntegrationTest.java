@@ -16,6 +16,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -106,6 +107,27 @@ public class GeofenceIntegrationTest {
         assertEquals(HttpStatus.CREATED, response2.getStatusCode());
         assertNotNull(response2.getBody().getId());
     }
+
+    @Test
+    public void deleteUser() {
+        JwtAuthenticationRequest jwtAuthenticationRequest = new JwtAuthenticationRequest("admin", "admin");
+        RestTemplate client = new RestTemplate();
+        ResponseEntity<String> response = client.postForEntity("http://localhost:{port}/api/users/auth", jwtAuthenticationRequest, String.class, port);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        client.getInterceptors().add(new LoggingRequestInterceptor());
+
+        String body = response.getBody();
+        HttpHeaders entityHeaders = new HttpHeaders();
+        entityHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+        entityHeaders.add("Authorization", body.substring(10, body.length()-2));
+
+        HttpEntity<Object> request = new HttpEntity<>(entityHeaders);
+
+        ResponseEntity<String> response2 = client.exchange("http://localhost:{port}/api/users/admin", HttpMethod.DELETE, request, String.class, port);
+        assertEquals(HttpStatus.OK, response2.getStatusCode());
+    }
+
+
 }
 
 class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -135,7 +136,7 @@ public class User {
         this.imei = imei;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonView(View.UserCompleteView.class)
     public Set<Geofence> getGeofences() {
         return geofences;
@@ -177,7 +178,7 @@ public class User {
         this.last_password_reset_date = last_password_reset_date;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonView(View.UserCompleteView.class)
     public Set<Notification> getNotifications() {
         return notifications;
@@ -187,7 +188,7 @@ public class User {
         this.notifications = notifications;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonView(View.UserCompleteView.class)
     public Set<GeofenceRegistry> getGeofencesRegistry() {
         return geofences_registry;

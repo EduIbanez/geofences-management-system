@@ -62,13 +62,13 @@ public class PositionController {
         LOGGER.info("Requested /api/locations using WebSocket");
         String token = positionAuthenticated.getAuthorization();
         String username = jwtTokenUtil.getUsernameFromToken(token);
-        if (username == null || userRepository.findByUsername(username) == null) {
+        if (username == null || userRepository.findByNick(username) == null) {
             throw new InsufficientAuthenticationException("Requires authentication");
         }
         LOGGER.info("with principal " + username);
         Calendar time = Calendar.getInstance();
         Position position = positionAuthenticated.getPosition();
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByNick(username);
         GeofenceRegistry previousGeofenceRegistry = geofenceRegistryRepository.findFirstByUserIdOrderByDateDesc(user.getId());
         Map<Long, Date> entering = new HashMap<>();
         Map<Long, Date> leaving = new HashMap<>();

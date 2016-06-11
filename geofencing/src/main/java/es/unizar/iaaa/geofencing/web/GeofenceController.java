@@ -65,7 +65,7 @@ public class GeofenceController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails customUser = (UserDetails) auth.getPrincipal();
         String nick = customUser.getUsername();
-        User user = userRepository.findByUsername(nick);
+        User user = userRepository.findByNick(nick);
         user.setGeofences(new HashSet<>());
         geofence.setUser(user);
         Geofence geofenceCreated = geofenceRepository.save(geofence);

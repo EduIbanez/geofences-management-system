@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -100,7 +101,7 @@ public class Rule {
         this.message = message;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rule")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rule", cascade = CascadeType.ALL)
     @JsonView(View.RuleCompleteView.class)
     public Set<Day> getDays() {
         return days;
@@ -110,7 +111,7 @@ public class Rule {
         this.days = days;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rule")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rule", cascade = CascadeType.ALL)
     @JsonView(View.RuleCompleteView.class)
     public Set<Notification> getNotifications() {
         return notifications;

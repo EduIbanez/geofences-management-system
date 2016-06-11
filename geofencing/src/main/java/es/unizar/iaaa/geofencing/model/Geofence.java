@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -110,7 +111,7 @@ public class Geofence {
         this.user = user;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "geofence")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "geofence", cascade = CascadeType.ALL)
     @JsonView(View.GeofenceCompleteView.class)
     public Set<Rule> getRules() {
         return rules;
