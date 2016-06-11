@@ -274,31 +274,38 @@ function getGeofences() {
         headers: createAuthorizationTokenHeader(),
         success: function (data, textStatus, jqXHR) {
             geofencesArray = [];
-            var geofences = [];
             var i, j;
             for (i = 0; i < data.length; i++) {
                 var geo = [];
                 var coordinates = data[i].geometry.coordinates[0];
+                var id = data[i].id;
                 for (j = 0; j < coordinates.length; j++) {
                     geo.push({lat: coordinates[j][0], lng: coordinates[j][1]});
                 }
-                geofences.push(geo);
-            }
-            for (j = 0; j < geofences.length; j++) {
                 // Construct the polygon.
                 var polygon = new google.maps.Polygon({
-                    paths: geofences[j],
+                    paths: geo,
                     strokeColor: '#20B2AA',
                     strokeOpacity: 0.8,
                     strokeWeight: 2,
                     fillColor: '#20B2AA',
                     fillOpacity: 0.35  });
+                polygon.id = id;
                 geofencesArray.push(polygon);
                 polygon.setMap(map);
+                addListenersOnPolygon(polygon);
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
+        }
+    });
+}
+
+var addListenersOnPolygon = function(polygon) {
+    google.maps.event.addListener(polygon, 'click', function (event) {
+        if (window.confirm('Do you want to delete it?')) {
+            deleteGeofence(polygon.id);
         }
     });
 }
@@ -352,6 +359,25 @@ function postGeofence(geofenceData) {
     });
 }
 
+function deleteGeofence(id) {
+    "use strict";
+    $.ajax({
+        url: "http://localhost:8080/api/geofences/"+id,
+        type: "DELETE",
+        headers: createAuthorizationTokenHeader(),
+        success: function (data, textStatus, jqXHR) {
+            clearGeofences();
+            getGeofences();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 401) {
+                console.log("Unauthorized request");
+            } else {
+                throw new Error("an unexpected error occured: " + errorThrown);
+            }
+        }
+    });
+}
 
 function doLogout() {
     "use strict";
