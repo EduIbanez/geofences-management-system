@@ -49,7 +49,12 @@ public class SwaggerConfig {
 
     @Bean
     UiConfiguration uiConfig() {
-        return new UiConfiguration("validatorUrl");
+        return new UiConfiguration(
+                null,// url
+                "list",       // docExpansion          => none | list
+                "alpha",      // apiSorter             => alpha
+                "schema",     // defaultModelRendering => schema
+                false,        // enableJsonEditor      => true | false
+                true);        // showRequestHeaders    => true | false
     }
-
 }
