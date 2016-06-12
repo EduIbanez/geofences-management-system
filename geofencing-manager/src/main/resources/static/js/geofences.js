@@ -322,17 +322,21 @@ $("#mapForm").submit(function (event) {
     event.preventDefault();
 
     var $form = $(this);
-    var geofence = $form.find('input[name="vertices"]').val();
-    var geofenceData = {
-        id: null,
-        type: "Feature",
-        properties: {},
-        geometry: { "type" : "Polygon", "coordinates" : JSON.parse(geofence) },
-        user: null,
-        rules: []
-    };
+    var name = $form.find('input[name="name"]').val();
+    console.log(name);
+    if (name !== "" && name !== "undefined") {
+        var geofence = $form.find('input[name="vertices"]').val();
+        var geofenceData = {
+            id: null,
+            type: "Feature",
+            properties: {"name": name},
+            geometry: {"type": "Polygon", "coordinates": JSON.parse(geofence)},
+            user: null,
+            rules: []
+        };
 
-    postGeofence(geofenceData);
+        postGeofence(geofenceData);
+    }
 });
 
 function postGeofence(geofenceData) {

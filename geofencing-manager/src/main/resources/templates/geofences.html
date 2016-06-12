@@ -23,6 +23,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/user">Geofencing Manager</a>
         </div>
@@ -30,6 +31,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="/user"><span class="glyphicon glyphicon-user"></span> User<span class="sr-only"></span></a></li>
                 <li class="active"><a href="/geofences"><span class="glyphicon glyphicon-globe"></span> Geofences</a></li>
+                <li><a href="/rules"><span class="glyphicon glyphicon-transfer"></span> Rules</a></li>
                 <li id="logout"><a href="/"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
             </ul>
         </div>
@@ -45,6 +47,12 @@
             <div class="text-center">
                 <form id="mapForm">
                     <h3>Do you want to save it?</h3>
+                    <div class="form-group col-sm-offset-2 col-sm-8">
+                        <label class="sr-only" for="name">Name</label>
+                        <input type="text" name="name"
+                               placeholder="Name..." class="form-control"
+                               id="name"/>
+                    </div>
                     <input id="vertices" type="hidden" name="vertices" value=""/>
                     <button type="submit" class="btn">Save!</button>
                 </form>

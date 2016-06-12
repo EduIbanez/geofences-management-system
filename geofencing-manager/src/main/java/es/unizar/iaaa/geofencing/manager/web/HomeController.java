@@ -26,4 +26,9 @@ public class HomeController {
         return "geofences";
     }
 
+    @RequestMapping("/rules")
+    public String rules() {
+        return "rules";
+    }
+
 }

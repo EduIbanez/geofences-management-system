@@ -11,7 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import es.unizar.iaaa.geofencing.builder.GeometryBuilder;
 import es.unizar.iaaa.geofencing.model.Geofence;
@@ -60,20 +62,32 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
         User adminUser = new User(null, "admin", null, "First", "Last", Date.valueOf("1992-08-07"), "",
                 new HashSet<>(), true, "ROLE_ADMIN", Date.valueOf("2016-05-19"), new HashSet<>(), new HashSet<>());
 
+        Map<String, String> properties = new HashMap<>();
+        properties.put("name", "La Paz");
+
         Coordinate[] coordinates = {new Coordinate(41.63266, -0.898361), new Coordinate(41.61962, -0.8025762),
                 new Coordinate(41.613191, -0.873092), new Coordinate(41.63266, -0.898361)};
 
         Geofence geofence = new Geofence(null, "Feature", null,
                 new GeometryFactory().createPolygon(coordinates), null, new HashSet<>());
+        geofence.setProperties(properties);
+
+        Map<String, String> properties2 = new HashMap<>();
+        properties2.put("name", "San Jose");
 
         Coordinate[] coordinates2 = {new Coordinate(41.65, -0.883333), new Coordinate(41.634742, -0.899631),
                 new Coordinate(41.625359, -0.859376), new Coordinate(41.65, -0.883333)};
 
         Geofence geofence2 = new Geofence(null, "Feature", null,
                 new GeometryFactory().createPolygon(coordinates2), null, new HashSet<>());
+        geofence2.setProperties(properties2);
+
+        Map<String, String> properties3 = new HashMap<>();
+        properties3.put("name", "EINA");
 
         Geofence geofence3 = new Geofence(null, "Feature", null,
                 new GeometryBuilder().circle(41.682746, -0.888445, 0.002, 40), null, new HashSet<>());
+        geofence3.setProperties(properties3);
 
         Rule rule = new Rule(null, true, ENTERING, 70, "You are entering", new HashSet<>(),
                 new HashSet<>(), geofence);
