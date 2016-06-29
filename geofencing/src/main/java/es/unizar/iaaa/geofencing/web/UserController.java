@@ -122,7 +122,7 @@ public class UserController {
     }
 
     /**
-     * This method returns a user by id.
+     * This method returns a user by nick.
      *
      * @param nick unique identifier name representing a specific user
      * @return the user requested

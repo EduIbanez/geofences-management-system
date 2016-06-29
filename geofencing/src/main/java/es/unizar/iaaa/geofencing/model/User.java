@@ -189,7 +189,6 @@ public class User {
     }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonView(View.UserCompleteView.class)
     public Set<GeofenceRegistry> getGeofencesRegistry() {
         return geofences_registry;
     }

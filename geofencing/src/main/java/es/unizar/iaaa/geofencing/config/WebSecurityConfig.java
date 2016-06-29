@@ -57,7 +57,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(GET, "/api/geofences/**").permitAll()
                 .antMatchers(GET, "/api/rules/**").permitAll()
                 .antMatchers(GET, "/api/notifications/**").permitAll()
-                .antMatchers(GET, "/api/notifications/**").permitAll()
                 .antMatchers(GET, "/api/locations/**").permitAll()
                 .antMatchers(POST, "/api/locations/**").permitAll()
                 .anyRequest().authenticated();
